@@ -31,12 +31,10 @@ app.get('/', (req, res) => res.status(301).redirect('/api/v1'));
 
 app.use('/api/v1', routes);
 
-app.use('*', (req, res) => {
-  return res.status(404).json({
-    status: res.statusCode,
-    error: 'Endpoint Not Found'
-  });
-});
+app.use('*', (req, res) => res.status(404).json({
+  status: res.statusCode,
+  error: 'Endpoint Not Found',
+}));
 
 app.use((err, req, res) => {
   if (!isProduction) {
@@ -46,8 +44,8 @@ app.use((err, req, res) => {
   res.json({
     errors: {
       message: err.message,
-      error: isProduction ? {} : err
-    }
+      error: isProduction ? {} : err,
+    },
   });
 });
 
