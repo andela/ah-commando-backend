@@ -7,6 +7,10 @@
     "es6": true,
     "mocha": true
   },
+  "parserOptions": {
+    "sourceType": "module",
+    "allowImportExportEverywhere": true
+  },
   "rules": {
     "prettier/prettier": ["error"],
     "one-var": 0,
