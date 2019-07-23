@@ -34,7 +34,7 @@ app.use('/api/v1', routes);
 app.use('*', (req, res) => {
   return res.status(404).json({
     status: res.statusCode,
-    error: 'Endpoint Not Found'
+    error: 'Endpoint Not Found',
   });
 });
 
@@ -46,8 +46,8 @@ app.use((err, req, res) => {
   res.json({
     errors: {
       message: err.message,
-      error: isProduction ? {} : err
-    }
+      error: isProduction ? {} : err,
+    },
   });
 });
 
