@@ -7,7 +7,10 @@
     "start": "node build/index.js",
     "dev": "export DEBUG=dev && nodemon --exec babel-node server/index.js",
     "clean": "rm -rf build && mkdir build",
-    "build": "npm run clean && babel -d ./build ./server"
+    "build": "npm run clean && babel -d ./build ./server",
+    "migrate": "node_modules/.bin/sequelize db:migrate",
+    "migrate:undo": "node_modules/.bin/sequelize db:migrate:undo",
+    "generate:model": "node_modules/.bin/sequelize model:generate"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
@@ -20,7 +23,11 @@
     "errorhandler": "^1.5.0",
     "express": "^4.16.3",
     "jsonwebtoken": "^8.3.0",
-    "morgan": "^1.9.1"
+    "morgan": "^1.9.1",
+    "pg": "^7.11.0",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^5.10.2",
+    "sequelize-cli": "^5.5.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
@@ -29,6 +36,7 @@
     "@babel/preset-env": "^7.5.5",
     "eslint": "^6.1.0",
     "eslint-config-airbnb-base": "^13.2.0",
+    "eslint-plugin-import": "^2.18.2",
     "husky": "^3.0.1",
     "lint-staged": "^9.2.0",
     "nodemon": "^1.19.1"
