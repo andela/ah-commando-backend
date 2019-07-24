@@ -10,7 +10,8 @@
     "build": "npm run clean && babel -d ./build ./server",
     "migrate": "node_modules/.bin/sequelize db:migrate",
     "migrate:undo": "node_modules/.bin/sequelize db:migrate:undo",
-    "generate:model": "node_modules/.bin/sequelize model:generate"
+    "generate:model": "node_modules/.bin/sequelize model:generate",
+    "test": "NODE_ENV=test mocha --require @babel/register server/tests --exit"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
@@ -34,11 +35,15 @@
     "@babel/core": "^7.5.5",
     "@babel/node": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
+    "@babel/register": "^7.5.5",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
     "eslint": "^6.1.0",
     "eslint-config-airbnb-base": "^13.2.0",
     "eslint-plugin-import": "^2.18.2",
     "husky": "^3.0.1",
     "lint-staged": "^9.2.0",
+    "mocha": "^6.2.0",
     "nodemon": "^1.19.1"
   },
   "husky": {
