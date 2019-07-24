@@ -1,0 +1,10 @@
+{
+  "name": "ah-commando-backend",
+  "description": "Review apps for new PRs to the repo",
+  "scripts": {},
+  "env": {},
+  "formation": {},
+  "addons": [],
+  "buildpacks": [],
+  "stack": "heroku-18"
+}

@@ -23,6 +23,7 @@ coverage
 .lock-wscript
 
 # Compiled binary addons (http://nodejs.org/api/addons.html)
+build
 build/Release
 
 # Dependency directory
@@ -33,4 +34,10 @@ node_modules
 
 # Optional REPL history
 .node_repl_history
+
+# Environmental variables
+.env
+
+# VScode workspace file (chuxmykel)
+ah.code-workspace
 
