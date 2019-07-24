@@ -10,12 +10,6 @@ env:
     - export NODE_ENV=test
 services:
   - postgresql
-addons:
-  postgresql: "11.3"
-  apt:
-    packages:
-    - postgresql-11.3
-    - postgresql-client-11.3
 before_script:
   - psql -c 'create database ah_test_db; ' -U postgres
 after_success:
