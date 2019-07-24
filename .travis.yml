@@ -1,0 +1,22 @@
+language: 
+  node_js
+node_js:
+  - "stable"
+cache:
+  directories:
+    - "node_modules"
+env:
+  global:
+    - export NODE_ENV=test
+services:
+  - postgresql
+addons:
+  postgresql: "11.3"
+  apt:
+    packages:
+    - postgresql-11.3
+    - postgresql-client-11.3
+before_script:
+  - psql -c 'create database ah_test_db; ' -U postgres
+after_success:
+  - nyc report --reporter=text-lcov | coveralls

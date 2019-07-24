@@ -31,7 +31,7 @@
     "eslint-config-airbnb-base": "^13.2.0",
     "husky": "^3.0.1",
     "lint-staged": "^9.2.0",
-    "nodemon": "^1.19.1"
+    "nodemon": "^1.17.5"
   },
   "husky": {
     "hooks": {
