@@ -37,9 +37,7 @@ app.use('*', (req, res) => res.status(404).json({
 }));
 
 app.use((err, req, res) => {
-  if (!isProduction) {
-    log(err.stack);
-  }
+  if (!isProduction) log(err.stack);
   res.status(err.status || 500);
   res.json({
     errors: {
@@ -50,3 +48,5 @@ app.use((err, req, res) => {
 });
 
 app.listen(port, () => log(`Listening on port ${chalk.yellow(`${port}`)}`));
+
+export default app;
