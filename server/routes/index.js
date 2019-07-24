@@ -4,7 +4,7 @@ import yaml from 'yamljs';
 
 const router = express();
 
-const swaggerDocument = yaml.load('../docs/ah-commando-doc.yml');
+const swaggerDocument = yaml.load(`${__dirname}/../docs/ah-commando-doc.yml`);
 router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 router.get('/', (req, res) => res.status(200).json({
