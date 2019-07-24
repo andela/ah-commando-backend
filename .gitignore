@@ -41,5 +41,7 @@ node_modules
 # VScode workspace file (chuxmykel)
 ah.code-workspace
 
+
 .coveralls.yml
 .nyc_output
+
