@@ -20,7 +20,7 @@ tags:
     description: Operations related to Users authentication
   - name: Articles
     description: Operations about the Articles
-    
+
 paths:
   /:
     get:
@@ -31,23 +31,49 @@ paths:
       responses:
         '200':
           description: Success
-          content: 
+          content:
             application/json:
               schema:
                 $ref: "#/components/schemas/successResponse"
         '404':
           description: Endpoint not found
-          content: 
+          content:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
         '500':
           description: Server error
-          content: 
+          content:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
-  
+
+  /auth/signup:
+    get:
+      tags:
+        - Users
+      summary: To signup new users
+      description: This endpoint signs up a new user using their email
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -79,7 +105,7 @@ components:
           type: string
         image:
           type: string
-        following: 
+        following:
           type: boolean
 
     article:
@@ -91,7 +117,7 @@ components:
           type: string
         description:
           type: string
-        body: 
+        body:
           type: string
         tagList:
           type: array
@@ -99,9 +125,9 @@ components:
           type: string
         updatedAt:
           type: string
-        favorited: 
+        favorited:
           type: boolean
-        favoritesCount: 
+        favoritesCount:
           type: string
         author:
           type: object
