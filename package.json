@@ -6,13 +6,14 @@
   "scripts": {
     "start": "node build/index.js",
     "dev": "export DEBUG=dev && nodemon --exec babel-node server/index.js",
-    "clean": "rm -rf build && mkdir build",
+    "clean": "rm -rf build && mkdir build && npm run copy-docs",
     "build": "npm run clean && babel -d ./build ./server",
     "test": "NODE_ENV=test nyc mocha --require @babel/register server/tests --exit",
     "generate:model": "node_modules/.bin/sequelize model:generate",
     "migrate": "node_modules/.bin/sequelize db:migrate",
     "migrate:undo": "node_modules/.bin/sequelize db:migrate:undo",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+    "coveralls": "nyc report --reporter=text-lcov | coveralls",
+    "copy-docs": "cp -r server/docs/ build/docs/"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
