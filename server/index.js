@@ -23,9 +23,7 @@ app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-if (!isProduction) {
-  app.use(errorhandler());
-}
+if (!isProduction) app.use(errorhandler());
 
 app.get('/', (req, res) => res.status(301).redirect('/api/v1'));
 
@@ -36,14 +34,12 @@ app.use('*', (req, res) => res.status(404).json({
   error: 'Endpoint Not Found',
 }));
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   if (!isProduction) log(err.stack);
-  res.status(err.status || 500);
-  res.json({
-    errors: {
-      message: err.message,
-      error: isProduction ? {} : err,
-    },
+  if (res.headersSent) return next(err);
+  return res.status(err.status || 500).json({
+    status: res.statusCode,
+    error: err.message,
   });
 });
 

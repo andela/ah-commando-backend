@@ -28,4 +28,15 @@ describe('Ah-commando-backend', () => {
         done();
       });
   });
+
+  it('Should display an error message for server error', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/%`)
+      .end((err, res) => {
+        const { body: { error, status } } = res;
+        expect(error).to.equal('Failed to decode param \'/api/v1/%\'');
+        expect(status).to.equal(400);
+        done();
+      });
+  });
 });

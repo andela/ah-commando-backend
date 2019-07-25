@@ -12,6 +12,6 @@ router.get('/', (req, res) => res.status(200).json({
   status: res.statusCode,
   message: 'Hello there! This is Author\'s haven'
 }));
-router.use('/auth', userRoute);
+router.use('/users', userRoute);
 
 export default router;

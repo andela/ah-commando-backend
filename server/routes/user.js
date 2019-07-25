@@ -4,6 +4,7 @@ import UserController from '../controllers/userController';
 
 const userRoute = express();
 
-userRoute.post('/signup', UserController.signUp);
+userRoute.post('/', UserController.signUp);
+userRoute.post('/login', UserController.login);
 
 export default userRoute;

@@ -5,9 +5,9 @@
 class Utilites {
   /**
     * @static
-    * @description Allows a user to sign up
-    * @param {Object} res - Request object
-    * @param {Number} status - Appropraite error statuus
+    * @description Returns message based on the status
+    * @param {Object} res - Response object
+    * @param {Number} status - Appropraite error status
     * @param {String} error - The appropriate error message
     * @returns {Object} res object to report approprate error
     * @memberof Utilites
