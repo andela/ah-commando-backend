@@ -2,7 +2,9 @@
   "name": "ah-commando-backend",
   "description": "Review apps for new PRs to the repo",
   "scripts": {},
-  "env": {},
+  "env": {
+    "DATABASE_URL": "postgres://unfmehko:931GEzpHkZL-5HGjnjmxRhMXI5KwNVea@raja.db.elephantsql.com:5432/unfmehko"
+  },
   "formation": {},
   "addons": [],
   "buildpacks": [],

@@ -5,6 +5,9 @@ node_js:
 cache:
   directories:
     - "node_modules"
+script:
+- npm test
+- npm run coveralls
 env:
   global:
     - export NODE_ENV=test

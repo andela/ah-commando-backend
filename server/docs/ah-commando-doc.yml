@@ -1,0 +1,149 @@
+openapi: 3.0.1
+
+info:
+  title: Author's Haven Commando API
+  description: |
+    Author's Haven is a community for like minded authors to foster inspiration and innovation by leveraging the modern web.
+  contact:
+    email: team-commando@author-haven.com
+  version: 1.0.0
+externalDocs:
+  description: The GitHub Repository
+  url: 'https://github.com/andela/ah-commando-backend'
+servers:
+  - url: '/api/v1'
+  - url: 'https://a-haven-staging.herokuapp.com/api/v1'
+tags:
+  - name: Welcome
+    description: The root endpoint
+  - name: Users
+    description: Operations related to Users authentication
+  - name: Articles
+    description: Operations about the Articles
+
+paths:
+  /:
+    get:
+      tags:
+        - Welcome
+      summary: The root endpoint
+      description: The root endpoint
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '404':
+          description: Endpoint not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+
+  /auth/signup:
+    get:
+      tags:
+        - Users
+      summary: To signup new users
+      description: This endpoint signs up a new user using their email
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    user:
+      type: object
+      properties:
+        token:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        bio:
+          type: string
+        image:
+          type: string
+          nullable: true
+
+    profile:
+      type: object
+      properties:
+        username:
+          type: string
+        bio:
+          type: string
+        image:
+          type: string
+        following:
+          type: boolean
+
+    article:
+      type: object
+      properties:
+        slug:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        body:
+          type: string
+        tagList:
+          type: array
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        favorited:
+          type: boolean
+        favoritesCount:
+          type: string
+        author:
+          type: object
+
+    errorResponse:
+      type: object
+      properties:
+        status:
+          type: number
+        error:
+          type: string
+
+    successResponse:
+      type: object
+      properties:
+        status:
+          type: number
+        message:
+          type: string
