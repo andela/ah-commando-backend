@@ -1,0 +1,39 @@
+* {
+    box-sizing: border-box
+}
+.container {
+    width: 90%;
+    margin: 5%;
+}
+.form {
+    position: relative;
+    margin: 10% 10% 4% 35%;
+    width: 30%;
+}
+.form-group{
+    position: relative;
+    display: block;
+    padding: 15px;
+    margin: 10px;
+    width: 100%;
+}
+.sp-1{
+    display: inline-block;
+    margin: 3%;
+}
+#btn:hover {
+    cursor: pointer;
+}
+.error {
+    padding: 3%;
+    background-color: red;
+    border: none;
+    text-align: canter;
+}
+.success {
+    padding: 3%;
+    border: none;
+    color: #fff;
+    text-align: center;
+    background-color: green;
+}
