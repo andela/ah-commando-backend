@@ -251,4 +251,64 @@ describe('User tests', () => {
         });
     });
   });
+
+  describe('User logout', () => {
+    it('should successfully log out a signed in user', (done) => {
+      chai.request(app)
+        .post(`${baseUrl}/users/login`)
+        .send(userData[10])
+        .end((err, res) => {
+          const { token } = res.body.user;
+          chai.request(app)
+            .post(`${baseUrl}/users/logout`)
+            .set('Authorization', token)
+            // eslint-disable-next-line no-unused-vars
+            .end((err1, res1) => {
+              done();
+            });
+        });
+    });
+    it('should return 401 for an invalid token', (done) => {
+      chai.request(app)
+        .post(`${baseUrl}/users/logout`)
+        .set('Authorization', 'token')
+        .end((err1, res1) => {
+          expect(res1).to.have.a.status(401);
+          expect(res1.body.error).to.equal('invalid token');
+          done();
+        });
+    });
+    it('should return 401 if no token is provided', (done) => {
+      chai.request(app)
+        .post(`${baseUrl}/users/logout`)
+        .set('Authorization', '')
+        .end((err1, res1) => {
+          expect(res1).to.have.a.status(401);
+          expect(res1.body.error).to.equal('Authorization error');
+          done();
+        });
+    });
+    it('should show invalid token if the token is in the blacklist', (done) => {
+      chai.request(app)
+        .post(`${baseUrl}/users/login`)
+        .send(userData[10])
+        .end((err, res) => {
+          const { token } = res.body.user;
+          chai.request(app)
+            .post(`${baseUrl}/users/logout`)
+            .set('Authorization', token)
+            // eslint-disable-next-line no-unused-vars
+            .end((err1, res1) => {
+              chai.request(app)
+                .post(`${baseUrl}/users/logout`)
+                .set('Authorization', token)
+                .end((err2, res2) => {
+                  expect(res2).to.have.a.status(401);
+                  expect(res2.body.error).to.equal('invalid token');
+                  done();
+                });
+            });
+        });
+    });
+  });
 });

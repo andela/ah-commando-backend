@@ -133,6 +133,27 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+  /users/logout:
+    post:
+      tags:
+        - Users
+      summary: User logs out
+      description: An endpoint to log out a user
+      responses:
+        '204':
+          description: Logout successful
+        '401':
+          description: Invalid login details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
 components:
   securitySchemes:
     bearerAuth:
