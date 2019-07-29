@@ -1,6 +1,9 @@
 import sequelize from 'sequelize';
+import dotenv from 'dotenv';
 import models from '../db/models';
 import helpers from '../helpers';
+
+dotenv.config();
 
 const { Op } = sequelize;
 const {
@@ -69,7 +72,6 @@ class UserController {
     if (!user) return errorStat(res, 401, 'Incorrect Login information');
     const matchPasswords = comparePassword(password, user.password);
     if (!matchPasswords) return errorStat(res, 401, 'Incorrect Login information');
-
     return successStat(res, 200, 'user', {
       id: user.id,
       token: await generateToken({ id: user.id, username: user.username, email }),
@@ -84,7 +86,6 @@ class UserController {
 
   /**
     * @static
-<<<<<<< HEAD
     * @description Allows a user to sign out
     * @param {Object} req - Request object
     * @param {Object} res - Response object
@@ -96,48 +97,6 @@ class UserController {
     const token = req.headers.authorization.split(' ')[1] || authorizationHeader;
     await addToBlacklist(token);
     return successStat(res, 204, 'message', 'No Content');
-=======
-    * @description Sends reset link to user Email
-    * @param {Object} req - Request object
-    * @param {Object} res - Response object
-    * @returns {Object} object containing user data which will be embedded in link sent to user
-    * @memberof UserController
-    */
-  static async sendResetLink(req, res) {
-    const { email } = req.body;
-    const user = await models.User.findOne({ where: { email } });
-    if (!user) return utils.errorStat(res, 404, `No user found with email address:  ${email}`);
-
-    // this controller generates a reset token
-    const { id, username } = user;
-    const token = auth.generateToken({ id, username, email });
-    // Link format protocol://host/api/v1/resetPassword/userID/token generated
-    const link = `http://localhost:3000/api/v1/users/resetPassword/${id}/${token}`;
-    // send mail function sends this link to the user.
-    console.log(link);
-    return utils.successStat(res, 200, 'message', `Hi ${user.firstname}, A password reset link has been sent to your mail-box`);
-  }
-
-  /**
-    * @static
-    * @description Updates the user password in the database
-    * @param {Object} req - Request object
-    * @param {Object} res - Response object
-    * @returns {Object} Object containing either a success or error message.
-    * @memberof UserController
-    */
-  static async resetPassword(req, res) {
-    const { password } = req.body;
-
-    const { id, token } = req.params;
-    const payload = auth.verifyToken(token);
-    if (!payload || payload.id !== Number(id)) return utils.errorStat(res, 401, 'Invalid Reset Token');
-
-    const user = models.User.findOne({ where: { id } });
-    if (!user) return utils.errorStat(res, 401, 'User Not Found');
-    await models.User.update({ password }, { where: { id } });
-    return utils.successStat(res, 200, 'message', 'Success, Password Reset Successfully');
->>>>>>> implementing password reset
   }
 
   /**

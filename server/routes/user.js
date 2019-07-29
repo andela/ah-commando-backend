@@ -4,19 +4,21 @@ import middlewares from '../middlewares';
 
 
 const userRoute = express();
-const { verifyToken, validateLogin, validateUser } = middlewares;
-const {
-  signUp, login, logout, confirmEmail
-} = UserController;
+
+const { validateToken, validateLogin, validateUser } = middlewares;
+
+
+const { signUp, login, logout, resetPassword, confirmEmail, sendResetLink } = UserController;
+
 
 
 userRoute.get('/confirmEmail', confirmEmail);
 
 // logs out a user
-userRoute.post('/logout', verifyToken, logout);
-userRoute.post('/', UserController.signUp);
-userRoute.post('/login', UserController.login);
-userRoute.post('/passwordReset/', UserController.sendResetLink);
-userRoute.put('/resetPassword/:id/:token', UserController.resetPassword);
+userRoute.post('/', signUp);
+userRoute.post('/login', login);
+userRoute.post('/logout', validateToken, logout);
+userRoute.post('/passwordReset/', sendResetLink);
+userRoute.put('/resetPassword/:id/:token', resetPassword);
 
 export default userRoute;
