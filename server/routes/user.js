@@ -1,10 +1,13 @@
 import express from 'express';
 import UserController from '../controllers/userController';
-
+import InputValidator from '../middlewares/inputValidator';
 
 const userRoute = express();
 
-userRoute.post('/', UserController.signUp);
-userRoute.post('/login', UserController.login);
+const { signUp, login } = UserController;
+const { validateUser, validateLogin } = InputValidator;
+
+userRoute.post('/', validateUser, signUp);
+userRoute.post('/login', validateLogin, login);
 
 export default userRoute;
