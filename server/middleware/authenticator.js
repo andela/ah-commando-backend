@@ -19,18 +19,14 @@ class Authenticate {
        */
   static async isLoggedIn(req, res, next) {
     const receivedToken = req.headers.authorization;
-    if (!receivedToken) {
-      return utils.errorStat(res, 401, 'Authorization error');
-    }
+    if (!receivedToken) return utils.errorStat(res, 401, 'Authorization error');
+
     const token = receivedToken.split(' ')[1];
     const verifiedToken = Auth.verifyToken(token);
     const { id } = verifiedToken;
 
     const loggedInUser = await models.User.findByPk(id);
 
-    if (!loggedInUser) {
-      return utils.errorStat(res, 401, 'Unauthorized user');
-    }
     req.loggedInUser = loggedInUser.dataValues;
 
     return next();

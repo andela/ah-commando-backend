@@ -30,6 +30,17 @@ describe('Profile Test', () => {
       });
   });
 
+  it('Should give authorization error if token is not supplied', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/user`)
+      .end((err, res) => {
+        const { status, error } = res.body;
+        expect(status).to.equal(401);
+        expect(error).to.equal('Authorization error');
+        done();
+      });
+  });
+
   it('Should get a user\'s profile', (done) => {
     chai.request(app)
       .get(`${baseUrl}/profiles/testProfile`)
