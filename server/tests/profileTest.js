@@ -29,4 +29,29 @@ describe('Profile Test', () => {
           });
       });
   });
+
+  it('Should get a user\'s profile', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/profiles/testProfile`)
+      .end((err, res) => {
+        const { status, profile } = res.body;
+        expect(status).to.equal(200);
+        expect(profile).to.have.property('username');
+        expect(profile).to.have.property('bio');
+        expect(profile).to.have.property('image');
+        expect(profile).to.have.property('following');
+        done();
+      });
+  });
+
+  it('Should give error if user\'s profile is not found', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/profiles/test`)
+      .end((err, res) => {
+        const { status, error } = res.body;
+        expect(status).to.equal(404);
+        expect(error).to.equal('No user found');
+        done();
+      });
+  });
 });

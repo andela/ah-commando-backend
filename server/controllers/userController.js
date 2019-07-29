@@ -87,7 +87,7 @@ class UserController {
     * @description Allows a user to sign out
     * @param {Object} req - Request object
     * @param {Object} res - Response object
-    * @returns {Object} object containing user data and access Token
+    * @returns {Object} object containing the user's profile
     * @memberof UserController
     */
   static async logout(req, res) {
@@ -150,6 +150,29 @@ class UserController {
       bio: loggedInUser.bio,
       image: loggedInUser.image,
       following: loggedInUser.following
+    });
+  }
+
+  /**
+    * @static
+    * @description Get another user's profile
+    * @param {Object} req - Request object
+    * @param {Object} res - Response object
+    * @returns {Object} object containing the user's profile
+    * @memberof UserController
+    */
+  static async getAuserProfile(req, res) {
+    const { username } = req.params;
+
+    const user = await models.User.findOne({ where: { username } });
+
+    if (!user) return errorStat(res, 404, 'No user found');
+
+    return successStat(res, 200, 'profile', {
+      username: user.username,
+      bio: user.bio,
+      image: user.image,
+      following: user.following
     });
   }
 }

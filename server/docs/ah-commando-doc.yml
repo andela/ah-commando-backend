@@ -203,6 +203,38 @@ paths:
               schema:
                 $ref: "#/components/schemas/errorResponse"
 
+  /profiles/{username}:
+    get:
+      tags:
+        - Profiles
+      summary: User's profile
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: Username of the user to get
+      description: The endpoint to get any user's profile
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/profile"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
 components:
   securitySchemes:
     bearerAuth:
