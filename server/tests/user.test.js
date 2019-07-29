@@ -372,3 +372,16 @@ describe('User tests', () => {
     });
   });
 });
+describe('Handle user reset password', () => {
+  it('Should send a reset mail to a user, if the user\'s email exists', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/users/passwordReset`)
+      .send({ email: userData[0].user.email })
+      .end((err, res) => {
+        const { message, status } = res.body;
+        expect(status).to.equal(200);
+        expect(message).to.equal(`Hi ${userData[0].user.firstname}, A password reset link has been sent to your mail-box`);
+        done();
+      });
+  });
+});

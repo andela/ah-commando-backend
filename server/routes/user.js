@@ -9,10 +9,14 @@ const {
   signUp, login, logout, confirmEmail
 } = UserController;
 
-userRoute.post('/', validateUser, signUp);
-userRoute.post('/login', validateLogin, login);
+
 userRoute.get('/confirmEmail', confirmEmail);
+
 // logs out a user
 userRoute.post('/logout', verifyToken, logout);
+userRoute.post('/', UserController.signUp);
+userRoute.post('/login', UserController.login);
+userRoute.post('/passwordReset/', UserController.sendResetLink);
+userRoute.put('/resetPassword/:id/:token', UserController.resetPassword);
 
 export default userRoute;
