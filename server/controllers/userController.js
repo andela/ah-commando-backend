@@ -133,6 +133,25 @@ class UserController {
       return errorStat(res, 400, 'Unable to verifiy email');
     }
   }
+
+  /**
+   *  @static
+    * @description Get authorised user's profile
+    * @param {Object} req - Request object
+    * @param {Object} res - Response object
+    * @returns {Object} object containing the user's profile
+    * @memberof UserController
+    */
+  static async userProfile(req, res) {
+    const { loggedInUser } = req;
+
+    return successStat(res, 200, 'profile', {
+      username: loggedInUser.username,
+      bio: loggedInUser.bio,
+      image: loggedInUser.image,
+      following: loggedInUser.following
+    });
+  }
 }
 
 export default UserController;

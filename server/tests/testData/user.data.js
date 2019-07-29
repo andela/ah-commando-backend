@@ -161,6 +161,15 @@ const user = [
       password: 'password'
     }
   },
+  {
+    user: {
+      firstname: 'testProfile',
+      lastname: 'testlastname',
+      username: 'testProfile',
+      email: 'testProfile@testdomain.testcom',
+      password: 'ahcommando'
+    }
+  }
 ];
 
 export default user;
