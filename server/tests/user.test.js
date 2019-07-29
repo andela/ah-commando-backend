@@ -375,10 +375,13 @@ describe('User tests', () => {
   });
 });
 describe('Handle user reset password', () => {
+<<<<<<< HEAD
   let user;
   beforeEach(async () => {
     user = await model.PasswordResetTokens.findOne({ where: { userId: 1 } });
   });
+=======
+>>>>>>> implementing password reset
   it('Should send a reset mail to a user, if the user\'s email exists', (done) => {
     chai.request(app)
       .post(`${baseUrl}/users/passwordReset`)
@@ -390,6 +393,7 @@ describe('Handle user reset password', () => {
         done();
       });
   });
+<<<<<<< HEAD
   it('Should fail if user emmail doesn\'t exist', (done) => {
     chai.request(app)
       .post(`${baseUrl}/users/passwordReset`)
@@ -423,4 +427,6 @@ describe('Handle user reset password', () => {
         done();
       });
   });
+=======
+>>>>>>> implementing password reset
 });
