@@ -4,7 +4,6 @@ import sinon from 'sinon';
 import sendGrid from '@sendgrid/mail';
 import app from '../index';
 import userData from './testData/user.data';
-
 import model from '../db/models';
 
 const { expect } = chai;
@@ -382,7 +381,7 @@ describe('Handle user reset password', () => {
   it('Should send a reset mail to a user, if the user\'s email exists', (done) => {
     chai.request(app)
       .post(`${baseUrl}/users/passwordReset`)
-      .send({ email: userData[0].user.email })
+      .send({ user: { email: userData[0].user.email } })
       .end((err, res) => {
         const { message, status } = res.body;
         expect(status).to.equal(200);
@@ -393,7 +392,7 @@ describe('Handle user reset password', () => {
   it('Should fail if user email doesn\'t exist', (done) => {
     chai.request(app)
       .post(`${baseUrl}/users/passwordReset`)
-      .send({ email: 'idontexist@gmail.com' })
+      .send({ user: { email: 'idontexist@gmail.com' } })
       .end((err, res) => {
         const { error, status } = res.body;
         expect(status).to.equal(404);
@@ -404,7 +403,7 @@ describe('Handle user reset password', () => {
   it('Should fail if token payload id doesn\'t match user id', (done) => {
     chai.request(app)
       .put(`${baseUrl}/users/resetPassword/${1}/mdsijidsfdsixjmd`)
-      .send({ password: 'OkayGoogle123...' })
+      .send({ user: { password: 'OkayGoogle123...' } })
       .end((err, res) => {
         const { error, status } = res.body;
         expect(status).to.equal(401);
@@ -415,7 +414,7 @@ describe('Handle user reset password', () => {
   it('Should pass if token matches user id', (done) => {
     chai.request(app)
       .put(`${baseUrl}/users/resetPassword/${1}/${user.token}`)
-      .send({ password: 'OkayGoogle123...' })
+      .send({ user: { password: 'OkayGoogle123...' } })
       .end((err, res) => {
         const { message, status } = res.body;
         expect(status).to.equal(200);
