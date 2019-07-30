@@ -1,11 +1,11 @@
 import Authenticate from './authenticate';
 import InputValidator from './inputValidator';
 
-const { validateToken } = Authenticate;
+const { isLoggedIn } = Authenticate;
 const { validateLogin, validateUser } = InputValidator;
 
 export default {
-  validateToken,
+  isLoggedIn,
   validateLogin,
   validateUser
 };

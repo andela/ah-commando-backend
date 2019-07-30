@@ -1,7 +1,7 @@
-import jwt from 'jsonwebtoken';
 import utilities from '../helpers';
+import auth from '../helpers/auth';
+import models from '../db/models';
 
-const secret = process.env.SECRET_KEY;
 const { errorStat, checkBlacklist } = utilities;
 
 /**
@@ -18,11 +18,11 @@ class Authenticate {
        * @returns {object} Json
        * @memberof Authenticate
        */
-  static async validateToken(req, res, next) {
+  static async isLoggedIn(req, res, next) {
     const authorizationHeader = req.headers.authorization;
+    if (!authorizationHeader) return errorStat(res, 401, 'Authorization error');
     const token = req.headers.authorization.split(' ')[1] || authorizationHeader;
-    if (!token) return errorStat(res, 401, 'Authorization error');
-    jwt.verify(token, secret, async (err) => {
+    const verify = await auth.verifyToken(token, async (err, decoded) => {
       if (err) {
         const message = (err.name === 'TokenExpiredError') ? 'token expired' : 'invalid token';
         return errorStat(res, 401, message);
@@ -31,8 +31,13 @@ class Authenticate {
       if (blacklist) {
         return errorStat(res, 401, 'invalid token');
       }
-      next();
+      return decoded;
     });
+    const { id } = verify;
+    const loggedInUser = await models.User.findByPk(id);
+
+    req.loggedInUser = loggedInUser.dataValues;
+    next();
   }
 }
 

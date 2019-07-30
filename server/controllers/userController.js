@@ -191,9 +191,10 @@ class UserController {
     const { bio, email } = req.body;
     let uploadedImage;
     if (req.file) {
-      const file = dataUri(req).content;
+      const file = await dataUri(req).content;
       uploadedImage = await uploader.upload(file);
-    }
+    } else { return errorStat(res, 400, 'No image found'); }
+
 
     await models.User.update({ image: uploadedImage.url, bio, email }, { where: { id } });
 

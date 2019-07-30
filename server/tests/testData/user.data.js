@@ -165,15 +165,15 @@ const user = [
     user: {
       firstname: 'testProfile',
       lastname: 'testlastname',
-      username: 'testProfile',
-      email: 'testProfile@testdomain.testcom',
-      password: 'ahcommando'
+      username: 'testprofile',
+      email: 'testsProfile@testdomain.com',
+      password: 'a@Hcommando1'
     }
   },
   {
     user: {
       email: 'testProfile@testdomain.testcom',
-      password: 'ahcommando'
+      password: 'a@Hcommando1'
     }
   }
 ];
