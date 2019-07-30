@@ -130,14 +130,13 @@ class UserController {
 
     const { bio } = newUser[0];
 
-    return successStat(res, 200, 'user',
-      {
-        email,
-        token,
-        username,
-        bio,
-        imageUrl,
-      });
+    return successStat(res, 200, 'user', {
+      email,
+      token,
+      username,
+      bio,
+      imageUrl,
+    });
   }
 }
 
