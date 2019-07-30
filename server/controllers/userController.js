@@ -102,6 +102,51 @@ class UserController {
   }
 
   /**
+   *
+   * @param {*} req
+   * @param {*} res
+   */
+  static async sendResetLink(req, res) {
+    const { email } = req.body.user;
+    const user = await models.User.findOne({ where: { email } });
+    if (!user) return utils.errorStat(res, 404, `No user found with email address:  ${email}`);
+
+    // this controller generates a reset token
+    const { id, username } = user;
+    const token = generateToken({ id, username, email });
+    await PasswordResetTokens.create({ token, userId: id });
+    // Link format protocol://host/api/v1/resetPassword/userID/token generated
+    const link = `http://localhost:3000/api/v1/users/resetPassword/${id}/${token}`;
+    // send mail function sends this link to the user.
+    console.log(link);
+    return utils.successStat(res, 200, 'message', `Hi ${user.firstname}, A password reset link has been sent to your mail-box`);
+  }
+
+  /**
+    * @static
+    * @description Updates the user password in the database
+    * @param {Object} req - Request object
+    * @param {Object} res - Response object
+    * @returns {Object} Object containing either a success or error message.
+    * @memberof UserController
+    */
+  static async resetPassword(req, res) {
+    const { password } = req.body.user;
+
+    const { id, token } = req.params;
+    const isTokenAvailable = await PasswordResetTokens.findOne({ where: { userId: id, token, } });
+    const payload = verifyToken(token);
+    if (!payload
+      || payload.id !== Number(id)
+      || !isTokenAvailable) return utils.errorStat(res, 401, 'Invalid Reset Token');
+    const user = models.User.findOne({ where: { id } });
+    if (!user) return utils.errorStat(res, 401, 'User Not Found');
+    await models.User.update({ password }, { where: { id } });
+    PasswordResetTokens.destroy({ where: { userId: id } });
+    return utils.successStat(res, 200, 'message', 'Success, Password Reset Successfully');
+  }
+
+  /**
   * @static
   * @description Send a user email on successful registration
   * @param {Object} req - Request object

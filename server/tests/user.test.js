@@ -185,7 +185,6 @@ describe('User tests', () => {
         });
     });
   });
-
   describe('test for user login', () => {
     it('Should login a user with the correct credentials', (done) => {
       chai.request(app)
@@ -266,12 +265,15 @@ describe('User tests', () => {
         });
     });
   });
-
-  describe('User logout', () => {
-    it('should successfully log out a signed in user', (done) => {
+  describe('Handle user reset password', () => {
+    let user;
+    beforeEach(async () => {
+      user = await model.PasswordResetTokens.findOne({ where: { userId: 1 } });
+    });
+    it('Should send a reset mail to a user, if the user\'s email exists', (done) => {
       chai.request(app)
-        .post(`${baseUrl}/users/login`)
-        .send(userData[10])
+        .post(`${baseUrl}/users/passwordReset`)
+        .send({ user: { email: userData[0].user.email } })
         .end((err, res) => {
           const { token } = res.body.user;
           chai.request(app)
@@ -281,32 +283,38 @@ describe('User tests', () => {
             .end((err1, res1) => {
               done();
             });
-        });
-    });
-    it('should return 401 for an invalid token', (done) => {
-      chai.request(app)
-        .post(`${baseUrl}/users/logout`)
-        .set('Authorization', 'token')
-        .end((err1, res1) => {
-          expect(res1).to.have.a.status(401);
-          expect(res1.body.error).to.equal('invalid token');
+          const { message, status } = res.body;
+          expect(status).to.equal(200);
+          expect(message).to.equal(`Hi ${userData[0].user.firstname}, A password reset link has been sent to your mail-box`);
           done();
         });
     });
-    it('should return 401 if no token is provided', (done) => {
+    it('Should fail if user email doesn\'t exist', (done) => {
       chai.request(app)
-        .post(`${baseUrl}/users/logout`)
-        .set('Authorization', '')
-        .end((err1, res1) => {
-          expect(res1).to.have.a.status(401);
-          expect(res1.body.error).to.equal('Authorization error');
+        .post(`${baseUrl}/users/passwordReset`)
+        .send({ user: { email: 'idontexist@gmail.com' } })
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(404);
+          expect(error).to.equal('No user found with email address: idontexist@gmail.com');
           done();
         });
     });
-    it('should show invalid token if the token is in the blacklist', (done) => {
+    it('Should fail if token payload id doesn\'t match user id', (done) => {
       chai.request(app)
-        .post(`${baseUrl}/users/login`)
-        .send(userData[10])
+        .put(`${baseUrl}/users/resetPassword/${1}/mdsijidsfdsixjmd`)
+        .send({ user: { password: 'OkayGoogle123...' } })
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(401);
+          expect(error).to.equal('Invalid Reset Token');
+          done();
+        });
+    });
+    it('Should pass if token matches user id', (done) => {
+      chai.request(app)
+        .put(`${baseUrl}/users/resetPassword/${1}/${user.token}`)
+        .send({ user: { password: 'OkayGoogle123...' } })
         .end((err, res) => {
           const { token } = res.body.user;
           chai.request(app)
@@ -323,6 +331,10 @@ describe('User tests', () => {
                   done();
                 });
             });
+          const { message, status } = res.body;
+          expect(status).to.equal(200);
+          expect(message).to.equal('Success, Password Reset Successfully');
+          done();
         });
     });
   });
