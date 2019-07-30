@@ -109,16 +109,27 @@ class UserController {
   static async sendResetLink(req, res) {
     const { email } = req.body.user;
     const user = await models.User.findOne({ where: { email } });
-    if (!user) return utils.errorStat(res, 404, `No user found with email address:  ${email}`);
+    if (!user) return utils.errorStat(res, 404, `No user found with email address: ${email}`);
 
     // this controller generates a reset token
     const { id, username } = user;
     const token = generateToken({ id, username, email });
     await PasswordResetTokens.create({ token, userId: id });
     // Link format protocol://host/api/v1/resetPassword/userID/token generated
-    const link = `http://localhost:3000/api/v1/users/resetPassword/${id}/${token}`;
+    const link = `http://${process.env.APP_URL}/api/v1/users/resetPassword/${id}/${token}`;
     // send mail function sends this link to the user.
-    console.log(link);
+    const mail = new Mail({
+      to: email,
+      subject: 'Welcome email',
+      message: `Hello ${user.firstname}, Please Verify your email with link Below`,
+      iButton: true
+    });
+    mail.InitButton({
+      text: 'Confirm Email address',
+      link,
+    });
+    mail.sendMail();
+
     return utils.successStat(res, 200, 'message', `Hi ${user.firstname}, A password reset link has been sent to your mail-box`);
   }
 

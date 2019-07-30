@@ -146,8 +146,6 @@ paths:
           description: Logout successful
         '401':
           description: Invalid login details
-<<<<<<< HEAD
-
   /user:
     get:
       tags:
@@ -165,7 +163,6 @@ paths:
                 $ref: "#/components/schemas/profile"
         '401':
           description: Authorization error
-=======
   /users/passwordReset:
     post:
       tags:
@@ -243,7 +240,6 @@ paths:
                 $ref: "#/components/schemas/password"
         '401':
           description: No user found, or invalid reset token
->>>>>>> feat(password-reset): setup password reset functionality
           content:
             application/json:
               schema:
