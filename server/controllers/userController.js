@@ -188,7 +188,7 @@ class UserController {
   */
   static async editProfile(req, res) {
     const { id } = req.loggedInUser;
-    const { bio, email } = req.body;
+    const { bio, email, username } = req.body;
     let uploadedImage;
     if (req.file) {
       const file = await dataUri(req).content;
@@ -196,7 +196,9 @@ class UserController {
     } else { return errorStat(res, 400, 'No image found'); }
 
 
-    await models.User.update({ image: uploadedImage.url, bio, email }, { where: { id } });
+    await models.User.update({
+      image: uploadedImage.url, bio, email, username,
+    }, { where: { id } });
 
     const updatedProfile = await models.User.findByPk(id);
     return successStat(res, 200, 'profile', {
