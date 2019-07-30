@@ -390,7 +390,7 @@ describe('Handle user reset password', () => {
         done();
       });
   });
-  it('Should fail if user emmail doesn\'t exist', (done) => {
+  it('Should fail if user email doesn\'t exist', (done) => {
     chai.request(app)
       .post(`${baseUrl}/users/passwordReset`)
       .send({ email: 'idontexist@gmail.com' })
