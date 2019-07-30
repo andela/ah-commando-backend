@@ -1,10 +1,12 @@
 import sequelize from 'sequelize';
 import models from '../db/models';
-import utils from '../helpers/Utilities';
-import hash from '../helpers/passwordHash';
-import auth from '../helpers/auth';
+import helpers from '../helpers';
 
 const { Op } = sequelize;
+const {
+  addToBlacklist, generateToken, errorStat, successStat,
+  comparePassword, hashPassword
+} = helpers;
 
 /**
   * @Module UserController
@@ -29,12 +31,12 @@ class UserController {
       }
     });
     if (existingUser) {
-      return utils.errorStat(res, 409, 'User Already Exists');
+      return errorStat(res, 409, 'User Already Exists');
     }
-    const newUser = { ...req.body.user, password: hash.hashPassword(password) };
+    const newUser = { ...req.body.user, password: hashPassword(password) };
     const user = await models.User.create(newUser);
-    const token = auth.generateToken({ id: user.id, username, email });
-    return utils.successStat(res, 201, 'user', {
+    const token = generateToken({ id: user.id, username, email });
+    return successStat(res, 201, 'user', {
       id: user.id, token, username, firstname, lastname, email,
     });
   }
@@ -51,13 +53,13 @@ class UserController {
     const { email, password } = req.body.user;
     const user = await models.User.findOne({ where: { email } });
 
-    if (!user) return utils.errorStat(res, 401, 'Incorrect Login information');
-    const matchPasswords = hash.comparePassword(password, user.password);
-    if (!matchPasswords) return utils.errorStat(res, 401, 'Incorrect Login information');
+    if (!user) return errorStat(res, 401, 'Incorrect Login information');
+    const matchPasswords = comparePassword(password, user.password);
+    if (!matchPasswords) return errorStat(res, 401, 'Incorrect Login information');
 
-    return utils.successStat(res, 200, 'user', {
+    return successStat(res, 200, 'user', {
       id: user.id,
-      token: await auth.generateToken({ id: user.id, username: user.username, email }),
+      token: await generateToken({ id: user.id, username: user.username, email }),
       firstname: user.firstname,
       lastname: user.firstname,
       username: user.username,
@@ -65,6 +67,21 @@ class UserController {
       bio: user.bio,
       image: user.image,
     });
+  }
+
+  /**
+    * @static
+    * @description Allows a user to sign out
+    * @param {Object} req - Request object
+    * @param {Object} res - Response object
+    * @returns {Object} object containing user data and access Token
+    * @memberof UserController
+    */
+  static async logout(req, res) {
+    const authorizationHeader = req.headers.authorization;
+    const token = req.headers.authorization.split(' ')[1] || authorizationHeader;
+    await addToBlacklist(token);
+    return successStat(res, 204, 'message', 'No Content');
   }
 }
 

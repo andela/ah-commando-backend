@@ -1,13 +1,16 @@
 import express from 'express';
 import UserController from '../controllers/userController';
-import InputValidator from '../middlewares/inputValidator';
+import middlewares from '../middlewares';
+
 
 const userRoute = express();
-
-const { signUp, login } = UserController;
-const { validateUser, validateLogin } = InputValidator;
+const { validateToken, validateLogin, validateUser } = middlewares;
+const { signUp, login, logout } = UserController;
 
 userRoute.post('/', validateUser, signUp);
 userRoute.post('/login', validateLogin, login);
+
+// logs out a user
+userRoute.post('/logout', validateToken, logout);
 
 export default userRoute;

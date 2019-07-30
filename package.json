@@ -6,13 +6,14 @@
   "scripts": {
     "start": "node build/index.js",
     "dev": "export DEBUG=dev && nodemon --exec babel-node server/index.js",
+    "debug": "export DEBUG=dev && nodemon --exec babel-node server/index.js --inspect",
     "clean": "rm -rf build && mkdir build && npm run copy-docs",
     "build": "npm run clean && npm run migrate && babel -d ./build ./server",
     "test": "export NODE_ENV=test && nyc mocha --require @babel/register server/tests --exit",
     "pretest": "export NODE_ENV=test && npm run migrate:undo && npm run migrate",
     "generate:model": "node_modules/.bin/sequelize model:generate",
     "migrate": "node_modules/.bin/sequelize db:migrate",
-    "migrate:undo": "node_modules/.bin/sequelize db:migrate:undo",
+    "migrate:undo": "node_modules/.bin/sequelize db:migrate:undo:all",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "copy-docs": "cp -r server/docs/ build/docs/"
   },
@@ -30,6 +31,7 @@
     "express": "^4.16.3",
     "jsonwebtoken": "^8.3.0",
     "morgan": "^1.9.1",
+    "node-cron": "^2.0.3",
     "pg": "^7.11.0",
     "pg-hstore": "^2.3.3",
     "sequelize": "^5.10.2",
