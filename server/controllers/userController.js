@@ -8,6 +8,8 @@ const {
   comparePassword, hashPassword
 } = helpers;
 
+const { User } = models;
+
 /**
   * @Module UserController
   * @description Controlls all the user based activity
@@ -82,6 +84,60 @@ class UserController {
     const token = req.headers.authorization.split(' ')[1] || authorizationHeader;
     await addToBlacklist(token);
     return successStat(res, 204, 'message', 'No Content');
+  }
+
+  /**
+* @static
+* @description Allows a user to sign in with social accounts
+* @param {Object} req - Request object
+* @param {Object} res - Response object
+* @param {function} next next function to be called
+* @returns {Object} object containing user data and access Token
+* @memberof UserController
+*/
+  static async socialSignin(req, res) {
+    if (!req.user) {
+      return errorStat(res, 404, 'Account not found');
+    }
+
+    // eslint-disable-next-line no-underscore-dangle
+    const userDetails = req.user._json;
+
+    const firstname = userDetails.name.split(' ')[0];
+    const lastname = userDetails.name.split(' ')[1];
+    const username = userDetails.email;
+    const imageUrl = userDetails.picture;
+    const isVerified = userDetails.email_verified;
+    const { email } = userDetails;
+
+    const newUser = await User.findOrCreate({
+      where: { email },
+      defaults: {
+        firstname,
+        lastname,
+        email,
+        password: 'null',
+        bio: '',
+        username,
+        image: imageUrl,
+        verified: isVerified,
+      }
+    });
+    const token = generateToken({
+      id: newUser.id,
+      email: userDetails.email
+    });
+
+    const { bio } = newUser[0];
+
+    return successStat(res, 200, 'user',
+      {
+        email,
+        token,
+        username,
+        bio,
+        imageUrl,
+      });
   }
 }
 

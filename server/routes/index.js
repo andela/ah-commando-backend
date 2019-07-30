@@ -2,6 +2,7 @@ import express from 'express';
 import swaggerUi from 'swagger-ui-express';
 import yaml from 'yamljs';
 import userRoute from './user';
+import socialRoute from './socialLogin';
 
 const router = express();
 
@@ -13,5 +14,6 @@ router.get('/', (req, res) => res.status(200).json({
   message: 'Hello there! This is Author\'s haven'
 }));
 router.use('/users', userRoute);
+router.use('/users', socialRoute);
 
 export default router;
