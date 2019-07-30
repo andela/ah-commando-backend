@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import path from 'path';
 import app from '../index';
 import userData from './testData/user.data';
 
@@ -63,6 +64,29 @@ describe('Profile Test', () => {
         expect(status).to.equal(404);
         expect(error).to.equal('No user found');
         done();
+      });
+  });
+
+  it('Should edit profile of the authorized user', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/users/login`)
+      .send(userData[5])
+      .end((authErr, authRes) => {
+        const { token } = authRes.body.user;
+        chai.request(app)
+          .put(`${baseUrl}/user`)
+          .set('authorization', `Bearer ${token}`)
+          .set('Content-Type', 'multipart/form-data')
+          .field({
+            email: 'new@test.com',
+            bio: 'I am testing new bio'
+          })
+          .attach('image', path.join(__dirname, './testData/img/test.png'))
+          .end((err, res) => {
+            const { status } = res.body;
+            expect(status).to.equal(200);
+            done();
+          });
       });
   });
 });

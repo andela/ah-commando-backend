@@ -1,6 +1,8 @@
 import sequelize from 'sequelize';
 import models from '../db/models';
 import helpers from '../helpers';
+import { dataUri } from '../middlewares/multer';
+import { uploader } from '../db/config/cloudinaryConfig';
 
 const { Op } = sequelize;
 const {
@@ -173,6 +175,33 @@ class UserController {
       bio: user.bio,
       image: user.image,
       following: user.following
+    });
+  }
+
+  /**
+  * @static
+  * @description Edit user's profile
+  * @param {Object} req - Request object
+  * @param {Object} res - Response object
+  * @returns {Object} object containing the user's profile
+  * @memberof UserController
+  */
+  static async editProfile(req, res) {
+    const { id } = req.loggedInUser;
+    const { bio, email } = req.body;
+    let uploadedImage;
+    if (req.file) {
+      const file = dataUri(req).content;
+      uploadedImage = await uploader.upload(file);
+    }
+
+    await models.User.update({ image: uploadedImage.url, bio, email }, { where: { id } });
+
+    const updatedProfile = await models.User.findByPk(id);
+    return successStat(res, 200, 'profile', {
+      username: updatedProfile.username,
+      bio: updatedProfile.bio,
+      image: updatedProfile.image,
     });
   }
 }

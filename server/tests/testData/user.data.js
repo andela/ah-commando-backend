@@ -169,6 +169,12 @@ const user = [
       email: 'testProfile@testdomain.testcom',
       password: 'ahcommando'
     }
+  },
+  {
+    user: {
+      email: 'testProfile@testdomain.testcom',
+      password: 'ahcommando'
+    }
   }
 ];
 
