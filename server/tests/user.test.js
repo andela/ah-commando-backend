@@ -5,6 +5,8 @@ import sendGrid from '@sendgrid/mail';
 import app from '../index';
 import userData from './testData/user.data';
 
+import model from '../db/models';
+
 const { expect } = chai;
 chai.use(chaiHttp);
 const baseUrl = '/api/v1';
@@ -373,6 +375,10 @@ describe('User tests', () => {
   });
 });
 describe('Handle user reset password', () => {
+  let user;
+  beforeEach(async () => {
+    user = await model.PasswordResetTokens.findOne({ where: { userId: 1 } });
+  });
   it('Should send a reset mail to a user, if the user\'s email exists', (done) => {
     chai.request(app)
       .post(`${baseUrl}/users/passwordReset`)
@@ -381,6 +387,39 @@ describe('Handle user reset password', () => {
         const { message, status } = res.body;
         expect(status).to.equal(200);
         expect(message).to.equal(`Hi ${userData[0].user.firstname}, A password reset link has been sent to your mail-box`);
+        done();
+      });
+  });
+  it('Should fail if user emmail doesn\'t exist', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/users/passwordReset`)
+      .send({ email: 'idontexist@gmail.com' })
+      .end((err, res) => {
+        const { error, status } = res.body;
+        expect(status).to.equal(404);
+        expect(error).to.equal('No user found with email address: idontexist@gmail.com');
+        done();
+      });
+  });
+  it('Should fail if token payload id doesn\'t match user id', (done) => {
+    chai.request(app)
+      .put(`${baseUrl}/users/resetPassword/${1}/mdsijidsfdsixjmd`)
+      .send({ password: 'OkayGoogle123...' })
+      .end((err, res) => {
+        const { error, status } = res.body;
+        expect(status).to.equal(401);
+        expect(error).to.equal('Invalid Reset Token');
+        done();
+      });
+  });
+  it('Should pass if token matches user id', (done) => {
+    chai.request(app)
+      .put(`${baseUrl}/users/resetPassword/${1}/${user.token}`)
+      .send({ password: 'OkayGoogle123...' })
+      .end((err, res) => {
+        const { message, status } = res.body;
+        expect(status).to.equal(200);
+        expect(message).to.equal('Success, Password Reset Successfully');
         done();
       });
   });

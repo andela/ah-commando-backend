@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import models from '../db/models';
 import helpers from '../helpers';
 
+const { PasswordResetTokens } = models;
+
 dotenv.config();
 
 const { Op } = sequelize;
