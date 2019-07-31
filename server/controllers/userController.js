@@ -8,8 +8,6 @@ const {
   comparePassword, hashPassword
 } = helpers;
 
-const { User } = models;
-
 /**
   * @Module UserController
   * @description Controlls all the user based activity
@@ -103,6 +101,8 @@ class UserController {
     // eslint-disable-next-line no-underscore-dangle
     const userDetails = req.user._json;
 
+    console.log('userdetails ===> ', userDetails);
+
     const firstname = userDetails.name.split(' ')[0];
     const lastname = userDetails.name.split(' ')[1];
     const username = userDetails.email;
@@ -110,7 +110,7 @@ class UserController {
     const isVerified = userDetails.email_verified;
     const { email } = userDetails;
 
-    const newUser = await User.findOrCreate({
+    const newUser = await models.User.findOrCreate({
       where: { email },
       defaults: {
         firstname,
@@ -131,8 +131,10 @@ class UserController {
     const { bio } = newUser[0];
 
     return successStat(res, 200, 'user', {
-      email,
       token,
+      firstname,
+      lastname,
+      email,
       username,
       bio,
       imageUrl,
