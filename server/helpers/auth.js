@@ -21,8 +21,8 @@ class Auth {
   }
 
   /**
-    * @description Generates a jwt token
-    * @param {Object} token - Details to encode in the token
+    * @description Verify a jwt token
+    * @param {Object} token - Token to be verified
     *  @param {function} callBack - call back method to jwt
     * @returns {Object} verified token
     * @memberof Auth

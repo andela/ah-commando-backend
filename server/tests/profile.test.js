@@ -12,7 +12,7 @@ chai.use(chaiHttp);
 const baseUrl = '/api/v1';
 let upload;
 let userToken;
-const expiredToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0ZXN0dXNlcm5hbWUiLCJlbWFpbCI6InRlc3RAdGVzdGRvbWFpbi50ZXN0Y29tIiwiaWF0IjoxNTY0NDgwNjM5LCJleHAiOjE1NjQ0ODA2NDB9.TsuwwCFHdaGvCCxZrfAQgP8RbfErBr6MQhHRqMT9JuE';
+
 
 before((done) => {
   upload = sinon.stub(uploader, 'upload').returns(() => { });
@@ -45,19 +45,6 @@ describe('Profile Test', () => {
         done();
       });
   });
-
-  it('Should give authorization error if token is expired', (done) => {
-    chai.request(app)
-      .get(`${baseUrl}/user`)
-      .set('authorization', `Bearer ${expiredToken}`)
-      .end((err, res) => {
-        const { status, error } = res.body;
-        expect(status).to.equal(401);
-        expect(error).to.equal('token expired');
-        done();
-      });
-  });
-
 
   it('Should give authorization error if token is not supplied', (done) => {
     chai.request(app)
@@ -111,12 +98,14 @@ describe('Profile Test', () => {
     chai.request(app)
       .put(`${baseUrl}/user`)
       .set('authorization', `Bearer ${userToken}`)
-      .set('Content-Type', 'multipart/form-data')
-      .field({
-        email: 'new@test.com',
-        bio: 'I am testing new bio'
+      .send({
+        user: {
+          username: 'metest',
+          email: 'new@test.com',
+          bio: 'I am testing new bio',
+          image: 'http://res.cloudinary.com/kafee/image/upload/v1564568639/luleidouer2w8vdi1yoc.png'
+        }
       })
-      .attach('image', path.join(__dirname, './testData/img/test.png'))
       .end((err, res) => {
         const { status } = res.body;
         expect(status).to.equal(200);
@@ -124,19 +113,48 @@ describe('Profile Test', () => {
       });
   });
 
-  it('Should return an error if an image is not found', (done) => {
+  it('Should throw error if the username and email does not meet the requirement', (done) => {
     chai.request(app)
       .put(`${baseUrl}/user`)
       .set('authorization', `Bearer ${userToken}`)
-      .set('Content-Type', 'multipart/form-data')
-      .field({
-        email: 'new@test.com',
-        bio: 'I am testing new bio'
+      .send({
+        user: {
+          email: 'new@test',
+          username: 'a@b'
+        }
       })
       .end((err, res) => {
-        const { status, error } = res.body;
+        const { status } = res.body;
         expect(status).to.equal(400);
-        expect(error).to.equal('No image found');
+        done();
+      });
+  });
+
+  it('Should throw error if the username is empty', (done) => {
+    chai.request(app)
+      .put(`${baseUrl}/user`)
+      .set('authorization', `Bearer ${userToken}`)
+      .send({
+        user: {
+          username: ''
+        }
+      })
+      .end((err, res) => {
+        const { status } = res.body;
+        expect(status).to.equal(400);
+        done();
+      });
+  });
+
+  it('Should upload image of the authorized user', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/image`)
+      .set('authorization', `Bearer ${userToken}`)
+      .set('Content-Type', 'multipart/form-data')
+      .attach('image', path.join(__dirname, './testData/img/test.png'))
+      .end((err, res) => {
+        const { status } = res.body;
+        expect(status).to.equal(200);
         done();
       });
   });

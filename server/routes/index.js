@@ -3,6 +3,7 @@ import swaggerUi from 'swagger-ui-express';
 import yaml from 'yamljs';
 import userRoute from './user';
 import profileRoute from './profile';
+import imageRoute from './image';
 import { cloudinaryConfig } from '../db/config/cloudinaryConfig';
 
 const router = express();
@@ -18,5 +19,6 @@ router.get('/', (req, res) => res.status(200).json({
 router.use('*', cloudinaryConfig);
 router.use('/', profileRoute);
 router.use('/users', userRoute);
+router.use('/image', imageRoute);
 
 export default router;

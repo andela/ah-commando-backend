@@ -1,8 +1,6 @@
 import sequelize from 'sequelize';
 import models from '../db/models';
 import helpers from '../helpers';
-import { dataUri } from '../middlewares/multer';
-import { uploader } from '../db/config/cloudinaryConfig';
 
 const { Op } = sequelize;
 const {
@@ -188,20 +186,18 @@ class UserController {
   */
   static async editProfile(req, res) {
     const { id } = req.loggedInUser;
-    const { bio, email, username } = req.body;
-    let uploadedImage;
-    if (req.file) {
-      const file = await dataUri(req).content;
-      uploadedImage = await uploader.upload(file);
-    } else { return errorStat(res, 400, 'No image found'); }
-
+    const {
+      image, bio, email, username
+    } = req.body.user;
 
     await models.User.update({
-      image: uploadedImage.url, bio, email, username,
+      image, bio, email, username,
     }, { where: { id } });
 
     const updatedProfile = await models.User.findByPk(id);
     return successStat(res, 200, 'profile', {
+      firstname: updatedProfile.firstname,
+      lastname: updatedProfile.lastname,
       username: updatedProfile.username,
       bio: updatedProfile.bio,
       image: updatedProfile.image,

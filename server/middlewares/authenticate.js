@@ -24,8 +24,7 @@ class Authenticate {
     const token = req.headers.authorization.split(' ')[1] || authorizationHeader;
     const verify = await auth.verifyToken(token, async (err, decoded) => {
       if (err) {
-        const message = (err.name === 'TokenExpiredError') ? 'token expired' : 'invalid token';
-        return errorStat(res, 401, message);
+        return errorStat(res, 401, 'invalid token');
       }
       const blacklist = await checkBlacklist(token);
       if (blacklist) {
