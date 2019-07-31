@@ -2,7 +2,6 @@
 import Helper from '../../helpers/passwordHash';
 
 const password = Helper.hashPassword('PassWord123...');
-
 module.exports = {
   up: queryInterface => queryInterface.bulkInsert(
     'Users', [
@@ -19,6 +18,5 @@ module.exports = {
       },
     ], {}
   ),
-
   down: queryInterface => queryInterface.bulkDelete('Users', null, {})
 };

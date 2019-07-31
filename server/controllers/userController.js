@@ -110,14 +110,10 @@ class UserController {
     const { email } = req.body.user;
     const user = await models.User.findOne({ where: { email } });
     if (!user) return utils.errorStat(res, 404, `No user found with email address: ${email}`);
-
-    // this controller generates a reset token
     const { id, username } = user;
     const token = generateToken({ id, username, email });
     await PasswordResetTokens.create({ token, userId: id });
-    // Link format protocol://host/api/v1/resetPassword/userID/token generated
     const link = `http://${process.env.APP_URL}/api/v1/users/resetPassword/${id}/${token}`;
-    // send mail function sends this link to the user.
     const mail = new Mail({
       to: email,
       subject: 'Welcome email',
