@@ -100,3 +100,25 @@ export const profileSchema = {
       return errors;
     }),
 };
+
+export const resetPasswordSchema = {
+  password: Joi.string()
+    .min(8)
+    .required()
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
+    .error((errors) => {
+      errors.forEach((err) => {
+        if (err.type === 'string.regex.base') {
+          err.message = 'password must contain at least 1 uppercase, 1 lowercase, 1 number and 1 special character';
+        }
+      });
+      return errors;
+    })
+};
+export const resetEmailSchema = {
+  email: Joi.string()
+    .trim()
+    .lowercase()
+    .email({ minDomainSegments: 2 })
+    .required()
+};

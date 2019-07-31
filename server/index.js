@@ -9,7 +9,6 @@ import chalk from 'chalk';
 import { config } from 'dotenv';
 import routes from './routes';
 
-
 config();
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -31,15 +30,15 @@ app.use('/api/v1', routes);
 
 app.use('*', (req, res) => res.status(404).json({
   status: res.statusCode,
-  error: 'Endpoint Not Found',
+  error: 'Endpoint Not Found'
 }));
-
+/* istanbul ignore next */
 app.use((err, req, res, next) => {
   if (!isProduction) log(err.stack);
   if (res.headersSent) return next(err);
   return res.status(err.status || 500).json({
     status: res.statusCode,
-    error: err.message,
+    error: err.message
   });
 });
 

@@ -327,7 +327,7 @@ describe('User tests', () => {
   describe('Handle user reset password', () => {
     let user;
     beforeEach(async () => {
-      user = await model.PasswordResetTokens.findOne({ where: { userId: 1 } });
+      user = await model.PasswordResetTokens.findOne({ where: { userId: 2 } });
     });
     it('Should send a reset mail to a user, if the user\'s email exists', (done) => {
       chai.request(app)
@@ -351,10 +351,21 @@ describe('User tests', () => {
           done();
         });
     });
+    it('Should fail if user email doesn\'t is invalid', (done) => {
+      chai.request(app)
+        .post(`${baseUrl}/users/passwordReset`)
+        .send({ user: { email: 'idontexistgmail.com' } })
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('email must be a valid email');
+          done();
+        });
+    });
     it('Should fail if token payload id doesn\'t match user id', (done) => {
       chai.request(app)
         .put(`${baseUrl}/users/resetPassword/${1}/mdsijidsfdsixjmd`)
-        .send({ user: { password: 'OkayGoogle123...' } })
+        .send({ user: { password: 'P@ssword123...x' } })
         .end((err, res) => {
           const { error, status } = res.body;
           expect(status).to.equal(401);
@@ -362,10 +373,43 @@ describe('User tests', () => {
           done();
         });
     });
+    it('Should fail if password doesn\'t meet required spec', (done) => {
+      chai.request(app)
+        .put(`${baseUrl}/users/resetPassword/${2}/${user.token}"`)
+        .send({ user: { password: 'okay..' } })
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('password length must be at least 8 characters long');
+          done();
+        });
+    });
+    it('Should fail if password doesn\'t meet required spec', (done) => {
+      chai.request(app)
+        .put(`${baseUrl}/users/resetPassword/${2}/${user.token}"`)
+        .send({ user: { password: 'okayPassword..' } })
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('password must contain at least 1 uppercase, 1 lowercase, 1 number and 1 special character');
+          done();
+        });
+    });
+    it('Should fail if user doesn\'t exist', (done) => {
+      chai.request(app)
+        .put(`${baseUrl}/users/resetPassword/${90}/${user.token}"`)
+        .send({ user: { password: 'P@ssWord123...' } })
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(404);
+          expect(error).to.equal('No user found');
+          done();
+        });
+    });
     it('Should pass if token matches user id', (done) => {
       chai.request(app)
-        .put(`${baseUrl}/users/resetPassword/${1}/${user.token}`)
-        .send({ user: { password: 'OkayGoogle123...' } })
+        .put(`${baseUrl}/users/resetPassword/${2}/${user.token}`)
+        .send({ user: { password: 'P@ssword123...x' } })
         .end((err, res) => {
           const { message, status } = res.body;
           expect(status).to.equal(200);

@@ -10,10 +10,7 @@ const log = debug('dev');
 sendgridMail.setApiKey(process.env.SENDGRID_API_KEY);
 const senderEmail = process.env.SERVER_MAIL;
 
-<<<<<<< HEAD
 /* istanbul ignore next */
-=======
->>>>>>> feat(Email): Recieve verification notification
 /**
   * @Module Mailer
   * @description Controlls all the mail based activities
@@ -30,18 +27,11 @@ class Mailer {
     */
   constructor(mailObject) {
     const {
-<<<<<<< HEAD
       to, subject, header, messageBody, messageHeader, iButton, iTemplate
     } = mailObject;
     this.to = to;
     this.messageBody = messageBody || null;
     this.messageHeader = messageHeader || null;
-=======
-      to, subject, header, message, iButton, iTemplate
-    } = mailObject;
-    this.to = to;
-    this.message = message || null;
->>>>>>> feat(Email): Recieve verification notification
     this.iButton = iButton || false;
     this.iTemplate = iTemplate || false;
     this.subject = subject;
@@ -62,11 +52,7 @@ class Mailer {
    * @returns  {Object} - Mailer response
    */
   async sendMail() {
-<<<<<<< HEAD
     if (!this.messageBody) { throw new Error('Message cannot be empty!'); }
-=======
-    if (!this.message) { throw new Error('Message cannot be empty!'); }
->>>>>>> feat(Email): Recieve verification notification
     const html = `
       <!DOCTYPE html>
       <html lang="en">
@@ -74,10 +60,6 @@ class Mailer {
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-<<<<<<< HEAD
-=======
-          <link href="https://fonts.googleapis.com/css?family=Montserrat:200,500,700" rel="stylesheet">
->>>>>>> feat(Email): Recieve verification notification
           <style>
             ${style}
           </style>
@@ -86,12 +68,8 @@ class Mailer {
           <div class='container' style = ${this.bodyStyle}>
             <div class='mail-message'>
               <h2 style = ${this.headerStyle}>${this.header}</h2>
-<<<<<<< HEAD
               <p style = ${this.messageStyle}>${this.messageHeader}</p>
               <p style = ${this.messageStyle}>${this.messageBody} </p>
-=======
-              <p style = ${this.messageStyle}>${this.message}</p>
->>>>>>> feat(Email): Recieve verification notification
               ${this.iButton ? this.buttonTemp : ''}
               ${this.iTemplate ? this.templateTemp : ''}
             </div>
@@ -133,11 +111,7 @@ class Mailer {
   setStyles(styles) {
     const { bodyStyle, headerStyle, messageStyle } = styles;
     this.bodyStyle = bodyStyle || this.bodyStyle;
-<<<<<<< HEAD
     this.subjectStyle = headerStyle || this.subjectStyle;
-=======
-    this.subjectStyle = headerStyle || this.headerStyle;
->>>>>>> feat(Email): Recieve verification notification
     this.messageStyle = messageStyle || this.messageStyle;
   }
 
@@ -160,11 +134,7 @@ class Mailer {
 
     this.buttonTemp = `
       <div class='button' style = '${bStyle}'>
-<<<<<<< HEAD
         <a style = 'color: rgb(255, 199, 0); ${lStyle}' class='link' href = '${link}'>${text}</a>
-=======
-        <a style = 'color: white; ${lStyle}' class='link' href = '${link}'>${text}</a>
->>>>>>> feat(Email): Recieve verification notification
       </div>
     `;
   }

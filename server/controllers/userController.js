@@ -3,11 +3,11 @@ import dotenv from 'dotenv';
 import models from '../db/models';
 import helpers from '../helpers';
 
-const { PasswordResetTokens } = models;
 
 dotenv.config();
 
 const { Op } = sequelize;
+const { PasswordResetTokens } = models;
 const {
   addToBlacklist, generateToken, errorStat, successStat,
   comparePassword, hashPassword, verifyToken, Mail
@@ -102,14 +102,16 @@ class UserController {
   }
 
   /**
-   *
-   * @param {*} req
-   * @param {*} res
-   */
+  * @description Sends reset link to user Email
+  * @param {Object} req - Request object
+  * @param {Object} res - Response object
+  * @returns {Object} object containing user data which will be embedded in link sent to user
+  * @memberof UserController
+  */
   static async sendResetLink(req, res) {
     const { email } = req.body.user;
     const user = await models.User.findOne({ where: { email } });
-    if (!user) return utils.errorStat(res, 404, `No user found with email address: ${email}`);
+    if (!user) return errorStat(res, 404, `No user found with email address: ${email}`);
     const { id, username } = user;
     const token = generateToken({ id, username, email });
     await PasswordResetTokens.create({ token, userId: id });
@@ -117,7 +119,8 @@ class UserController {
     const mail = new Mail({
       to: email,
       subject: 'Welcome email',
-      message: `Hello ${user.firstname}, Please Verify your email with link Below`,
+      messageHeader: `Hello ${user.firstname}`,
+      messageBody: 'Please Verify your email with link Below',
       iButton: true
     });
     mail.InitButton({
@@ -126,7 +129,7 @@ class UserController {
     });
     mail.sendMail();
 
-    return utils.successStat(res, 200, 'message', `Hi ${user.firstname}, A password reset link has been sent to your mail-box`);
+    return successStat(res, 200, 'message', `Hi ${user.firstname}, A password reset link has been sent to your mail-box`);
   }
 
   /**
@@ -139,18 +142,17 @@ class UserController {
     */
   static async resetPassword(req, res) {
     const { password } = req.body.user;
-
     const { id, token } = req.params;
+    const user = await models.User.findOne({ where: { id } });
+    if (!user) return errorStat(res, 404, 'No user found');
     const isTokenAvailable = await PasswordResetTokens.findOne({ where: { userId: id, token, } });
-    const payload = verifyToken(token);
+    const payload = await verifyToken(token, (err, decoded) => decoded);
     if (!payload
       || payload.id !== Number(id)
-      || !isTokenAvailable) return utils.errorStat(res, 401, 'Invalid Reset Token');
-    const user = models.User.findOne({ where: { id } });
-    if (!user) return utils.errorStat(res, 401, 'User Not Found');
-    await models.User.update({ password }, { where: { id } });
+      || !isTokenAvailable) return errorStat(res, 401, 'Invalid Reset Token');
+    await models.User.update({ password }, { where: { id: user.id } });
     PasswordResetTokens.destroy({ where: { userId: id } });
-    return utils.successStat(res, 200, 'message', 'Success, Password Reset Successfully');
+    return successStat(res, 200, 'message', 'Success, Password Reset Successfully');
   }
 
   /**
