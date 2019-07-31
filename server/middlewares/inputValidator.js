@@ -2,6 +2,7 @@ import {
   userSchema,
   loginSchema,
   profileSchema,
+  articleSchema
 } from './schema';
 import validate from '../helpers/validate';
 
@@ -48,6 +49,19 @@ class InputValidator {
   static validateProfileUpdate(req, res, next) {
     const profile = { ...req.body.user };
     return validate(profile, profileSchema, req, res, next);
+  }
+
+  /**
+  * @method validateArticle
+  * @description Validates articles input details
+  * @param {object} req - The Request Object
+  * @param {object} res - The Response Object
+  * @param {function} next - The next function to point to the next middleware
+  * @returns {function} validate() - An execucted validate function
+  */
+  static validateArticle(req, res, next) {
+    const article = { ...req.body.article };
+    return validate(article, articleSchema, req, res, next);
   }
 }
 
