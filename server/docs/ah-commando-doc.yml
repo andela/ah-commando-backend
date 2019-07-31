@@ -133,6 +133,56 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+  /users/google:
+    get:
+      tags:
+        - Social user
+      summary: User login
+      description: An endpoint to login a user via social media accounts
+      responses:
+        '200':
+          description: user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+        '404':
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /users/facebook:
+    get:
+      tags:
+        - users
+      summary: User login
+      description: An endpoint to login a user via social media accounts
+      responses:
+        '200':
+          description: user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+        '404':
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
   /users/logout:
     post:
       tags:
