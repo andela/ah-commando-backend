@@ -165,6 +165,7 @@ class UserController {
   * @memberof UserController
   */
   static async socialSignin(req, res) {
+    /* istanbul ignore next */
     if (!req.user) {
       return errorStat(res, 404, 'Account not found');
     }

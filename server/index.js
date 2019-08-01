@@ -24,7 +24,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(passport.initialize());
-
+/* istanbul ignore next */
 if (!isProduction) app.use(errorhandler());
 
 app.get('/', (req, res) => res.status(301).redirect('/api/v1'));
