@@ -1,62 +1,38 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
-import userController from '../controllers/userController';
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import app from '../index';
+
+const { expect } = chai;
+chai.use(chaiHttp);
+const baseUrl = '/api/v1';
 
 describe('Social signin test', () => {
-  const req = {
-    user: {
-      _json: {
-        id: 'userid',
-        name: 'Martins Obayomi',
-        email: 'martins@test.com',
-        username: 'martins@test.com',
-        imageUrl: 'myImage.jpg',
-        isVerified: true
-      }
-    }
-  };
-
-  const notFound = () => {
-    const response = {};
-    response.status = () => 404;
-    response.json = () => ({ errors: { message: 'Account not found' } });
-    return response;
-  };
-
-  const success = () => {
-    const response = {};
-    response.status = () => 200;
-    response.json = () => ({
-      user: {
-        email: 'martins@test.com',
-        token: 'hjshkshnjdjnsjkksknsjsjsj',
-        username: 'martins@test.com',
-        imageUrl: 'myImage.jpg',
-      }
+  it('Should display user details on success login', (done) => {
+    const user = JSON.stringify({
+      name: ['test testlastname'],
+      email: 'testemail',
+      picture: 'testimage.jpg',
+      email_verified: true,
     });
-    return response;
-  };
-
-  it('should return 200 on successful signin', async () => {
-    sinon.stub(userController, 'socialSignin').returns(success());
-    const result = await userController.socialSignin(req, {}, () => ({}));
-    expect(result.status()).to.equal(200);
-    expect(result.json().user.email).to.be.a('string');
-    expect(result.json().user.email).to.equal('martins@test.com');
-    expect(result.json().user.token).to.be.a('string');
-    expect(result.json().user.username).to.be.a('string');
-    expect(result.json().user.username).to.equal('martins@test.com');
-    expect(result.json().user.imageUrl).to.be.a('string');
-    expect(result.json().user.imageUrl).to.equal('myImage.jpg');
-    userController.socialSignin.restore();
+    chai.request(app)
+      .get(`${baseUrl}/users/google/callback?user=${user}`)
+      .end((err, res) => {
+        const { body: { status } } = res;
+        expect(status).to.equal(200);
+        done();
+      });
   });
 
-  it('should return 404 if user is not found on request object', async () => {
-    const req = {};
-    sinon.stub(userController, 'socialSignin').returns(notFound());
-    const result = await userController.socialSignin(req, {}, () => ({}));
-    expect(result.status()).to.equal(404);
-    expect(result.json().errors.message).to.equal('Account not found');
-    userController.socialSignin.restore();
-  });
+  // it('Should return 404 user is not found', (done) => {
+  //   const user = null;
+  //   chai.request(app)
+  //     .get(`${baseUrl}/users/google/callback?user=${user}`)
+  //     .end((err, res) => {
+  //       const { body: { message, status } } = res;
+  //       expect(status).to.equal(404);
+  //       expect(message).to.be.a('string');
+  //       expect(message).to.equal('Account not found');
+  //       done();
+  //     });
+  // });
 });

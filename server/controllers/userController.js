@@ -99,14 +99,12 @@ class UserController {
     }
 
     // eslint-disable-next-line no-underscore-dangle
-    const userDetails = req.user._json;
-
-    console.log('userdetails ===> ', userDetails);
+    const userDetails = req.user._json || req.user;
 
     const firstname = userDetails.name.split(' ')[0];
     const lastname = userDetails.name.split(' ')[1];
     const username = userDetails.email;
-    const imageUrl = userDetails.picture;
+    const imageUrl = userDetails.image || userDetails.picture.data.url;
     const isVerified = userDetails.email_verified;
     const { email } = userDetails;
 

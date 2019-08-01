@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node build/index.js",
-    "dev": "export DEBUG=dev && nodemon --exec babel-node server/index.js",
+    "dev": "export NODE_ENV=production && DEBUG=dev && nodemon --exec babel-node server/index.js",
     "debug": "export DEBUG=dev && nodemon --exec babel-node server/index.js --inspect",
     "clean": "rm -rf build && mkdir build && npm run copy-docs",
     "build": "npm run clean && npm run migrate && babel -d ./build ./server",
@@ -33,6 +33,7 @@
     "morgan": "^1.9.1",
     "node-cron": "^2.0.3",
     "passport": "^0.4.0",
+    "passport-custom": "^1.0.5",
     "passport-facebook": "^3.0.0",
     "passport-google-oauth": "^2.0.0",
     "pg": "^7.11.0",
