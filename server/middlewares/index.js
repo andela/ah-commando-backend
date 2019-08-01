@@ -2,12 +2,12 @@ import Authenticate from './authenticate';
 import InputValidator from './inputValidator';
 import { multerUploads } from './multer';
 
-const { isLoggedIn } = Authenticate;
+const { verifyToken } = Authenticate;
 const { validateLogin, validateUser, validateProfileUpdate } = InputValidator;
 
 export default {
   multerUploads,
-  isLoggedIn,
+  verifyToken,
   validateLogin,
   validateUser,
   validateProfileUpdate,

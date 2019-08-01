@@ -18,11 +18,11 @@ class Authenticate {
        * @returns {object} Json
        * @memberof Authenticate
        */
-  static async isLoggedIn(req, res, next) {
+  static async verifyToken(req, res, next) {
     const authorizationHeader = req.headers.authorization;
     if (!authorizationHeader) return errorStat(res, 401, 'Authorization error');
     const token = req.headers.authorization.split(' ')[1] || authorizationHeader;
-    const verify = await auth.verifyToken(token, async (err, decoded) => {
+    const verifiedUser = await auth.verifyToken(token, async (err, decoded) => {
       if (err) {
         return errorStat(res, 401, 'invalid token');
       }
@@ -32,10 +32,10 @@ class Authenticate {
       }
       return decoded;
     });
-    const { id } = verify;
-    const loggedInUser = await models.User.findByPk(id);
+    const { id } = verifiedUser;
+    const user = await models.User.findByPk(id);
 
-    req.loggedInUser = loggedInUser.dataValues;
+    req.user = user.dataValues;
     next();
   }
 }

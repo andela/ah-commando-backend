@@ -143,13 +143,13 @@ class UserController {
     * @memberof UserController
     */
   static async userProfile(req, res) {
-    const { loggedInUser } = req;
+    const { user } = req;
 
     return successStat(res, 200, 'profile', {
-      username: loggedInUser.username,
-      bio: loggedInUser.bio,
-      image: loggedInUser.image,
-      following: loggedInUser.following
+      username: user.username,
+      bio: user.bio,
+      image: user.image,
+      following: user.following
     });
   }
 
@@ -185,7 +185,7 @@ class UserController {
   * @memberof UserController
   */
   static async editProfile(req, res) {
-    const { id } = req.loggedInUser;
+    const { id } = req.user;
     const {
       image, bio, email, username
     } = req.body.user;
