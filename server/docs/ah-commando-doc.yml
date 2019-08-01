@@ -133,6 +133,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
   /users/logout:
     post:
       tags:
@@ -150,10 +151,38 @@ paths:
                 $ref: "#/components/schemas/errorResponse"
         '500':
           description: Server error
+
+  /user/confirmEmail:
+    get:
+      tags:
+        - Users
+      summary: Registered email verification
+      description: Enables a user to be able verify their email after successful registeration
+      parameters:
+        - in: query
+          name: token
+          schema:
+              type: string
+          required: true
+        - in: query
+          name: id
+          schema:
+              type: number
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        400:
+          description: Bad request due to Invalid verification link
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
 components:
   securitySchemes:
     bearerAuth:

@@ -18,7 +18,7 @@ const port = process.env.PORT || 5040;
 
 app.use(cors());
 app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, 'public')));

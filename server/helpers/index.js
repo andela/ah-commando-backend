@@ -2,8 +2,9 @@ import blacklistToken from './blacklistToken';
 import Auth from './auth';
 import passwordHash from './passwordHash';
 import Utilities from './Utilities';
+import Mail from './mail/mail';
 
-const { generateToken } = Auth;
+const { generateToken, verifyToken } = Auth;
 const { hashPassword, comparePassword } = passwordHash;
 const { errorStat, successStat } = Utilities;
 const { addToBlacklist, checkBlacklist } = blacklistToken;
@@ -15,5 +16,7 @@ export default {
   hashPassword,
   comparePassword,
   errorStat,
-  successStat
+  successStat,
+  verifyToken,
+  Mail
 };

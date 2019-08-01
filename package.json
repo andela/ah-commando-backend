@@ -15,12 +15,14 @@
     "migrate": "node_modules/.bin/sequelize db:migrate",
     "migrate:undo": "node_modules/.bin/sequelize db:migrate:undo:all",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "copy-docs": "cp -r server/docs/ build/docs/"
+    "copy-docs": "cp -r server/docs/ build/docs/",
+    "testmail": "export DEBUG=dev && nodemon --exec babel-node server/helpers/mail/mail"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
   "dependencies": {
     "@hapi/joi": "^15.1.0",
+    "@sendgrid/mail": "^6.4.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "chalk": "^2.4.2",
@@ -36,6 +38,7 @@
     "pg-hstore": "^2.3.3",
     "sequelize": "^5.10.2",
     "sequelize-cli": "^5.5.0",
+    "sinon": "^7.3.2",
     "swagger-ui-express": "^4.0.7",
     "yamljs": "^0.3.0"
   },
@@ -55,7 +58,7 @@
     "lint-staged": "^9.2.0",
     "mocha": "^6.2.0",
     "mocha-lcov-reporter": "^1.3.0",
-    "nodemon": "^1.19.1",
+    "nodemon": "^1.18.10",
     "nyc": "^14.1.1"
   },
   "husky": {
