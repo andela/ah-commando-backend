@@ -45,9 +45,7 @@ passport.use(
       profile.image = profilePix;
       done(null, profile);
     }
-  ) : new customStrategy(
-    (req, done) => strategy(req, done)
-  )
+  ) : new customStrategy((req, done) => strategy(req, done))
 );
 
 passport.use(
@@ -59,7 +57,5 @@ passport.use(
       profile.image = profilePix;
       done(null, profile);
     }
-  ) : new customStrategy(
-    (req, done) => strategy(req, done)
-  )
+  ) : new customStrategy((req, done) => strategy(req, done))
 );
