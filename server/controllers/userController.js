@@ -118,13 +118,13 @@ class UserController {
     const link = `http://${process.env.APP_URL}/api/v1/users/resetPassword/${id}/${token}`;
     const mail = new Mail({
       to: email,
-      subject: 'Welcome email',
+      subject: 'Password Reset',
       messageHeader: `Hello ${user.firstname}`,
-      messageBody: 'Please Verify your email with link Below',
+      messageBody: 'Click on the link below to reset your password',
       iButton: true
     });
     mail.InitButton({
-      text: 'Confirm Email address',
+      text: 'Reset Password',
       link,
     });
     mail.sendMail();
