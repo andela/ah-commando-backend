@@ -4,7 +4,7 @@ import middlewares from '../middlewares';
 
 
 const userRoute = express();
-const { validateToken, validateLogin, validateUser } = middlewares;
+const { verifyToken, validateLogin, validateUser } = middlewares;
 const {
   signUp, login, logout, confirmEmail
 } = UserController;
@@ -12,6 +12,7 @@ const {
 userRoute.post('/', validateUser, signUp);
 userRoute.post('/login', validateLogin, login);
 userRoute.get('/confirmEmail', confirmEmail);
-userRoute.post('/logout', validateToken, logout);
+// logs out a user
+userRoute.post('/logout', verifyToken, logout);
 
 export default userRoute;

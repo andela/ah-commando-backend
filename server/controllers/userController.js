@@ -87,7 +87,7 @@ class UserController {
     * @description Allows a user to sign out
     * @param {Object} req - Request object
     * @param {Object} res - Response object
-    * @returns {Object} object containing user data and access Token
+    * @returns {Object} object containing the user's profile
     * @memberof UserController
     */
   static async logout(req, res) {
@@ -126,12 +126,82 @@ class UserController {
       return successStat(res, 200, 'message', 'Verification link has been sent to your email');
     }
     try {
-      const verify = verifyToken(token);
+      const verify = await verifyToken(token, (err, decoded) => decoded);
       await models.User.update({ verified: true }, { where: { id: verify.id } });
       return successStat(res, 200, 'message', 'Email verified successfully');
     } catch (err) {
       return errorStat(res, 400, 'Unable to verifiy email');
     }
+  }
+
+  /**
+   *  @static
+    * @description Get authorised user's profile
+    * @param {Object} req - Request object
+    * @param {Object} res - Response object
+    * @returns {Object} object containing the user's profile
+    * @memberof UserController
+    */
+  static async userProfile(req, res) {
+    const { user } = req;
+
+    return successStat(res, 200, 'profile', {
+      username: user.username,
+      bio: user.bio,
+      image: user.image,
+      following: user.following
+    });
+  }
+
+  /**
+    * @static
+    * @description Get another user's profile
+    * @param {Object} req - Request object
+    * @param {Object} res - Response object
+    * @returns {Object} object containing the user's profile
+    * @memberof UserController
+    */
+  static async getAuserProfile(req, res) {
+    const { username } = req.params;
+
+    const user = await models.User.findOne({ where: { username } });
+
+    if (!user) return errorStat(res, 404, 'No user found');
+
+    return successStat(res, 200, 'profile', {
+      username: user.username,
+      bio: user.bio,
+      image: user.image,
+      following: user.following
+    });
+  }
+
+  /**
+  * @static
+  * @description Edit user's profile
+  * @param {Object} req - Request object
+  * @param {Object} res - Response object
+  * @returns {Object} object containing the user's profile
+  * @memberof UserController
+  */
+  static async editProfile(req, res) {
+    const { id } = req.user;
+    const {
+      image, bio, email, username
+    } = req.body.user;
+
+    await models.User.update({
+      image, bio, email, username,
+    }, { where: { id } });
+
+    const updatedProfile = await models.User.findByPk(id);
+    return successStat(res, 200, 'profile', {
+      firstname: updatedProfile.firstname,
+      lastname: updatedProfile.lastname,
+      username: updatedProfile.username,
+      bio: updatedProfile.bio,
+      image: updatedProfile.image,
+    });
   }
 }
 

@@ -80,3 +80,23 @@ export const loginSchema = {
       return errors;
     }),
 };
+
+export const profileSchema = {
+  email: Joi.string().trim().lowercase().email({ minDomainSegments: 2 }),
+  bio: Joi.string().lowercase(),
+  image: Joi.string(),
+  username: Joi.string().trim().min(3).max(16)
+    .regex(/^[a-z0-9_-]+$/)
+    .error((errors) => {
+      errors.forEach((err) => {
+        switch (err.type) {
+          case 'string.regex.base':
+            err.message = 'usernames can only be alphanumeric characters, underscores and hyphens';
+            break;
+          default:
+            break;
+        }
+      });
+      return errors;
+    }),
+};

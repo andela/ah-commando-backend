@@ -18,6 +18,8 @@ tags:
     description: The root endpoint
   - name: Users
     description: Operations related to Users authentication
+  - name: Profiles
+    description: Operations related to User's profile
   - name: Articles
     description: Operations about the Articles
 
@@ -145,6 +147,24 @@ paths:
           description: Logout successful
         '401':
           description: Invalid login details
+
+  /user:
+    get:
+      tags:
+        - Profiles
+      security:
+        - bearerAuth: []
+      summary: User's profile
+      description: The endpoint to get authorised user's profile
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/profile"
+        '401':
+          description: Authorization error
           content:
             application/json:
               schema:
@@ -182,7 +202,78 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+    put:
+      tags:
+        - Profiles
+      security:
+        - bearerAuth: []
+      summary: User's profile
+      description: The endpoint to edit user's profile
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                bio:
+                  type: string
+                email:
+                  type: string
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/profile"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
 
+  /profiles/{username}:
+    get:
+      tags:
+        - Profiles
+      summary: User's profile
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: Username of the user to get
+      description: The endpoint to get any user's profile
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/profile"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
 components:
   securitySchemes:
     bearerAuth:
