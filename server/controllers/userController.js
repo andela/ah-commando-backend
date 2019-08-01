@@ -126,7 +126,7 @@ class UserController {
       return successStat(res, 200, 'message', 'Verification link has been sent to your email');
     }
     try {
-      const verify = verifyToken(token);
+      const verify = await verifyToken(token, (err, decoded) => decoded);
       await models.User.update({ verified: true }, { where: { id: verify.id } });
       return successStat(res, 200, 'message', 'Email verified successfully');
     } catch (err) {

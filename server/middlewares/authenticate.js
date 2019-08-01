@@ -22,16 +22,21 @@ class Authenticate {
     const authorizationHeader = req.headers.authorization;
     if (!authorizationHeader) return errorStat(res, 401, 'Authorization error');
     const token = req.headers.authorization.split(' ')[1] || authorizationHeader;
-    const verifiedUser = await auth.verifyToken(token, async (err, decoded) => {
-      if (err) {
-        return errorStat(res, 401, 'invalid token');
-      }
-      const blacklist = await checkBlacklist(token);
-      if (blacklist) {
-        return errorStat(res, 401, 'invalid token');
-      }
-      return decoded;
-    });
+    let verifiedUser;
+    try {
+      verifiedUser = await auth.verifyToken(token, async (err, decoded) => {
+        if (err) {
+          throw new Error();
+        }
+        const blacklist = await checkBlacklist(token);
+        if (blacklist) {
+          throw new Error();
+        }
+        return decoded;
+      });
+    } catch (err) {
+      return errorStat(res, 401, 'invalid token');
+    }
     const { id } = verifiedUser;
     const user = await models.User.findByPk(id);
 
