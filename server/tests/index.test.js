@@ -34,7 +34,7 @@ describe('Ah-commando-backend', () => {
       .get(`${baseUrl}/%`)
       .end((err, res) => {
         const { body: { error, status } } = res;
-        expect(error).to.equal('Failed to decode param \'/api/v1/%\'');
+        expect(error).to.equal('Failed to decode param \'/%\'');
         expect(status).to.equal(400);
         done();
       });

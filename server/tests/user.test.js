@@ -1,11 +1,24 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import sinon from 'sinon';
+import sendGrid from '@sendgrid/mail';
 import app from '../index';
 import userData from './testData/user.data';
 
 const { expect } = chai;
 chai.use(chaiHttp);
 const baseUrl = '/api/v1';
+let send;
+let userToken;
+const expiredToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0ZXN0dXNlcm5hbWUiLCJlbWFpbCI6InRlc3RAdGVzdGRvbWFpbi50ZXN0Y29tIiwiaWF0IjoxNTY0NDgwNjM5LCJleHAiOjE1NjQ0ODA2NDB9.TsuwwCFHdaGvCCxZrfAQgP8RbfErBr6MQhHRqMT9JuE';
+
+beforeEach(() => {
+  send = sinon.stub(sendGrid, 'send').returns(() => { });
+});
+
+afterEach(() => {
+  send.restore();
+});
 
 describe('User tests', () => {
   describe('test for user signup', () => {
@@ -22,6 +35,7 @@ describe('User tests', () => {
           expect(user).to.have.property('username');
           expect(user).to.have.property('id');
           expect(user).to.have.property('token');
+          userToken = user.token;
           done();
         });
     });
@@ -374,6 +388,52 @@ describe('User tests', () => {
           const { error, status } = res.body;
           expect(status).to.equal(404);
           expect(error).to.equal('Endpoint Not Found');
+          done();
+        });
+    });
+  });
+
+  describe('Confirms user email', () => {
+    it('Should confirm user email', (done) => {
+      chai.request(app)
+        .get(`${baseUrl}/users/confirmEmail?token=${userToken}&id=1`)
+        .end((err, res) => {
+          const { status, message } = res.body;
+          expect(status).to.equal(200);
+          expect(message).to.equal('Email verified successfully');
+          done();
+        });
+    });
+
+    it('Should send another email if requested', (done) => {
+      chai.request(app)
+        .get(`${baseUrl}/users/confirmEmail?token=${expiredToken}&id=1&resend=true`)
+        .end((err, res) => {
+          const { status, message } = res.body;
+          expect(status).to.equal(200);
+          expect(message).to.equal('Verification link has been sent to your email');
+          done();
+        });
+    });
+
+    it('Should return an error for invaild user id', (done) => {
+      chai.request(app)
+        .get(`${baseUrl}/users/confirmEmail?token=invalid&id=10000&resend=true`)
+        .end((err, res) => {
+          const { status, error } = res.body;
+          expect(status).to.equal(400);
+          expect(error).to.equal('Unable to send verification email');
+          done();
+        });
+    });
+
+    it('Should return an error for invalid tokens', (done) => {
+      chai.request(app)
+        .get(`${baseUrl}/users/confirmEmail?token=invalid&id=1`)
+        .end((err, res) => {
+          const { status, error } = res.body;
+          expect(status).to.equal(400);
+          expect(error).to.equal('Unable to verifiy email');
           done();
         });
     });

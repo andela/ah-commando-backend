@@ -9,13 +9,14 @@
     "debug": "export DEBUG=dev && nodemon --exec babel-node server/index.js --inspect",
     "clean": "rm -rf build && mkdir build && npm run copy-docs",
     "build": "npm run clean && npm run migrate && babel -d ./build ./server",
-    "test": "export NODE_ENV=test && nyc mocha --require @babel/register server/tests --exit",
+    "test": "export NODE_ENV=test && nyc mocha --timeout 10000 --require @babel/register server/tests --exit",
     "pretest": "export NODE_ENV=test && npm run migrate:undo && npm run migrate",
     "generate:model": "node_modules/.bin/sequelize model:generate",
     "migrate": "node_modules/.bin/sequelize db:migrate",
     "migrate:undo": "node_modules/.bin/sequelize db:migrate:undo:all",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "copy-docs": "cp -r server/docs/ build/docs/"
+    "copy-docs": "cp -r server/docs/ build/docs/",
+    "testmail": "export DEBUG=dev && nodemon --exec babel-node server/helpers/mail/mail"
   },
   "nyc": {
     "exclude": [
@@ -26,16 +27,20 @@
   "license": "MIT",
   "dependencies": {
     "@hapi/joi": "^15.1.0",
+    "@sendgrid/mail": "^6.4.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "chalk": "^2.4.2",
+    "cloudinary": "^1.14.0",
     "cors": "^2.8.4",
+    "datauri": "^2.0.0",
     "debug": "^4.1.1",
     "dotenv": "^6.0.0",
     "errorhandler": "^1.5.0",
     "express": "^4.16.3",
     "jsonwebtoken": "^8.3.0",
     "morgan": "^1.9.1",
+    "multer": "^1.4.2",
     "node-cron": "^2.0.3",
     "passport": "^0.4.0",
     "passport-custom": "^1.0.5",
@@ -45,6 +50,7 @@
     "pg-hstore": "^2.3.3",
     "sequelize": "^5.10.2",
     "sequelize-cli": "^5.5.0",
+    "sinon": "^7.3.2",
     "swagger-ui-express": "^4.0.7",
     "yamljs": "^0.3.0"
   },
@@ -65,9 +71,9 @@
     "mocha": "^6.2.0",
     "mocha-lcov-reporter": "^1.3.0",
     "nock": "^10.0.6",
-    "nodemon": "^1.19.1",
     "nyc": "^14.1.1",
-    "sinon": "^7.3.2"
+    "sinon": "^7.3.2",
+    "nodemon": "^1.18.10"
   },
   "husky": {
     "hooks": {

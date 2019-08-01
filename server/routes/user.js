@@ -5,12 +5,10 @@ import middlewares from '../middlewares';
 import '../helpers/passport';
 
 const userRoute = express();
-const { validateToken, validateLogin, validateUser } = middlewares;
+const { verifyToken, validateLogin, validateUser } = middlewares;
 const {
-  signUp,
-  login,
-  logout,
-  socialSignin
+  socialSignin,
+  signUp, login, logout, confirmEmail,
 } = UserController;
 
 userRoute.post('/', validateUser, signUp);
@@ -25,6 +23,10 @@ userRoute.get('/google/callback', passport.authenticate('google', { session: fal
 userRoute.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 userRoute.get('/facebook/callback', passport.authenticate('facebook', { session: false }), socialSignin);
 
-userRoute.post('/logout', validateToken, logout);
+userRoute.post('/logout', verifyToken, logout);
+
+userRoute.get('/confirmEmail', confirmEmail);
+
+userRoute.post('/logout', verifyToken, logout);
 
 export default userRoute;

@@ -11,6 +11,7 @@ module.exports = {
       allowNull: true
     }),
   ],
+
   down: async queryInterface => [
     await queryInterface.removeColumn('Users', 'socialId'),
     await queryInterface.removeColumn('Users', 'verified'),
