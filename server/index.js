@@ -6,6 +6,7 @@ import errorhandler from 'errorhandler';
 import morgan from 'morgan';
 import debug from 'debug';
 import chalk from 'chalk';
+import passport from 'passport';
 import { config } from 'dotenv';
 import routes from './routes';
 
@@ -22,6 +23,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(passport.initialize());
+/* istanbul ignore next */
 if (!isProduction) app.use(errorhandler());
 
 app.get('/', (req, res) => res.status(301).redirect('/api/v1'));

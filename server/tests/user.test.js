@@ -419,6 +419,73 @@ describe('User tests', () => {
     });
   });
 
+  describe('Social signin test', () => {
+    it('should display user google details on success login', (done) => {
+      const usr = JSON.stringify({
+        displayName: 'test testlastname',
+        emails: [{ value: 'test@gmail.com' }],
+        image: 'testimage.jpg',
+        email_verified: true,
+      });
+      chai.request(app)
+        .get(`${baseUrl}/users/google/callback?user=${usr}`)
+        .end((err, res) => {
+          const { status, user } = res.body;
+          expect(status).to.equal(200);
+          expect(user).to.have.property('token');
+          expect(user).to.have.property('firstname');
+          expect(user).to.have.property('lastname');
+          expect(user).to.have.property('email');
+          expect(user).to.have.property('username');
+          expect(user).to.have.property('bio');
+          expect(user).to.have.property('imageUrl');
+          done();
+        });
+    });
+    it('should return 404 if endpoint is not found', (done) => {
+      chai.request(app)
+        .get(`${baseUrl}/users/google/callback/fake endpoint`)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(404);
+          expect(error).to.equal('Endpoint Not Found');
+          done();
+        });
+    });
+    it('should display user facebook details on success login', (done) => {
+      const usr = JSON.stringify({
+        displayName: 'test testlastname',
+        emails: [{ value: 'test@gmail.com' }],
+        image: 'testimage.jpg',
+        email_verified: true,
+      });
+      chai.request(app)
+        .get(`${baseUrl}/users/facebook/callback?user=${usr}`)
+        .end((err, res) => {
+          const { status, user } = res.body;
+          expect(status).to.equal(200);
+          expect(user).to.have.property('token');
+          expect(user).to.have.property('firstname');
+          expect(user).to.have.property('lastname');
+          expect(user).to.have.property('email');
+          expect(user).to.have.property('username');
+          expect(user).to.have.property('bio');
+          expect(user).to.have.property('imageUrl');
+          done();
+        });
+    });
+    it('should return 404 if endpoint is not found', (done) => {
+      chai.request(app)
+        .get(`${baseUrl}/users/facebook/callback/fake endpoint`)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(404);
+          expect(error).to.equal('Endpoint Not Found');
+          done();
+        });
+    });
+  });
+
   describe('Confirms user email', () => {
     it('Should confirm user email', (done) => {
       chai.request(app)

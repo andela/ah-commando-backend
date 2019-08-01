@@ -157,6 +157,60 @@ class UserController {
 
   /**
   * @static
+  * @description Allows a user to sign in with social accounts
+  * @param {Object} req - Request object
+  * @param {Object} res - Response object
+  * @param {function} next next function to be called
+  * @returns {Object} object containing user data and access Token
+  * @memberof UserController
+  */
+  static async socialSignin(req, res) {
+    /* istanbul ignore next */
+    if (!req.user) {
+      return errorStat(res, 404, 'Account not found');
+    }
+    const userDetails = req.user;
+
+    const firstname = userDetails.displayName.split(' ')[0];
+    const lastname = userDetails.displayName.split(' ')[1];
+    const username = userDetails.emails[0].value;
+    const imageUrl = userDetails.image;
+    const isVerified = userDetails.email_verified;
+    const email = userDetails.emails[0].value;
+
+    const newUser = await models.User.findOrCreate({
+      where: { email },
+      defaults: {
+        firstname,
+        lastname,
+        email,
+        password: 'null',
+        bio: '',
+        username,
+        image: imageUrl,
+        verified: isVerified,
+      }
+    });
+    const token = generateToken({
+      id: newUser.id,
+      email: userDetails.email
+    });
+
+    const { bio } = newUser[0];
+
+    return successStat(res, 200, 'user', {
+      token,
+      firstname,
+      lastname,
+      email,
+      username,
+      bio,
+      imageUrl,
+    });
+  }
+
+  /**
+  * @static
   * @description Send a user email on successful registration
   * @param {Object} req - Request object
   * @param {Object} res - Response object

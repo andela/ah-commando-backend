@@ -1,6 +1,8 @@
 import express from 'express';
+import passport from 'passport';
 import UserController from '../controllers/userController';
 import middlewares from '../middlewares';
+import '../helpers/passport';
 
 const userRoute = express();
 const {
@@ -8,13 +10,26 @@ const {
   validateEmail,
 } = middlewares;
 const {
+  socialSignin,
   signUp, login, logout, resetPassword, confirmEmail, sendResetLink
 } = UserController;
 
 userRoute.post('/', validateUser, signUp);
 userRoute.post('/login', validateLogin, login);
+
+userRoute.get('/google', passport.authenticate('google', {
+  scope:
+  ['https://www.googleapis.com/auth/plus.login', 'https://www.googleapis.com/auth/userinfo.email']
+}));
+userRoute.get('/google/callback', passport.authenticate('google', { session: false }), socialSignin);
+
+userRoute.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+userRoute.get('/facebook/callback', passport.authenticate('facebook', { session: false }), socialSignin);
+
+userRoute.post('/logout', verifyToken, logout);
+
 userRoute.get('/confirmEmail', confirmEmail);
-// logs out a user
+
 userRoute.post('/logout', verifyToken, logout);
 userRoute.post('/passwordReset/', validateEmail, sendResetLink);
 userRoute.put('/resetPassword/:id/:token', validatePasswordReset, resetPassword);
