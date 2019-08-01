@@ -5,10 +5,13 @@ import middlewares from '../middlewares';
 import '../helpers/passport';
 
 const userRoute = express();
-const { verifyToken, validateLogin, validateUser } = middlewares;
+const {
+  verifyToken, validateLogin, validateUser, validatePasswordReset,
+  validateEmail,
+} = middlewares;
 const {
   socialSignin,
-  signUp, login, logout, confirmEmail,
+  signUp, login, logout, resetPassword, confirmEmail, sendResetLink
 } = UserController;
 
 userRoute.post('/', validateUser, signUp);
@@ -28,5 +31,7 @@ userRoute.post('/logout', verifyToken, logout);
 userRoute.get('/confirmEmail', confirmEmail);
 
 userRoute.post('/logout', verifyToken, logout);
+userRoute.post('/passwordReset/', validateEmail, sendResetLink);
+userRoute.put('/resetPassword/:id/:token', validatePasswordReset, resetPassword);
 
 export default userRoute;

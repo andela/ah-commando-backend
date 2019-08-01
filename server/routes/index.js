@@ -6,6 +6,7 @@ import profileRoute from './profile';
 import imageRoute from './image';
 import { cloudinaryConfig } from '../db/config/cloudinaryConfig';
 
+
 const router = express();
 
 const swaggerDocument = yaml.load(`${__dirname}/../docs/ah-commando-doc.yml`);
