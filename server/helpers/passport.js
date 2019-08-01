@@ -1,6 +1,6 @@
 import passport from 'passport';
 import facebook from 'passport-facebook';
-import google from 'passport-google-oauth';
+import googleStrategy from 'passport-google-oauth2';
 import customStrategy from 'passport-custom';
 import dotenv from 'dotenv';
 
@@ -26,7 +26,7 @@ const googleStrat = {
   clientID: googleClient,
   clientSecret: googleSecret,
   callbackURL: googleCallbackUrl,
-  profileFields: ['id', 'displayName', 'email']
+  passReqToCallback: true
 };
 
 const facebookStrat = {
@@ -38,9 +38,11 @@ const facebookStrat = {
 
 passport.use(
   'google',
-  process.env.NODE_ENV === 'production' ? new google.OAuth2Strategy(
+  process.env.NODE_ENV === 'production' ? new googleStrategy.Strategy(
     googleStrat,
-    (accessToken, refreshToken, profile, done) => {
+    (request, accessToken, refreshToken, profile, done) => {
+      const profilePix = profile.photos[0].value;
+      profile.image = profilePix;
       done(null, profile);
     }
   ) : new customStrategy(

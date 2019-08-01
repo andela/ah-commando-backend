@@ -97,16 +97,14 @@ class UserController {
     if (!req.user) {
       return errorStat(res, 404, 'Account not found');
     }
+    const userDetails = req.user;
 
-    // eslint-disable-next-line no-underscore-dangle
-    const userDetails = req.user._json || req.user;
-
-    const firstname = userDetails.name.split(' ')[0];
-    const lastname = userDetails.name.split(' ')[1];
-    const username = userDetails.email;
-    const imageUrl = userDetails.image || userDetails.picture.data.url;
+    const firstname = userDetails.displayName.split(' ')[0];
+    const lastname = userDetails.displayName.split(' ')[1];
+    const username = userDetails.emails[0].value;
+    const imageUrl = userDetails.image;
     const isVerified = userDetails.email_verified;
-    const { email } = userDetails;
+    const email = userDetails.emails[0].value;
 
     const newUser = await models.User.findOrCreate({
       where: { email },

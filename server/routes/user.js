@@ -16,7 +16,10 @@ const {
 userRoute.post('/', validateUser, signUp);
 userRoute.post('/login', validateLogin, login);
 
-userRoute.get('/google', passport.authenticate('google', { scope: ['email'] }));
+userRoute.get('/google', passport.authenticate('google', {
+  scope:
+  ['https://www.googleapis.com/auth/plus.login', 'https://www.googleapis.com/auth/userinfo.email']
+}));
 userRoute.get('/google/callback', passport.authenticate('google', { session: false }), socialSignin);
 
 userRoute.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
