@@ -7,7 +7,9 @@ const {
   validateLogin,
   validateUser,
   validateArticle,
-  validateProfileUpdate
+  validateProfileUpdate,
+  validatePasswordReset,
+  validateEmail
 } = InputValidator;
 
 export default {
@@ -16,5 +18,7 @@ export default {
   validateLogin,
   validateUser,
   validateProfileUpdate,
-  validateArticle
+  validateArticle,
+  validatePasswordReset,
+  validateEmail
 };

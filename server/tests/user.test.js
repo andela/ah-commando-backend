@@ -4,6 +4,7 @@ import sinon from 'sinon';
 import sendGrid from '@sendgrid/mail';
 import app from '../index';
 import userData from './testData/user.data';
+import model from '../db/models';
 
 const { expect } = chai;
 chai.use(chaiHttp);
@@ -184,7 +185,6 @@ describe('User tests', () => {
         });
     });
   });
-
   describe('test for user login', () => {
     it('Should login a user with the correct credentials', (done) => {
       chai.request(app)
@@ -265,7 +265,6 @@ describe('User tests', () => {
         });
     });
   });
-
   describe('User logout', () => {
     it('should successfully log out a signed in user', (done) => {
       chai.request(app)
@@ -325,50 +324,215 @@ describe('User tests', () => {
         });
     });
   });
-
-  describe('Confirms user email', () => {
-    it('Should confirm user email', (done) => {
+  describe('Handle user reset password', () => {
+    let userResetToken, id;
+    beforeEach(async () => {
+      const { email } = userData[0].user;
+      const user = await model.PasswordResetTokens.findOne({ where: { email } });
+      if (!user) return;
+      userResetToken = user.token;
+      id = user.userId;
+    });
+    it('Should send a reset mail to a user, if the user\'s email exists', (done) => {
       chai.request(app)
-        .get(`${baseUrl}/users/confirmEmail?token=${userToken}&id=1`)
+        .post(`${baseUrl}/users/passwordReset`)
+        .send({ user: { email: userData[0].user.email } })
         .end((err, res) => {
-          const { status, message } = res.body;
+          const { message, status } = res.body;
           expect(status).to.equal(200);
-          expect(message).to.equal('Email verified successfully');
+          expect(message).to.equal(`Hi ${userData[0].user.firstname}, A password reset link has been sent to your mail-box`);
           done();
         });
     });
-
-    it('Should send another email if requested', (done) => {
+    it('Should fail if user email doesn\'t exist', (done) => {
       chai.request(app)
-        .get(`${baseUrl}/users/confirmEmail?token=${expiredToken}&id=1&resend=true`)
+        .post(`${baseUrl}/users/passwordReset`)
+        .send({ user: { email: 'idontexist@gmail.com' } })
         .end((err, res) => {
-          const { status, message } = res.body;
+          const { error, status } = res.body;
+          expect(status).to.equal(404);
+          expect(error).to.equal('No user found with email address: idontexist@gmail.com');
+          done();
+        });
+    });
+    it('Should fail if user email doesn\'t is invalid', (done) => {
+      chai.request(app)
+        .post(`${baseUrl}/users/passwordReset`)
+        .send({ user: { email: 'idontexistgmail.com' } })
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('email must be a valid email');
+          done();
+        });
+    });
+    it('Should fail if token payload id doesn\'t match user id', (done) => {
+      chai.request(app)
+        .put(`${baseUrl}/users/resetPassword/${1}/mdsijidsfdsixjmd`)
+        .send({ user: { password: 'P@ssword123...x' } })
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(401);
+          expect(error).to.equal('Invalid Reset Token');
+          done();
+        });
+    });
+    it('Should fail if password doesn\'t meet required spec', (done) => {
+      chai.request(app)
+        .put(`${baseUrl}/users/resetPassword/${id}/${userResetToken}"`)
+        .send({ user: { password: 'okay..' } })
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('password length must be at least 8 characters long');
+          done();
+        });
+    });
+    it('Should fail if password doesn\'t meet required spec', (done) => {
+      chai.request(app)
+        .put(`${baseUrl}/users/resetPassword/${id}/${userResetToken}"`)
+        .send({ user: { password: 'okayPassword..' } })
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('password must contain at least 1 uppercase, 1 lowercase, 1 number and 1 special character');
+          done();
+        });
+    });
+    it('Should fail if user doesn\'t exist', (done) => {
+      chai.request(app)
+        .put(`${baseUrl}/users/resetPassword/${90}/${userResetToken}"`)
+        .send({ user: { password: 'P@ssWord123...' } })
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(404);
+          expect(error).to.equal('No user found');
+          done();
+        });
+    });
+    it('Should pass if token matches user id', (done) => {
+      chai.request(app)
+        .put(`${baseUrl}/users/resetPassword/${id}/${userResetToken}`)
+        .send({ user: { password: 'P@ssword123...x' } })
+        .end((err, res) => {
+          const { message, status } = res.body;
           expect(status).to.equal(200);
-          expect(message).to.equal('Verification link has been sent to your email');
+          expect(message).to.equal('Success, Password Reset Successfully');
           done();
         });
     });
+  });
+});
 
-    it('Should return an error for invaild user id', (done) => {
-      chai.request(app)
-        .get(`${baseUrl}/users/confirmEmail?token=invalid&id=10000&resend=true`)
-        .end((err, res) => {
-          const { status, error } = res.body;
-          expect(status).to.equal(400);
-          expect(error).to.equal('Unable to send verification email');
-          done();
-        });
+describe('Social signin test', () => {
+  it('should display user google details on success login', (done) => {
+    const usr = JSON.stringify({
+      displayName: 'test testlastname',
+      emails: [{ value: 'test@gmail.com' }],
+      image: 'testimage.jpg',
+      email_verified: true,
     });
+    chai.request(app)
+      .get(`${baseUrl}/users/google/callback?user=${usr}`)
+      .end((err, res) => {
+        const { status, user } = res.body;
+        expect(status).to.equal(200);
+        expect(user).to.have.property('token');
+        expect(user).to.have.property('firstname');
+        expect(user).to.have.property('lastname');
+        expect(user).to.have.property('email');
+        expect(user).to.have.property('username');
+        expect(user).to.have.property('bio');
+        expect(user).to.have.property('imageUrl');
+        done();
+      });
+  });
+  it('should return 404 if endpoint is not found', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/users/google/callback/fake endpoint`)
+      .end((err, res) => {
+        const { error, status } = res.body;
+        expect(status).to.equal(404);
+        expect(error).to.equal('Endpoint Not Found');
+        done();
+      });
+  });
+  it('should display user facebook details on success login', (done) => {
+    const usr = JSON.stringify({
+      displayName: 'test testlastname',
+      emails: [{ value: 'test@gmail.com' }],
+      image: 'testimage.jpg',
+      email_verified: true,
+    });
+    chai.request(app)
+      .get(`${baseUrl}/users/facebook/callback?user=${usr}`)
+      .end((err, res) => {
+        const { status, user } = res.body;
+        expect(status).to.equal(200);
+        expect(user).to.have.property('token');
+        expect(user).to.have.property('firstname');
+        expect(user).to.have.property('lastname');
+        expect(user).to.have.property('email');
+        expect(user).to.have.property('username');
+        expect(user).to.have.property('bio');
+        expect(user).to.have.property('imageUrl');
+        done();
+      });
+  });
+  it('should return 404 if endpoint is not found', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/users/facebook/callback/fake endpoint`)
+      .end((err, res) => {
+        const { error, status } = res.body;
+        expect(status).to.equal(404);
+        expect(error).to.equal('Endpoint Not Found');
+        done();
+      });
+  });
+});
 
-    it('Should return an error for invalid tokens', (done) => {
-      chai.request(app)
-        .get(`${baseUrl}/users/confirmEmail?token=invalid&id=1`)
-        .end((err, res) => {
-          const { status, error } = res.body;
-          expect(status).to.equal(400);
-          expect(error).to.equal('Unable to verifiy email');
-          done();
-        });
-    });
+describe('Confirms user email', () => {
+  it('Should confirm user email', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/users/confirmEmail?token=${userToken}&id=1`)
+      .end((err, res) => {
+        const { status, message } = res.body;
+        expect(status).to.equal(200);
+        expect(message).to.equal('Email verified successfully');
+        done();
+      });
+  });
+
+  it('Should send another email if requested', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/users/confirmEmail?token=${expiredToken}&id=1&resend=true`)
+      .end((err, res) => {
+        const { status, message } = res.body;
+        expect(status).to.equal(200);
+        expect(message).to.equal('Verification link has been sent to your email');
+        done();
+      });
+  });
+
+  it('Should return an error for invaild user id', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/users/confirmEmail?token=invalid&id=10000&resend=true`)
+      .end((err, res) => {
+        const { status, error } = res.body;
+        expect(status).to.equal(400);
+        expect(error).to.equal('Unable to send verification email');
+        done();
+      });
+  });
+
+  it('Should return an error for invalid tokens', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/users/confirmEmail?token=invalid&id=1`)
+      .end((err, res) => {
+        const { status, error } = res.body;
+        expect(status).to.equal(400);
+        expect(error).to.equal('Unable to verifiy email');
+        done();
+      });
   });
 });

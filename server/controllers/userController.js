@@ -1,8 +1,13 @@
 import sequelize from 'sequelize';
+import dotenv from 'dotenv';
 import models from '../db/models';
 import helpers from '../helpers';
 
+
+dotenv.config();
+
 const { Op } = sequelize;
+const { PasswordResetTokens } = models;
 const {
   addToBlacklist, generateToken, errorStat, successStat,
   comparePassword, hashPassword, verifyToken, Mail
@@ -39,7 +44,7 @@ class UserController {
 
     const mail = new Mail({
       to: user.email,
-      subject: 'Welcome email',
+      subject: 'Password Reset',
       messageHeader: `Hi, ${user.firstname}!`,
       messageBody: 'We are exicted to get you started. First, you have to verify your account. Just click on the link below',
       iButton: true
@@ -69,7 +74,6 @@ class UserController {
     if (!user) return errorStat(res, 401, 'Incorrect Login information');
     const matchPasswords = comparePassword(password, user.password);
     if (!matchPasswords) return errorStat(res, 401, 'Incorrect Login information');
-
     return successStat(res, 200, 'user', {
       id: user.id,
       token: await generateToken({ id: user.id, username: user.username, email }),
@@ -95,6 +99,119 @@ class UserController {
     const token = req.headers.authorization.split(' ')[1] || authorizationHeader;
     await addToBlacklist(token);
     return successStat(res, 204, 'message', 'No Content');
+  }
+
+  /**
+  * @description Sends reset link to user Email
+  * @param {Object} req - Request object
+  * @param {Object} res - Response object
+  * @returns {Object} object containing user data which will be embedded in link sent to user
+  * @memberof UserController
+  */
+  static async sendResetLink(req, res) {
+    const { email } = req.body.user;
+    const user = await models.User.findOne({ where: { email } });
+    if (!user) return errorStat(res, 404, `No user found with email address: ${email}`);
+    const { id, username } = user;
+    const token = generateToken({ id, username, email });
+    await PasswordResetTokens.create({ token, userId: id, email });
+    const link = `http://${process.env.APP_URL}/api/v1/users/resetPassword/${id}/${token}`;
+    const mail = new Mail({
+      to: email,
+      subject: 'Welcome email',
+      messageHeader: `Hello ${user.firstname}`,
+      messageBody: 'Please Verify your email with link Below',
+      iButton: true
+    });
+    mail.InitButton({
+      text: 'Confirm Email address',
+      link,
+    });
+    mail.sendMail();
+
+    return successStat(res, 200, 'message', `Hi ${user.firstname}, A password reset link has been sent to your mail-box`);
+  }
+
+  /**
+    * @static
+    * @description Updates the user password in the database
+    * @param {Object} req - Request object
+    * @param {Object} res - Response object
+    * @returns {Object} Object containing either a success or error message.
+    * @memberof UserController
+    */
+  static async resetPassword(req, res) {
+    const { password } = req.body.user;
+    const { id, token } = req.params;
+    const user = await models.User.findOne({ where: { id } });
+    if (!user) return errorStat(res, 404, 'No user found');
+    const isTokenAvailable = await PasswordResetTokens.findOne({ where: { userId: id, token, } });
+    const payload = await verifyToken(token, (err, decoded) => decoded);
+    /* istanbul ignore next */
+    if (!payload
+      || payload.id !== Number(id)
+      /* istanbul ignore next */
+      || !isTokenAvailable) return errorStat(res, 401, 'Invalid Reset Token');
+    /* istanbul ignore next */
+    await models.User.update({ password }, { where: { id: user.id } });
+    /* istanbul ignore next */
+    PasswordResetTokens.destroy({ where: { userId: id } });
+    /* istanbul ignore next */
+    return successStat(res, 200, 'message', 'Success, Password Reset Successfully');
+  }
+
+  /**
+  * @static
+  * @description Allows a user to sign in with social accounts
+  * @param {Object} req - Request object
+  * @param {Object} res - Response object
+  * @param {function} next next function to be called
+  * @returns {Object} object containing user data and access Token
+  * @memberof UserController
+  */
+  static async socialSignin(req, res) {
+    /* istanbul ignore next */
+    if (!req.user) {
+      return errorStat(res, 404, 'Account not found');
+    }
+    const userDetails = req.user;
+
+    const firstname = userDetails.displayName.split(' ')[0];
+    const lastname = userDetails.displayName.split(' ')[1];
+    const username = userDetails.emails[0].value;
+    const imageUrl = userDetails.image;
+    const isVerified = userDetails.email_verified;
+    const email = userDetails.emails[0].value;
+
+    const newUser = await models.User.findOrCreate({
+      where: { email },
+      defaults: {
+        firstname,
+        lastname,
+        email,
+        password: 'null',
+        bio: '',
+        username,
+        image: imageUrl,
+        verified: isVerified,
+      }
+    });
+    const token = generateToken({
+      id: newUser.id,
+      email: userDetails.email
+    });
+
+    const { bio } = newUser[0];
+
+    return successStat(res, 200, 'user', {
+      token,
+      firstname,
+      lastname,
+      email,
+      username,
+      bio,
+      imageUrl,
+    });
   }
 
   /**
