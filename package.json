@@ -11,6 +11,9 @@
     "build": "npm run clean && npm run migrate && babel -d ./build ./server",
     "test": "export NODE_ENV=test && nyc mocha --timeout 10000 --require @babel/register server/tests --exit",
     "pretest": "export NODE_ENV=test && npm run migrate:undo && npm run migrate",
+    "seed": "npm run seed:all",
+    "seed:all": "node_modules/.bin/sequelize db:seed:all",
+    "seed:undo": "node_modules/.bin/sequelize db:seed:undo:all",
     "generate:model": "node_modules/.bin/sequelize model:generate",
     "migrate": "node_modules/.bin/sequelize db:migrate",
     "migrate:undo": "node_modules/.bin/sequelize db:migrate:undo:all",
@@ -61,7 +64,7 @@
     "lint-staged": "^9.2.0",
     "mocha": "^6.2.0",
     "mocha-lcov-reporter": "^1.3.0",
-    "nodemon": "^1.18.10",
+    "nodemon": "^1.17.4",
     "nyc": "^14.1.1"
   },
   "husky": {
