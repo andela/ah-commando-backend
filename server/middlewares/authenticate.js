@@ -39,7 +39,9 @@ class Authenticate {
     }
     const { id } = verifiedUser;
     const user = await models.User.findByPk(id);
-
+    if (!user) {
+      return errorStat(res, 404, 'user not found');
+    }
     req.user = user.dataValues;
     next();
   }

@@ -3,6 +3,7 @@ import swaggerUi from 'swagger-ui-express';
 import yaml from 'yamljs';
 import userRoute from './user';
 import profileRoute from './profile';
+import articleRoute from './article';
 import imageRoute from './image';
 import { cloudinaryConfig } from '../db/config/cloudinaryConfig';
 
@@ -11,6 +12,7 @@ const router = express();
 
 const swaggerDocument = yaml.load(`${__dirname}/../docs/ah-commando-doc.yml`);
 router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+router.use('*', cloudinaryConfig);
 
 router.get('/', (req, res) => res.status(200).json({
   status: res.statusCode,
@@ -20,6 +22,7 @@ router.get('/', (req, res) => res.status(200).json({
 router.use('*', cloudinaryConfig);
 router.use('/', profileRoute);
 router.use('/users', userRoute);
+router.use('/articles', articleRoute);
 router.use('/image', imageRoute);
 
 export default router;

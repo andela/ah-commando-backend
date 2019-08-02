@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
     verified: DataTypes.BOOLEAN,
     following: DataTypes.BOOLEAN,
   }, {});
-  User.associate = () => {
-    // associations can be defined here
+  User.associate = (models) => {
+    User.hasMany(models.Article, { foreignKey: 'authorId', onDelete: 'CASCADE' });
   };
   return User;
 };
