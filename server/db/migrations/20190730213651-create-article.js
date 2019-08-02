@@ -38,9 +38,6 @@ module.exports = {
     authorId: {
       type: Sequelize.INTEGER
     },
-    author: {
-      type: Sequelize.JSON
-    },
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE
