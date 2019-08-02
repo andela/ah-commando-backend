@@ -325,9 +325,13 @@ describe('User tests', () => {
     });
   });
   describe('Handle user reset password', () => {
-    let user;
+    let userResetToken, id;
     beforeEach(async () => {
-      user = await model.PasswordResetTokens.findOne({ where: { userId: 14 } });
+      const { email } = userData[0].user;
+      const user = await model.PasswordResetTokens.findOne({ where: { email } });
+      if (!user) return;
+      userResetToken = user.token;
+      id = user.userId;
     });
     it('Should send a reset mail to a user, if the user\'s email exists', (done) => {
       chai.request(app)
@@ -375,7 +379,7 @@ describe('User tests', () => {
     });
     it('Should fail if password doesn\'t meet required spec', (done) => {
       chai.request(app)
-        .put(`${baseUrl}/users/resetPassword/${2}/${user.token}"`)
+        .put(`${baseUrl}/users/resetPassword/${id}/${userResetToken}"`)
         .send({ user: { password: 'okay..' } })
         .end((err, res) => {
           const { error, status } = res.body;
@@ -386,7 +390,7 @@ describe('User tests', () => {
     });
     it('Should fail if password doesn\'t meet required spec', (done) => {
       chai.request(app)
-        .put(`${baseUrl}/users/resetPassword/${2}/${user.token}"`)
+        .put(`${baseUrl}/users/resetPassword/${id}/${userResetToken}"`)
         .send({ user: { password: 'okayPassword..' } })
         .end((err, res) => {
           const { error, status } = res.body;
@@ -397,7 +401,7 @@ describe('User tests', () => {
     });
     it('Should fail if user doesn\'t exist', (done) => {
       chai.request(app)
-        .put(`${baseUrl}/users/resetPassword/${90}/${user.token}"`)
+        .put(`${baseUrl}/users/resetPassword/${90}/${userResetToken}"`)
         .send({ user: { password: 'P@ssWord123...' } })
         .end((err, res) => {
           const { error, status } = res.body;
@@ -408,7 +412,7 @@ describe('User tests', () => {
     });
     it('Should pass if token matches user id', (done) => {
       chai.request(app)
-        .put(`${baseUrl}/users/resetPassword/${14}/${user.token}`)
+        .put(`${baseUrl}/users/resetPassword/${id}/${userResetToken}`)
         .send({ user: { password: 'P@ssword123...x' } })
         .end((err, res) => {
           const { message, status } = res.body;
@@ -418,117 +422,117 @@ describe('User tests', () => {
         });
     });
   });
+});
 
-  describe('Social signin test', () => {
-    it('should display user google details on success login', (done) => {
-      const usr = JSON.stringify({
-        displayName: 'test testlastname',
-        emails: [{ value: 'test@gmail.com' }],
-        image: 'testimage.jpg',
-        email_verified: true,
+describe('Social signin test', () => {
+  it('should display user google details on success login', (done) => {
+    const usr = JSON.stringify({
+      displayName: 'test testlastname',
+      emails: [{ value: 'test@gmail.com' }],
+      image: 'testimage.jpg',
+      email_verified: true,
+    });
+    chai.request(app)
+      .get(`${baseUrl}/users/google/callback?user=${usr}`)
+      .end((err, res) => {
+        const { status, user } = res.body;
+        expect(status).to.equal(200);
+        expect(user).to.have.property('token');
+        expect(user).to.have.property('firstname');
+        expect(user).to.have.property('lastname');
+        expect(user).to.have.property('email');
+        expect(user).to.have.property('username');
+        expect(user).to.have.property('bio');
+        expect(user).to.have.property('imageUrl');
+        done();
       });
-      chai.request(app)
-        .get(`${baseUrl}/users/google/callback?user=${usr}`)
-        .end((err, res) => {
-          const { status, user } = res.body;
-          expect(status).to.equal(200);
-          expect(user).to.have.property('token');
-          expect(user).to.have.property('firstname');
-          expect(user).to.have.property('lastname');
-          expect(user).to.have.property('email');
-          expect(user).to.have.property('username');
-          expect(user).to.have.property('bio');
-          expect(user).to.have.property('imageUrl');
-          done();
-        });
-    });
-    it('should return 404 if endpoint is not found', (done) => {
-      chai.request(app)
-        .get(`${baseUrl}/users/google/callback/fake endpoint`)
-        .end((err, res) => {
-          const { error, status } = res.body;
-          expect(status).to.equal(404);
-          expect(error).to.equal('Endpoint Not Found');
-          done();
-        });
-    });
-    it('should display user facebook details on success login', (done) => {
-      const usr = JSON.stringify({
-        displayName: 'test testlastname',
-        emails: [{ value: 'test@gmail.com' }],
-        image: 'testimage.jpg',
-        email_verified: true,
+  });
+  it('should return 404 if endpoint is not found', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/users/google/callback/fake endpoint`)
+      .end((err, res) => {
+        const { error, status } = res.body;
+        expect(status).to.equal(404);
+        expect(error).to.equal('Endpoint Not Found');
+        done();
       });
-      chai.request(app)
-        .get(`${baseUrl}/users/facebook/callback?user=${usr}`)
-        .end((err, res) => {
-          const { status, user } = res.body;
-          expect(status).to.equal(200);
-          expect(user).to.have.property('token');
-          expect(user).to.have.property('firstname');
-          expect(user).to.have.property('lastname');
-          expect(user).to.have.property('email');
-          expect(user).to.have.property('username');
-          expect(user).to.have.property('bio');
-          expect(user).to.have.property('imageUrl');
-          done();
-        });
+  });
+  it('should display user facebook details on success login', (done) => {
+    const usr = JSON.stringify({
+      displayName: 'test testlastname',
+      emails: [{ value: 'test@gmail.com' }],
+      image: 'testimage.jpg',
+      email_verified: true,
     });
-    it('should return 404 if endpoint is not found', (done) => {
-      chai.request(app)
-        .get(`${baseUrl}/users/facebook/callback/fake endpoint`)
-        .end((err, res) => {
-          const { error, status } = res.body;
-          expect(status).to.equal(404);
-          expect(error).to.equal('Endpoint Not Found');
-          done();
-        });
-    });
+    chai.request(app)
+      .get(`${baseUrl}/users/facebook/callback?user=${usr}`)
+      .end((err, res) => {
+        const { status, user } = res.body;
+        expect(status).to.equal(200);
+        expect(user).to.have.property('token');
+        expect(user).to.have.property('firstname');
+        expect(user).to.have.property('lastname');
+        expect(user).to.have.property('email');
+        expect(user).to.have.property('username');
+        expect(user).to.have.property('bio');
+        expect(user).to.have.property('imageUrl');
+        done();
+      });
+  });
+  it('should return 404 if endpoint is not found', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/users/facebook/callback/fake endpoint`)
+      .end((err, res) => {
+        const { error, status } = res.body;
+        expect(status).to.equal(404);
+        expect(error).to.equal('Endpoint Not Found');
+        done();
+      });
+  });
+});
+
+describe('Confirms user email', () => {
+  it('Should confirm user email', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/users/confirmEmail?token=${userToken}&id=1`)
+      .end((err, res) => {
+        const { status, message } = res.body;
+        expect(status).to.equal(200);
+        expect(message).to.equal('Email verified successfully');
+        done();
+      });
   });
 
-  describe('Confirms user email', () => {
-    it('Should confirm user email', (done) => {
-      chai.request(app)
-        .get(`${baseUrl}/users/confirmEmail?token=${userToken}&id=1`)
-        .end((err, res) => {
-          const { status, message } = res.body;
-          expect(status).to.equal(200);
-          expect(message).to.equal('Email verified successfully');
-          done();
-        });
-    });
+  it('Should send another email if requested', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/users/confirmEmail?token=${expiredToken}&id=1&resend=true`)
+      .end((err, res) => {
+        const { status, message } = res.body;
+        expect(status).to.equal(200);
+        expect(message).to.equal('Verification link has been sent to your email');
+        done();
+      });
+  });
 
-    it('Should send another email if requested', (done) => {
-      chai.request(app)
-        .get(`${baseUrl}/users/confirmEmail?token=${expiredToken}&id=1&resend=true`)
-        .end((err, res) => {
-          const { status, message } = res.body;
-          expect(status).to.equal(200);
-          expect(message).to.equal('Verification link has been sent to your email');
-          done();
-        });
-    });
+  it('Should return an error for invaild user id', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/users/confirmEmail?token=invalid&id=10000&resend=true`)
+      .end((err, res) => {
+        const { status, error } = res.body;
+        expect(status).to.equal(400);
+        expect(error).to.equal('Unable to send verification email');
+        done();
+      });
+  });
 
-    it('Should return an error for invaild user id', (done) => {
-      chai.request(app)
-        .get(`${baseUrl}/users/confirmEmail?token=invalid&id=10000&resend=true`)
-        .end((err, res) => {
-          const { status, error } = res.body;
-          expect(status).to.equal(400);
-          expect(error).to.equal('Unable to send verification email');
-          done();
-        });
-    });
-
-    it('Should return an error for invalid tokens', (done) => {
-      chai.request(app)
-        .get(`${baseUrl}/users/confirmEmail?token=invalid&id=1`)
-        .end((err, res) => {
-          const { status, error } = res.body;
-          expect(status).to.equal(400);
-          expect(error).to.equal('Unable to verifiy email');
-          done();
-        });
-    });
+  it('Should return an error for invalid tokens', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/users/confirmEmail?token=invalid&id=1`)
+      .end((err, res) => {
+        const { status, error } = res.body;
+        expect(status).to.equal(400);
+        expect(error).to.equal('Unable to verifiy email');
+        done();
+      });
   });
 });

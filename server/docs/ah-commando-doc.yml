@@ -357,6 +357,49 @@ paths:
                 $ref: "#/components/schemas/profile"
         '401':
           description: Authorization error
+  /articles:
+    post:
+      tags:
+        - Articles
+      security:
+        - bearerAuth: []
+      summary: Article created
+      description: Authorized User can create article
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                article:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    articleBody:
+                      type: string
+                    tagList:
+                      type: string
+                    image:
+                      type: string
+      responses:
+        '201':
+          description: Create an Article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+        '400':
+          description: Supplied Wrong or Incomplete inputs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '401':
+          description: Unauthorized user
           content:
             application/json:
               schema:
@@ -367,6 +410,169 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+   
+    get:
+      tags:
+        - Articles
+      summary: get all articles
+      description: user can get all articles
+      responses:
+        '200':
+          description: successfully view all articles
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /articles/{slug}:
+    get:
+      tags:
+        - Articles
+      summary: get a single article
+      description: users can get a single article
+      parameters:
+        - in: path
+          name: slug
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: successfully viewed an articles
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /articles/{slug}/edit:
+    put:
+      tags:
+        - Articles
+      security:
+        - bearerAuth: []
+      summary: Only edit articles created by me
+      description: Only Owner of an Article can edit that article
+      parameters:
+        - in: path
+          name: slug
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                article:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    articleBody:
+                      type: string
+                    tagList:
+                      type: string
+                    image:
+                      type: string
+      responses:
+        '200':
+          description: successfully edit an articles
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /articles/{slug}/:
+    delete:
+      tags:
+        - Articles
+      security:
+        - bearerAuth: []
+      summary: Only delete articles created by me
+      description: Only Owner of an Article can delete that article
+      parameters:
+        - in: path
+          name: slug
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: successfully delete an article
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /image:
+    post:
+      tags:
+        - Image
+      security:
+        - bearerAuth: []
+      summary: Image upload endpoint
+      description: Only authorized users can upload Image
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                article:
+                  type: object
+                  properties:
+                    image:
+                      type: string
+      responses:
+        '200':
+          description: successfully uploaded an image
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse" 
+
+
 
   /profiles/{username}:
     get:
@@ -504,7 +710,6 @@ components:
           type: integer
         message: 
           type: string
-
     profile:
       type: object
       properties:
@@ -524,8 +729,9 @@ components:
           type: boolean
         followers:
           type: object
-
-    article:
+        followings:
+          type: object                 
+    article:    
       type: object
       properties:
         slug:
@@ -538,7 +744,6 @@ components:
           type: string
         tagList:
           type: array
-          items: {}
         createdAt:
           type: string
         updatedAt:
@@ -549,7 +754,11 @@ components:
           type: string
         author:
           type: object
-
+    image:
+      type: object
+      properties:
+        image:
+          type: string  
     errorResponse:
       type: object
       properties:

@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       hooks: true,
       timestamps: false,
     });
+    User.hasMany(models.Article, { foreignKey: 'authorId', onDelete: 'CASCADE' });
   };
   return User;
 };

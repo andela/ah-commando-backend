@@ -4,8 +4,12 @@ import { multerUploads } from './multer';
 
 const { verifyToken, optionalLogin } = Authenticate;
 const {
-  validateLogin, validateUser, validateProfileUpdate, validatePasswordReset,
-  validateEmail,
+  validateLogin,
+  validateUser,
+  validateArticle,
+  validateProfileUpdate,
+  validatePasswordReset,
+  validateEmail
 } = InputValidator;
 
 export default {
@@ -14,6 +18,7 @@ export default {
   validateLogin,
   validateUser,
   validateProfileUpdate,
+  validateArticle,
   validatePasswordReset,
   validateEmail,
   optionalLogin,

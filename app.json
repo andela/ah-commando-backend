@@ -15,6 +15,30 @@
     },
     "CLOUD_API_SECRET": {
       "required": true
+    },
+    "GOOGLE_CLIENT": {
+      "required": true
+    },
+    "GOOGLE_SECRET": {
+      "required": true
+    },
+    "GOOGLE_CALLBACK_URL": {
+      "required": true
+    },
+    "FACEBOOK_CLIENT": {
+      "required": true
+    },
+    "FACEBOOK_SECRET": {
+      "required": true
+    },
+    "FACEBOOK_CALLBACK_URL": {
+      "required": true
+    },
+    "SENDGRID_API_KEY": {
+      "required": true
+    },
+    "SERVER_MAIL": {
+      "required": true
     }
   },
   "formation": {},
