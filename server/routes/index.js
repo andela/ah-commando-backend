@@ -18,8 +18,8 @@ router.get('/', (req, res) => res.status(200).json({
 }));
 
 router.use('*', cloudinaryConfig);
-router.use('/', profileRoute);
 router.use('/users', userRoute);
 router.use('/image', imageRoute);
+router.use('/', profileRoute);
 
 export default router;

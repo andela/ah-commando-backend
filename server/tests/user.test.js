@@ -327,7 +327,7 @@ describe('User tests', () => {
   describe('Handle user reset password', () => {
     let user;
     beforeEach(async () => {
-      user = await model.PasswordResetTokens.findOne({ where: { userId: 2 } });
+      user = await model.PasswordResetTokens.findOne({ where: { userId: 14 } });
     });
     it('Should send a reset mail to a user, if the user\'s email exists', (done) => {
       chai.request(app)
@@ -351,7 +351,7 @@ describe('User tests', () => {
           done();
         });
     });
-    it('Should fail if user email doesn\'t is invalid', (done) => {
+    it('Should fail if user email is invalid', (done) => {
       chai.request(app)
         .post(`${baseUrl}/users/passwordReset`)
         .send({ user: { email: 'idontexistgmail.com' } })
@@ -408,7 +408,7 @@ describe('User tests', () => {
     });
     it('Should pass if token matches user id', (done) => {
       chai.request(app)
-        .put(`${baseUrl}/users/resetPassword/${2}/${user.token}`)
+        .put(`${baseUrl}/users/resetPassword/${14}/${user.token}`)
         .send({ user: { password: 'P@ssword123...x' } })
         .end((err, res) => {
           const { message, status } = res.body;

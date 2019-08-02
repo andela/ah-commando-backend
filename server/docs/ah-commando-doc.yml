@@ -400,6 +400,73 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+  /profiles/{username}/follow:
+    post:
+      tags:
+        - Profiles
+      security:
+        - bearerAuth: []
+      summary: Follow a user
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: Username of the user to follow
+      description: An endpoint to follow a user
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+    delete:
+      tags:
+        - Profiles
+      security:
+        - bearerAuth: []
+      summary: Unfollow a user
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: Username of the user to unfollow
+      description: An endpoint to unfollow a user
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
 components:
   securitySchemes:
     bearerAuth:
@@ -441,7 +508,13 @@ components:
     profile:
       type: object
       properties:
+        firstname:
+            type: string
+        lastname:
+          type: string
         username:
+          type: string
+        email:
           type: string
         bio:
           type: string
@@ -449,6 +522,8 @@ components:
           type: string
         following:
           type: boolean
+        followers:
+          type: object
 
     article:
       type: object
@@ -463,6 +538,7 @@ components:
           type: string
         tagList:
           type: array
+          items: {}
         createdAt:
           type: string
         updatedAt:
