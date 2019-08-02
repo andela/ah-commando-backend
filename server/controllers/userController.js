@@ -253,20 +253,38 @@ class UserController {
 
   /**
    *  @static
-    * @description Get authorised user's profile
+    * @description Gets the logged in user's profile
     * @param {Object} req - Request object
     * @param {Object} res - Response object
     * @returns {Object} object containing the user's profile
     * @memberof UserController
     */
   static async userProfile(req, res) {
-    const { user } = req;
-
+    const { id } = req.user;
+    const attributes = ['id', 'username', 'firstname', 'lastname', 'email', 'bio', 'image'];
+    const userProfile = await models.User.findByPk(id, {
+      attributes,
+      include: [{
+        model: models.User,
+        through: {
+          attributes: []
+        },
+        as: 'followers',
+        attributes,
+      },
+      {
+        model: models.User,
+        through: {
+          attributes: []
+        },
+        as: 'followings',
+        attributes,
+      }],
+    });
     return successStat(res, 200, 'profile', {
-      username: user.username,
-      bio: user.bio,
-      image: user.image,
-      following: user.following
+      ...userProfile.dataValues,
+      followerCount: await userProfile.countFollowers(),
+      followingCount: await userProfile.countFollowings(),
     });
   }
 
@@ -279,28 +297,48 @@ class UserController {
     * @memberof UserController
     */
   static async getAuserProfile(req, res) {
-    const { username } = req.params;
+    const { params: { username }, user } = req;
+    const attributes = ['id', 'username', 'firstname', 'lastname', 'email', 'bio', 'image'];
+    const userProfile = await models.User.findOne({
+      where: {
+        username,
+      },
+      attributes,
+      include: [{
+        model: models.User,
+        through: {
+          attributes: []
+        },
+        as: 'followers',
+        attributes,
+      },
+      {
+        model: models.User,
+        through: {
+          attributes: []
+        },
+        as: 'followings',
+        attributes,
+      }],
+    });
 
-    const user = await models.User.findOne({ where: { username } });
-
-    if (!user) return errorStat(res, 404, 'No user found');
-
+    if (!userProfile) return errorStat(res, 404, 'User not found');
     return successStat(res, 200, 'profile', {
-      username: user.username,
-      bio: user.bio,
-      image: user.image,
-      following: user.following
+      ...userProfile.dataValues,
+      followerCount: await userProfile.countFollowers(),
+      followingCount: await userProfile.countFollowings(),
+      following: user === undefined ? undefined : await userProfile.hasFollower(user.id),
     });
   }
 
   /**
-  * @static
-  * @description Edit user's profile
-  * @param {Object} req - Request object
-  * @param {Object} res - Response object
-  * @returns {Object} object containing the user's profile
-  * @memberof UserController
-  */
+    * @static
+    * @description Edit user's profile
+    * @param {Object} req - Request object
+    * @param {Object} res - Response object
+    * @returns {Object} object containing the user's profile
+    * @memberof UserController
+    */
   static async editProfile(req, res) {
     const { id } = req.user;
     const {
@@ -319,6 +357,32 @@ class UserController {
       bio: updatedProfile.bio,
       image: updatedProfile.image,
     });
+  }
+
+  /**
+    * @static
+    * @description Allows a user to follow/unfollow another user
+    * @param {Object} req - Request object
+    * @param {Object} res - Response object
+    * @returns {Object} sucess message
+    * @memberof UserController
+    */
+  static async follow(req, res) {
+    const { params: { username }, user: { id }, method } = req;
+    const user = await models.User.findOne({ where: { username } });
+    if (!user) return errorStat(res, 404, `User with username: ${username} not found`);
+    if (user.id === req.user.id) return errorStat(res, 400, `You cannot ${method === 'POST' ? '' : 'un'}follow yourself`);
+    const following = await user.hasFollower(id);
+
+    if (method === 'POST') {
+      if (following) return errorStat(res, 400, `Already following ${username}`);
+      await user.addFollower(id);
+    } else {
+      if (!following) return errorStat(res, 400, `You are not following ${username}`);
+      await user.removeFollower(id);
+    }
+
+    return successStat(res, 200, 'message', 'successful');
   }
 }
 

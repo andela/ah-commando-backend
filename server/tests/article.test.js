@@ -17,17 +17,8 @@ const baseUrl = '/api/v1';
 const wrongToken = 'wrongtoken';
 
 
-// let upload;
 let userToken;
-// beforeEach(() => {
-//   upload = sinon.stub(uploader, 'upload').returns(() => 'andela.png');
-// });
-
-// afterEach(() => {
-//   upload.restore();
-// });
 describe('Article test', () => {
-  // let userToken;
   before((done) => {
     chai
       .request(app)
@@ -77,7 +68,7 @@ describe('Article test', () => {
 
   it('should not create an article if the supplied ID is wrong', (done) => {
     const user = jwt.verify(userToken, process.env.SECRET_KEY, { expiresIn: '1h' });
-    user.id = 9;
+    user.id = 2560;
     const newToken = jwt.sign(user, process.env.SECRET_KEY);
     chai
       .request(app)

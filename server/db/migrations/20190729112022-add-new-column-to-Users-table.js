@@ -1,5 +1,3 @@
-/* eslint-disable require-jsdoc */
-// eslint-disable-next-line import/prefer-default-export
 module.exports = {
   up: async (queryInterface, Sequelize) => [
     await queryInterface.addColumn('Users', 'socialId', {

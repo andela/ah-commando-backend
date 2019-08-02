@@ -355,7 +355,7 @@ describe('User tests', () => {
           done();
         });
     });
-    it('Should fail if user email doesn\'t is invalid', (done) => {
+    it('Should fail if user email is invalid', (done) => {
       chai.request(app)
         .post(`${baseUrl}/users/passwordReset`)
         .send({ user: { email: 'idontexistgmail.com' } })
