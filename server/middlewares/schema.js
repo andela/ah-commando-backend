@@ -238,10 +238,17 @@ export const resetPasswordSchema = {
       return errors;
     })
 };
+
 export const resetEmailSchema = {
   email: Joi.string()
     .trim()
     .lowercase()
     .email({ minDomainSegments: 2 })
     .required()
+};
+
+export const ratingSchema = {
+  articleId: Joi.number().required(),
+  rate: Joi.number().required(),
+  description: Joi.string()
 };

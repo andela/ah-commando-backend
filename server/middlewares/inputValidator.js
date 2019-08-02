@@ -4,7 +4,8 @@ import {
   profileSchema,
   articleSchema,
   resetPasswordSchema,
-  resetEmailSchema
+  resetEmailSchema,
+  ratingSchema
 } from './schema';
 import validate from '../helpers/validate';
 
@@ -25,6 +26,20 @@ class InputValidator {
   static validateUser(req, res, next) {
     const user = { ...req.body.user };
     return validate(user, userSchema, req, res, next);
+  }
+
+  /**
+   * @method validateUser
+   * @description Validates user details on signup
+   * @param {object} req - The Request Object
+   * @param {object} res - The Response Object
+   * @param {function} next - The next function to point to the next middleware
+   * @returns {function} validate() - An execucted validate function
+   */
+  static validateRating(req, res, next) {
+    const { articleId } = req.params;
+    const { rate, description } = req.body.rating;
+    return validate({ articleId, rate, description }, ratingSchema, req, res, next);
   }
 
   /**

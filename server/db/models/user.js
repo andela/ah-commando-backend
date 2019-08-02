@@ -12,7 +12,10 @@ module.exports = (sequelize, DataTypes) => {
     following: DataTypes.BOOLEAN,
   }, {});
   User.associate = (models) => {
-    User.hasMany(models.Article, { foreignKey: 'authorId', onDelete: 'CASCADE' });
+    User.hasMany(models.Article, { foreignKey: 'authorId', onDelete: 'CASCADE', timestamps: false });
+    User.hasMany(models.Rating, {
+      foreignKey: 'userId', as: 'rating', timestamps: false, onDelete: 'CASCADE'
+    });
   };
   return User;
 };

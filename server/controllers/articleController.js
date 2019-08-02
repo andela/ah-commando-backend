@@ -1,7 +1,9 @@
 import uuid from 'uuid';
 import sequelize from 'sequelize';
 import models from '../db/models';
-import utils from '../helpers/Utilities';
+import helpers from '../helpers';
+
+const { successStat, errorStat } = helpers;
 
 const { Op } = sequelize;
 /**
@@ -64,7 +66,7 @@ class ArticleController {
       bio: userDetails.User.bio,
       image: userDetails.User.image
     };
-    return utils.successStat(res, 201, 'articles', article);
+    return successStat(res, 201, 'articles', article);
   }
 
   /**
@@ -76,7 +78,7 @@ class ArticleController {
    */
   static async getAllArticles(req, res) {
     const articles = await models.Article.findAll();
-    return utils.successStat(res, 200, 'articles', articles);
+    return successStat(res, 200, 'articles', articles);
   }
 
   /**
@@ -91,9 +93,9 @@ class ArticleController {
       where: { slug: req.params.slug }
     });
     if (!article) {
-      return utils.errorStat(res, 404, 'Article not found');
+      return errorStat(res, 404, 'Article not found');
     }
-    return utils.successStat(res, 200, 'article', article);
+    return successStat(res, 200, 'article', article);
   }
 
   /**
@@ -126,11 +128,11 @@ class ArticleController {
     );
 
     if (editedArticle[1].length < 1) {
-      return utils.errorStat(res, 404, 'Article not found');
+      return errorStat(res, 404, 'Article not found');
     }
 
     const article = editedArticle[1][editedArticle[1].length - 1].dataValues;
-    return utils.successStat(res, 200, 'article', article);
+    return successStat(res, 200, 'article', article);
   }
 
   /**
@@ -147,14 +149,41 @@ class ArticleController {
     });
 
     if (!deletedArticle) {
-      return utils.errorStat(res, 404, 'Article not found');
+      return errorStat(res, 404, 'Article not found');
     }
-    return utils.successStat(
+    return successStat(
       res,
       200,
       'message',
       'Article deleted successfully'
     );
+  }
+
+  /**
+   * @description Allows the user to rate an article
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @returns {String} returns a message indicating that the article was deleted
+   * @memberof ArticleController
+   */
+  static async rateArticle(req, res) {
+    const { body: { rating: { rate, articleId, description } }, user } = req;
+    const theUser = await models.User.findByPk(user.id);
+    const hasArticle = await theUser.hasArticle(articleId);
+    console.log(user.id);
+    if (hasArticle) {
+      return errorStat(res, 400, 'Cannot rate own Article!');
+    }
+    try {
+      const userRating = await theUser.createRating({
+        ratings: rate,
+        articleId,
+        description
+      });
+      successStat(res, 201, 'User Rating', userRating);
+    } catch (err) {
+      errorStat(res, 200, 'Rating already Recorded');
+    }
   }
 }
 

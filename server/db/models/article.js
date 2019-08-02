@@ -29,7 +29,10 @@ module.exports = (sequelize, DataTypes) => {
     slugOptions: { lower: true }
   });
   Article.associate = function (models) {
-    Article.belongsTo(models.User, { foreignKey: 'id', onDelete: 'CASCADE' });
+    Article.belongsTo(models.User, { foreignKey: 'id', onDelete: 'CASCADE', timestamps: false });
+    Article.hasMany(models.Rating, {
+      foreignKey: 'articleId', as: 'rating', onDelete: 'CASCADE', timestamps: false
+    });
   };
   return Article;
 };
