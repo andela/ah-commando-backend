@@ -161,6 +161,7 @@ const user = [
       password: 'password'
     }
   },
+  // 18
   {
     user: {
       firstname: 'testProfile',
@@ -170,10 +171,28 @@ const user = [
       password: 'a@Hcommando1'
     }
   },
+  // 19
   {
     user: {
       email: 'testProfile@testdomain.testcom',
       password: 'a@Hcommando1'
+    }
+  },
+  // user correct details 20
+  {
+    user: {
+      firstname: 'test',
+      lastname: 'testlastname',
+      username: 'testingusername',
+      email: 'test@testerdomain.com',
+      password: 'P@ssword123'
+    }
+  },
+  // user login 21
+  {
+    user: {
+      email: 'test@testerdomain.com',
+      password: 'P@ssword123'
     }
   }
 ];
