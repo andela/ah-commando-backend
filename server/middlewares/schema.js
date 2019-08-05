@@ -172,7 +172,6 @@ export const resetEmailSchema = {
     .email({ minDomainSegments: 2 })
     .required()
 };
-
 export const commentBodySchema = {
   comment: Joi.string()
     .trim()
@@ -212,6 +211,7 @@ export const idSchema = {
 export const reportArticleSchema = {
   reportId: Joi.number()
 };
+
 
 export const highlightDataSchema = {
   id: Joi.number().integer().required().min(1),

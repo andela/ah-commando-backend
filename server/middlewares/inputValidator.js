@@ -165,6 +165,7 @@ class InputValidator {
     return validate(reportId, reportArticleSchema, req, res, next);
   }
 
+
   /**
    * @method validateHighlightdata
    * @description Validate the highligh data as given from the frontend

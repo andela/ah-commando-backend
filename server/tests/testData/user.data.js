@@ -194,75 +194,7 @@ const user = [
       email: 'test@testerdomain.com',
       password: 'P@ssword123'
     }
-  },
-  // user correct details 22
-  {
-    user: {
-      firstname: 'favour',
-      lastname: 'elemoku',
-      username: 'elemf',
-      email: 'elem@test.com',
-      password: 'P@ssword123'
-    }
-  },
-  // user login 23
-  {
-    user: {
-      email: 'elem@test.com',
-      password: 'P@ssword123'
-    }
-  },
-  // user correct details 24
-  {
-    user: {
-      firstname: 'favour',
-      lastname: 'elemoku',
-      username: 'elemfavoe',
-      email: 'elesm@test.com',
-      password: 'P@ssword123'
-    }
-  },
-  // login data 25
-  {
-    user: {
-      email: 'elesm@test.com',
-      password: 'P@ssword123'
-    }
-  },
-  // sign up 26
-  {
-    user: {
-      firstname: 'favour',
-      lastname: 'elemoku',
-      username: 'elemavoe',
-      email: 'em@test.com',
-      password: 'P@ssword123'
-    }
-  },
-  // login data 27
-  {
-    user: {
-      email: 'em@test.com',
-      password: 'P@ssword123'
-    }
-  },
-  // sign up 28
-  {
-    user: {
-      firstname: 'mike',
-      lastname: 'elemoku',
-      username: 'mikeelems',
-      email: 'mikeelems@test.com',
-      password: 'P@ssword123'
-    }
-  },
-  // login data 29
-  {
-    user: {
-      email: 'mikeelems@test.com',
-      password: 'P@ssword123'
-    }
-  },
+  }
 ];
 
 export default user;

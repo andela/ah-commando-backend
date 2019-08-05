@@ -10,7 +10,7 @@ chai.use(chaiHttp);
 const baseUrl = '/api/v1';
 
 describe('Handle Comment', () => {
-  let userToken, postId, commentId, anotherUserToken;
+  let userToken, postId, anotherUserToken, commentId;
   before('sign up a user', (done) => {
     chai
       .request(app)
@@ -24,7 +24,15 @@ describe('Handle Comment', () => {
     chai
       .request(app)
       .post(`${baseUrl}/users/`)
-      .send(userData[28])
+      .send({
+        user: {
+          firstname: 'nopost',
+          lastname: 'nopost',
+          username: 'nopostuser',
+          email: 'test@testingdomain.com',
+          password: 'P@ssword123...x',
+        }
+      })
       .end(() => {
         done();
       });
@@ -44,7 +52,12 @@ describe('Handle Comment', () => {
       chai
         .request(app)
         .post(`${baseUrl}/users/login`)
-        .send(userData[29])
+        .send({
+          user: {
+            email: 'test@testingdomain.com',
+            password: 'P@ssword123...x',
+          }
+        })
         .end((err, res) => {
           anotherUserToken = res.body.user.token;
           done();

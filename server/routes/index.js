@@ -5,7 +5,6 @@ import userRoute from './user';
 import profileRoute from './profile';
 import articleRoute from './article';
 import imageRoute from './image';
-import bookmarkRoute from './bookmark';
 import commentRouter from './comment';
 import likesRouter from './likes';
 import notificationRoute from './notification';
@@ -28,7 +27,10 @@ router.use('/users', userRoute);
 router.use('/articles', articleRoute);
 router.use('/image', imageRoute);
 router.use('/', profileRoute);
+<<<<<<< HEAD
 router.use('/user', bookmarkRoute);
+=======
+>>>>>>> feat(comments): user comments
 router.use('/comment', commentRouter);
 router.use('/likes', likesRouter);
 router.use('/notifications', notificationRoute);
