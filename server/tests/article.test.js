@@ -1,5 +1,6 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import chaiInteger from 'chai-integer';
 import jwt from 'jsonwebtoken';
 import path from 'path';
 import dotenv from 'dotenv';
@@ -10,6 +11,8 @@ import articleData from './testData/article.data';
 dotenv.config();
 const { expect } = chai;
 chai.use(chaiHttp);
+chai.use(chaiInteger);
+
 const baseUrl = '/api/v1';
 const wrongToken = 'wrongtoken';
 
@@ -86,8 +89,10 @@ describe('Article test', () => {
       .set('Authorization', `Bearer ${userToken}`)
       .send(articleData[0])
       .end((err, res) => {
-        const { status } = res.body;
+        const { status, articles } = res.body;
         expect(status).to.equal(201);
+        expect(articles).to.have.property('readTime');
+        expect(articles.readTime).to.be.an.integer();
         done();
       });
   });
@@ -298,7 +303,7 @@ describe('Article test', () => {
       });
   });
 
-  it('wrong title format: should throw an error if title has incorrect format', (done) => {
+  it('wrong taglist format: should throw an error if description has incorrect format', (done) => {
     chai
       .request(app)
       .post(`${baseUrl}/articles`)
@@ -307,62 +312,7 @@ describe('Article test', () => {
       .end((err, res) => {
         const { status, error } = res.body;
         expect(status).to.equal(400);
-        expect(error[0]).to.equal('title must not contain special character');
-        done();
-      });
-  });
-
-  it('wrong description format: should throw an error if description has incorrect format', (done) => {
-    chai
-      .request(app)
-      .post(`${baseUrl}/articles`)
-      .set('Authorization', `Bearer ${userToken}`)
-      .send(articleData[7])
-      .end((err, res) => {
-        const { status, error } = res.body;
-        expect(status).to.equal(400);
-        expect(error[0]).to.equal('description must not contain special character');
-        done();
-      });
-  });
-
-  it('wrong articleBody format: should throw an error if articleBody has incorrect format', (done) => {
-    chai
-      .request(app)
-      .post(`${baseUrl}/articles`)
-      .set('Authorization', `Bearer ${userToken}`)
-      .send(articleData[8])
-      .end((err, res) => {
-        const { status, error } = res.body;
-        expect(status).to.equal(400);
-        expect(error[0]).to.equal('article body follows the wrong format');
-        done();
-      });
-  });
-
-  it('wrong taglist format: should throw an error if description has incorrect format', (done) => {
-    chai
-      .request(app)
-      .post(`${baseUrl}/articles`)
-      .set('Authorization', `Bearer ${userToken}`)
-      .send(articleData[9])
-      .end((err, res) => {
-        const { status, error } = res.body;
-        expect(status).to.equal(400);
         expect(error[0]).to.equal('taglist does not follow the specified format');
-        done();
-      });
-  });
-
-  it('empty title', (done) => {
-    chai
-      .request(app)
-      .post(`${baseUrl}/articles`)
-      .set('Authorization', `Bearer ${userToken}`)
-      .send(articleData[10])
-      .end((err, res) => {
-        const { status } = res.body;
-        expect(status).to.equal(400);
         done();
       });
   });

@@ -414,7 +414,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
-   
+
     get:
       tags:
         - Articles
@@ -576,7 +576,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/errorResponse" 
+                $ref: "#/components/schemas/errorResponse"
   /profiles/{username}:
     get:
       tags:
@@ -752,9 +752,9 @@ components:
     password:
       type: object
       properties:
-        status: 
+        status:
           type: integer
-        message: 
+        message:
           type: string
     profile:
       type: object
@@ -776,8 +776,8 @@ components:
         followers:
           type: object
         followings:
-          type: object                 
-    article:    
+          type: object
+    article:
       type: object
       properties:
         slug:
@@ -800,11 +800,13 @@ components:
           type: string
         author:
           type: object
+        readTime:
+          type: number
     image:
       type: object
       properties:
         image:
-          type: string  
+          type: string
     errorResponse:
       type: object
       properties:

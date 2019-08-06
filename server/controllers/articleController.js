@@ -24,20 +24,19 @@ class ArticleController {
       description,
       tagList,
       articleBody,
-      favorited,
-      favoriteCounts,
       image
     } = req.body.article;
+    const readTime = Math.floor(articleBody.split(' ').length / 200);
+
     const article = await models.Article.create({
       title,
       description,
       tagList,
       articleBody,
-      favorited,
       uuid: uuid.v1().split('-')[0],
-      favoriteCounts,
       authorId: req.user.id,
-      image
+      image,
+      readTime
     });
     article.tagList = [...article.dataValues.tagList.split(' ')];
     return utils.successStat(res, 201, 'articles', article);

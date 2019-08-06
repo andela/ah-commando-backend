@@ -104,42 +104,15 @@ export const loginSchema = {
 export const articleSchema = {
   title: Joi.string()
     .trim()
-    .required()
-    .regex(/^[a-zA-Z0-9\ \-]+$/)
-    .error((errors) => {
-      errors.forEach((err) => {
-        if (err.type === 'string.regex.base') {
-          err.message = 'title must not contain special character';
-        }
-      });
-      return errors;
-    }),
+    .required(),
 
   description: Joi.string()
     .trim()
-    .required()
-    .regex(/^[a-zA-Z0-9\ \-]+$/)
-    .error((errors) => {
-      errors.forEach((err) => {
-        if (err.type === 'string.regex.base') {
-          err.message = 'description must not contain special character';
-        }
-      });
-      return errors;
-    }),
+    .required(),
 
   articleBody: Joi.string()
     .trim()
-    .required()
-    .regex(/^[a-zA-Z0-9\ \-]+$/)
-    .error((errors) => {
-      errors.forEach((err) => {
-        if (err.type === 'string.regex.base') {
-          err.message = 'article body follows the wrong format';
-        }
-      });
-      return errors;
-    }),
+    .required(),
 
   tagList: Joi.string()
     .required()
