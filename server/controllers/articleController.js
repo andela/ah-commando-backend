@@ -2,8 +2,10 @@ import uuid from 'uuid';
 import sequelize from 'sequelize';
 import models from '../db/models';
 import utils from '../helpers/Utilities';
+import Paginate from '../helpers/paginate';
 
 const { Op } = sequelize;
+const { paginateArticles } = Paginate;
 /**
  * @Module ArticleController
  * @description Controlls all activities related to Articles
@@ -26,7 +28,6 @@ class ArticleController {
       favoriteCounts,
       image
     } = req.body.article;
-
     const article = await models.Article.create({
       title,
       description,
@@ -38,32 +39,7 @@ class ArticleController {
       authorId: req.user.id,
       image
     });
-    const userData = await models.Article.findOne({
-      where: { authorId: req.user.id },
-      include: [
-        {
-          model: models.User,
-          attributes: {
-            exclude: [
-              'id',
-              'createdAt',
-              'updatedAt',
-              'firstname',
-              'lastname',
-              'password'
-            ]
-          }
-        }
-      ]
-    });
-    const userDetails = JSON.parse(JSON.stringify(userData));
     article.tagList = [...article.dataValues.tagList.split(' ')];
-    article.author = {
-      username: userDetails.User.username,
-      email: userDetails.User.email,
-      bio: userDetails.User.bio,
-      image: userDetails.User.image
-    };
     return utils.successStat(res, 201, 'articles', article);
   }
 
@@ -75,8 +51,14 @@ class ArticleController {
    * @memberof ArticleController
    */
   static async getAllArticles(req, res) {
-    const articles = await models.Article.findAll();
-    return utils.successStat(res, 200, 'articles', articles);
+    const { page, limit } = req.query;
+    if (!page && !limit) {
+      const articles = await models.Article.findAll({
+        include: [{ model: models.User, as: 'author', attributes: ['firstname', 'lastname', 'username', 'image', 'email'] }]
+      });
+      return utils.successStat(res, 200, 'articles', articles);
+    }
+    paginateArticles(req, res);
   }
 
   /**
@@ -87,13 +69,23 @@ class ArticleController {
    * @memberof ArticleController
    */
   static async getOneArticle(req, res) {
+    const { slug } = req.params;
     const article = await models.Article.findOne({
-      where: { slug: req.params.slug }
+      where: {
+        slug,
+      },
+      include: [{
+        model: models.User,
+        as: 'author',
+        attributes: ['firstname', 'lastname', 'username', 'image', 'email']
+      }]
     });
     if (!article) {
       return utils.errorStat(res, 404, 'Article not found');
     }
-    return utils.successStat(res, 200, 'article', article);
+    let comments = await article.getComment();
+    comments = Object.values(comments).map(comment => comment.dataValues);
+    return utils.successStat(res, 200, 'article', { article, comments, noOfComments: comments.length });
   }
 
   /**
@@ -121,7 +113,9 @@ class ArticleController {
       },
       {
         returning: true,
-        where: { [Op.and]: [{ slug: req.params.slug }] }
+        where: {
+          [Op.and]: [{ slug: req.params.slug }, { authorId: req.user.id }]
+        }
       }
     );
 
@@ -143,7 +137,9 @@ class ArticleController {
   static async deleteArticle(req, res) {
     const deletedArticle = await models.Article.destroy({
       returning: true,
-      where: { [Op.and]: [{ slug: req.params.slug }] }
+      where: {
+        [Op.and]: [{ slug: req.params.slug }, { authorId: req.user.id }]
+      }
     });
 
     if (!deletedArticle) {

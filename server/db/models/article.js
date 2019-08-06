@@ -14,7 +14,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         unique: true
       },
-      author: DataTypes.JSON,
       favorited: DataTypes.BOOLEAN,
       favoriteCounts: DataTypes.INTEGER,
       image: DataTypes.STRING,
@@ -36,6 +35,10 @@ module.exports = (sequelize, DataTypes) => {
     Article.hasMany(models.Bookmark, {
       foreignKey: 'articleId',
       onDelete: 'CASCADE'
+    });
+    Article.belongsTo(models.User, { as: 'author', foreignKey: 'authorId', onDelete: 'CASCADE' });
+    Article.hasMany(models.Comment, {
+      foreignKey: 'articleId', onDelete: 'CASCADE', as: 'comment', hooks: true
     });
   };
   return Article;
