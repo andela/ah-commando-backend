@@ -1,10 +1,7 @@
-/* eslint-disable no-useless-escape */
 import chai from 'chai';
 import chaiHttp from 'chai-http';
-// import sinon from 'sinon';
 import jwt from 'jsonwebtoken';
 import path from 'path';
-// import { uploader } from 'cloudinary';
 import dotenv from 'dotenv';
 import app from '../index';
 import articleData from './testData/article.data';
@@ -108,10 +105,59 @@ describe('Article test', () => {
       });
   });
 
+  it('should get all articles with pagination', (done) => {
+    chai
+      .request(app)
+      .get(`${baseUrl}/articles/?limit=1&page=1`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .end((err, res) => {
+        const { status } = res.body;
+        expect(status).to.equal(200);
+        done();
+      });
+  });
+
+  it('should get all articles with pagination if no limit is provided', (done) => {
+    chai
+      .request(app)
+      .get(`${baseUrl}/articles/?page=1`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .end((err, res) => {
+        const { status } = res.body;
+        expect(status).to.equal(200);
+        done();
+      });
+  });
+
+  it('should return a 404 if a page that does not exist is entered', (done) => {
+    chai
+      .request(app)
+      .get(`${baseUrl}/articles/?limit=1&page=1500`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .end((err, res) => {
+        const { status } = res.body;
+        expect(status).to.equal(404);
+        done();
+      });
+  });
+
+  it('should get all articles with pagination if no page is provided', (done) => {
+    chai
+      .request(app)
+      .get(`${baseUrl}/articles/?limit=1`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .end((err, res) => {
+        const { status } = res.body;
+        expect(status).to.equal(200);
+        done();
+      });
+  });
+
+
   it('should get a single article', (done) => {
     chai
       .request(app)
-      .get(`${baseUrl}/articles/${articleData[0].article.slug}`)
+      .get(`${baseUrl}/articles/this-is-the-first-title`)
       .set('Authorization', `Bearer ${userToken}`)
       .end((err, res) => {
         const { status } = res.body;
@@ -135,7 +181,7 @@ describe('Article test', () => {
   it('should edit a single article', (done) => {
     chai
       .request(app)
-      .put(`${baseUrl}/articles/${articleData[0].article.slug}/edit`)
+      .put(`${baseUrl}/articles/this-is-the-first-title/edit`)
       .send({ article: { title: 'new title' } })
       .set('Authorization', `Bearer ${userToken}`)
       .end((err, res) => {
@@ -161,7 +207,7 @@ describe('Article test', () => {
   it('should delete an article', (done) => {
     chai
       .request(app)
-      .delete(`${baseUrl}/articles/${articleData[0].article.slug}`)
+      .delete(`${baseUrl}/articles/this-is-the-first-title`)
       .set('Authorization', `Bearer ${userToken}`)
       .end((err, res) => {
         const { status } = res.body;
@@ -224,7 +270,7 @@ describe('Article test', () => {
       });
   });
 
-  it('not boolean favorited: should throw an error if favorited is not a boolean', (done) => {
+  it('no tagList: should throw an error if tagList is not provided', (done) => {
     chai
       .request(app)
       .post(`${baseUrl}/articles`)
@@ -233,35 +279,7 @@ describe('Article test', () => {
       .end((err, res) => {
         const { status, error } = res.body;
         expect(status).to.equal(400);
-        expect(error[0]).to.equal('favorited must be a boolean');
-        done();
-      });
-  });
-
-  it('no tagList: should throw an error if tagList is not provided', (done) => {
-    chai
-      .request(app)
-      .post(`${baseUrl}/articles`)
-      .set('Authorization', `Bearer ${userToken}`)
-      .send(articleData[5])
-      .end((err, res) => {
-        const { status, error } = res.body;
-        expect(status).to.equal(400);
         expect(error[0]).to.equal('tagList is required');
-        done();
-      });
-  });
-
-  it('favoriteCounts is  not an integer: should throw an error if favoriteCounts is not an integer', (done) => {
-    chai
-      .request(app)
-      .post(`${baseUrl}/articles`)
-      .set('Authorization', `Bearer ${userToken}`)
-      .send(articleData[6])
-      .end((err, res) => {
-        const { status, error } = res.body;
-        expect(status).to.equal(400);
-        expect(error[0]).to.equal('favoriteCounts must be a number');
         done();
       });
   });
@@ -271,53 +289,11 @@ describe('Article test', () => {
       .request(app)
       .post(`${baseUrl}/articles`)
       .set('Authorization', `Bearer ${userToken}`)
-      .send(articleData[7])
+      .send(articleData[5])
       .end((err, res) => {
         const { status, error } = res.body;
         expect(status).to.equal(400);
         expect(error[0]).to.equal('image is required');
-        done();
-      });
-  });
-
-  it('wrong title format: should throw an error if title has incorrect format', (done) => {
-    chai
-      .request(app)
-      .post(`${baseUrl}/articles`)
-      .set('Authorization', `Bearer ${userToken}`)
-      .send(articleData[8])
-      .end((err, res) => {
-        const { status, error } = res.body;
-        expect(status).to.equal(400);
-        expect(error[0]).to.equal('title must not contain special character');
-        done();
-      });
-  });
-
-  it('wrong description format: should throw an error if description has incorrect format', (done) => {
-    chai
-      .request(app)
-      .post(`${baseUrl}/articles`)
-      .set('Authorization', `Bearer ${userToken}`)
-      .send(articleData[9])
-      .end((err, res) => {
-        const { status, error } = res.body;
-        expect(status).to.equal(400);
-        expect(error[0]).to.equal('description must not contain special character');
-        done();
-      });
-  });
-
-  it('wrong articleBody format: should throw an error if articleBody has incorrect format', (done) => {
-    chai
-      .request(app)
-      .post(`${baseUrl}/articles`)
-      .set('Authorization', `Bearer ${userToken}`)
-      .send(articleData[10])
-      .end((err, res) => {
-        const { status, error } = res.body;
-        expect(status).to.equal(400);
-        expect(error[0]).to.equal('article body follows the wrong format');
         done();
       });
   });
@@ -327,7 +303,7 @@ describe('Article test', () => {
       .request(app)
       .post(`${baseUrl}/articles`)
       .set('Authorization', `Bearer ${userToken}`)
-      .send(articleData[11])
+      .send(articleData[6])
       .end((err, res) => {
         const { status, error } = res.body;
         expect(status).to.equal(400);
@@ -336,33 +312,7 @@ describe('Article test', () => {
       });
   });
 
-  it('empty title', (done) => {
-    chai
-      .request(app)
-      .post(`${baseUrl}/articles`)
-      .set('Authorization', `Bearer ${userToken}`)
-      .send(articleData[12])
-      .end((err, res) => {
-        const { status } = res.body;
-        expect(status).to.equal(400);
-        done();
-      });
-  });
-
-  it('special character in title', (done) => {
-    chai
-      .request(app)
-      .post(`${baseUrl}/articles`)
-      .set('Authorization', `Bearer ${userToken}`)
-      .send(articleData[13])
-      .end((err, res) => {
-        const { status } = res.body;
-        expect(status).to.equal(400);
-        done();
-      });
-  });
-
-  it('should', (done) => {
+  it('Should upload Image successfully to cloudinary', (done) => {
     chai
       .request(app)
       .post(`${baseUrl}/image`)

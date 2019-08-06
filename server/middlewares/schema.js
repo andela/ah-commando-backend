@@ -104,42 +104,15 @@ export const loginSchema = {
 export const articleSchema = {
   title: Joi.string()
     .trim()
-    .required()
-    .regex(/^[a-zA-Z0-9\ \-]+$/)
-    .error((errors) => {
-      errors.forEach((err) => {
-        if (err.type === 'string.regex.base') {
-          err.message = 'title must not contain special character';
-        }
-      });
-      return errors;
-    }),
+    .required(),
 
   description: Joi.string()
     .trim()
-    .required()
-    .regex(/^[a-zA-Z0-9\ \-]+$/)
-    .error((errors) => {
-      errors.forEach((err) => {
-        if (err.type === 'string.regex.base') {
-          err.message = 'description must not contain special character';
-        }
-      });
-      return errors;
-    }),
+    .required(),
 
   articleBody: Joi.string()
     .trim()
-    .required()
-    .regex(/^[a-zA-Z0-9\ \-]+$/)
-    .error((errors) => {
-      errors.forEach((err) => {
-        if (err.type === 'string.regex.base') {
-          err.message = 'article body follows the wrong format';
-        }
-      });
-      return errors;
-    }),
+    .required(),
 
   tagList: Joi.string()
     .required()
@@ -153,53 +126,8 @@ export const articleSchema = {
       return errors;
     }),
 
-  favoriteCounts: Joi.number().error((errors) => {
-    errors.forEach((err) => {
-      /* istanbul ignore next */
-      if (err) {
-        err.message = 'favoriteCounts must be a number';
-      }
-    });
-    return errors;
-  }),
-
-  favorited: Joi.boolean().error((errors) => {
-    /* istanbul ignore next */
-    errors.forEach((err) => {
-      if (err) {
-        err.message = 'favorited must be a boolean';
-      }
-    });
-    return errors;
-  }),
-
   image: Joi.string()
     .required()
-    /* istanbul ignore next */
-    .error((errors) => {
-      errors.forEach((err) => {
-        /* istanbul ignore next */
-        if (err) {
-          err.message = 'image is required';
-        }
-      });
-      return errors;
-    }),
-
-  slug: Joi.string()
-    .lowercase()
-    .error((errors) => {
-      /* istanbul ignore next */
-      errors.forEach((err) => {
-        /* istanbul ignore next */
-        if (err) {
-          /* istanbul ignore next */
-          err.message = 'slug is wrong';
-        }
-      });
-      /* istanbul ignore next */
-      return errors;
-    })
 };
 
 export const profileSchema = {
