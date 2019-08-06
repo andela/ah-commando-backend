@@ -206,8 +206,40 @@ paths:
         - Profiles
       security:
         - bearerAuth: []
-      summary: User's profile
+      summary: Get an Authorised User's profile
       description: The endpoint to get authorised user's profile
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/profile"
+        '401':
+          description: Authorization error
+
+    put:
+      tags:
+        - Profiles
+      security:
+        - bearerAuth: []
+      summary: Edit User's profile
+      description: The endpoint to edit user's profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    bio:
+                      type: string
+                    email:
+                      type: string
+                    image:
+                      type: string
       responses:
         '200':
           description: Success
@@ -363,6 +395,11 @@ paths:
                 $ref: "#/components/schemas/profile"
         '401':
           description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+
   /articles:
     post:
       tags:
@@ -437,6 +474,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+ 
   /articles/{slug}:
     get:
       tags:
@@ -464,6 +502,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+  
   /articles/{slug}/edit:
     put:
       tags:
@@ -513,6 +552,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+ 
   /articles/{slug}/:
     delete:
       tags:
@@ -542,6 +582,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
   /image:
     post:
       tags:
@@ -557,14 +598,16 @@ paths:
             schema:
               type: object
               properties:
-                article:
-                  type: object
-                  properties:
-                    image:
-                      type: string
+                image:
+                  type: string
+                  format: binary
       responses:
         '200':
           description: successfully uploaded an image
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
         '401':
           description: Unauthorized
           content:
@@ -577,8 +620,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
-
-
 
   /profiles/{username}:
     get:
@@ -612,6 +653,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
   /profiles/{username}/follow:
     post:
       tags:
@@ -646,6 +688,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
     delete:
       tags:
         - Profiles
@@ -679,6 +722,51 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
+  /comment/{postId}/:
+    post:
+      tags:
+        - Articles
+      security:
+        - bearerAuth: []
+      summary: comment on an article
+      parameters:
+        - in: path
+          name: postId
+          schema:
+            type: integer
+          required: true
+          description: Id of the post to comment on
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string
+      description: An endpoint to make a comment on Articles
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  
 components:
   securitySchemes:
     bearerAuth:

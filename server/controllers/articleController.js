@@ -24,8 +24,6 @@ class ArticleController {
       description,
       tagList,
       articleBody,
-      favorited,
-      favoriteCounts,
       image
     } = req.body.article;
     const article = await models.Article.create({
@@ -33,9 +31,7 @@ class ArticleController {
       description,
       tagList,
       articleBody,
-      favorited,
       uuid: uuid.v1().split('-')[0],
-      favoriteCounts,
       authorId: req.user.id,
       image
     });
@@ -83,7 +79,9 @@ class ArticleController {
     if (!article) {
       return utils.errorStat(res, 404, 'Article not found');
     }
-    return utils.successStat(res, 200, 'article', article);
+    let comments = await article.getComment();
+    comments = Object.values(comments).map(comment => comment.dataValues);
+    return utils.successStat(res, 200, 'article', { article, comments, noOfComments: comments.length });
   }
 
   /**
