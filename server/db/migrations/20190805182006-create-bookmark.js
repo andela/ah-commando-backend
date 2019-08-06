@@ -7,7 +7,20 @@ module.exports = {
       type: Sequelize.INTEGER
     },
     userId: {
-      type: Sequelize.STRING
+      type: Sequelize.INTEGER,
+      onDelete: 'CASCADE',
+      reference: {
+        model: 'Users',
+        key: 'id'
+      }
+    },
+    articleId: {
+      type: Sequelize.INTEGER,
+      onDelete: 'CASCADE',
+      reference: {
+        model: 'Articles',
+        key: 'id'
+      }
     },
     createdAt: {
       allowNull: false,
