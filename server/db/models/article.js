@@ -14,7 +14,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         unique: true
       },
-      author: DataTypes.JSON,
       favorited: DataTypes.BOOLEAN,
       favoriteCounts: DataTypes.INTEGER,
       image: DataTypes.STRING,
@@ -29,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     slugOptions: { lower: true }
   });
   Article.associate = function (models) {
-    Article.belongsTo(models.User, { foreignKey: 'id', onDelete: 'CASCADE' });
+    Article.belongsTo(models.User, { as: 'author', foreignKey: 'authorId', onDelete: 'CASCADE' });
   };
   return Article;
 };
