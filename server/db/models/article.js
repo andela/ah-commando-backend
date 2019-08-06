@@ -28,8 +28,15 @@ module.exports = (sequelize, DataTypes) => {
     suffixSource: ['uuid'],
     slugOptions: { lower: true }
   });
-  Article.associate = function (models) {
-    Article.belongsTo(models.User, { foreignKey: 'id', onDelete: 'CASCADE' });
+  Article.associate = (models) => {
+    Article.belongsTo(models.User, {
+      foreignKey: 'id',
+      onDelete: 'CASCADE'
+    });
+    Article.hasMany(models.Bookmark, {
+      foreignKey: 'articleId',
+      onDelete: 'CASCADE'
+    });
   };
   return Article;
 };
