@@ -44,7 +44,7 @@ class UserController {
 
     const mail = new Mail({
       to: user.email,
-      subject: 'Password Reset',
+      subject: "Welcome to Authors' Haven",
       messageHeader: `Hi, ${user.firstname}!`,
       messageBody: 'We are exicted to get you started. First, you have to verify your account. Just click on the link below',
       iButton: true

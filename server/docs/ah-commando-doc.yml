@@ -161,6 +161,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
   /users/facebook:
     get:
       tags:
@@ -198,6 +199,7 @@ paths:
           description: Logout successful
         '401':
           description: Invalid login details
+
   /user:
     get:
       tags:
@@ -215,6 +217,7 @@ paths:
                 $ref: "#/components/schemas/profile"
         '401':
           description: Authorization error
+
   /users/passwordReset:
     post:
       tags:
@@ -252,6 +255,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
   /users/resetPassword/{id}/{token}:
     put:
       tags:
@@ -298,7 +302,8 @@ paths:
                 $ref: "#/components/schemas/errorResponse"
         '500':
           description: Server error
-  /user/confirmEmail:
+
+  /users/confirmEmail:
     get:
       tags:
         - Users
@@ -328,6 +333,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
     put:
       tags:
         - Profiles
@@ -410,7 +416,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
-   
+
     get:
       tags:
         - Articles
@@ -570,7 +576,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/errorResponse" 
+                $ref: "#/components/schemas/errorResponse"
 
 
 
@@ -706,9 +712,9 @@ components:
     password:
       type: object
       properties:
-        status: 
+        status:
           type: integer
-        message: 
+        message:
           type: string
     profile:
       type: object
@@ -730,8 +736,8 @@ components:
         followers:
           type: object
         followings:
-          type: object                 
-    article:    
+          type: object
+    article:
       type: object
       properties:
         slug:
@@ -758,7 +764,7 @@ components:
       type: object
       properties:
         image:
-          type: string  
+          type: string
     errorResponse:
       type: object
       properties:
