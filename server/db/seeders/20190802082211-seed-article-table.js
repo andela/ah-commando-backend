@@ -9,7 +9,6 @@ const articles = [{
   tagList: 'happy',
   image: 'test image',
   slug: 'the-title',
-  readTime: 3,
   authorId: 1,
   createdAt: new Date(),
   updatedAt: new Date()
@@ -20,7 +19,6 @@ const articles = [{
   tagList: 'marriage',
   image: 'test image',
   slug: 'the-title-0337485',
-  readTime: 3,
   authorId: 26,
   createdAt: new Date(),
   updatedAt: new Date()
@@ -31,11 +29,10 @@ for (let i = 0; i < 20; i += 1) {
     title,
     articleBody: faker.lorem.text(),
     description: faker.lorem.sentence(),
-    tagList: faker.random.arrayElement(tags),
+    tagList: tags[Math.floor(Math.random() * tags.length)],
     image: faker.random.image(),
     slug: title.split(' ').join('-') || title,
     authorId: faker.random.number({ min: 1, max: 20 }),
-    readTime: faker.random.number({ min: 1, max: 10 }),
     createdAt: new Date(),
     updatedAt: new Date()
   });
