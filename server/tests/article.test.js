@@ -92,6 +92,65 @@ describe('Article test', () => {
       });
   });
 
+  it('should dislike an article', (done) => {
+    chai
+      .request(app)
+      .post(`${baseUrl}/articles/1/likes`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({
+        liked: 'false'
+      })
+      .end((err, res) => {
+        const { status } = res.body;
+        expect(status).to.equal(200);
+        done();
+      });
+  });
+
+  it('should like an article', (done) => {
+    chai
+      .request(app)
+      .post(`${baseUrl}/articles/1/likes`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({
+        liked: 'true'
+      })
+      .end((err, res) => {
+        const { status } = res.body;
+        expect(status).to.equal(200);
+        done();
+      });
+  });
+
+  it('should unlike an already liked article', (done) => {
+    chai
+      .request(app)
+      .post(`${baseUrl}/articles/1/likes`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({
+        liked: 'true'
+      })
+      .end((err, res) => {
+        const { status } = res.body;
+        expect(status).to.equal(200);
+        done();
+      });
+  });
+
+  it('should should return an error if no article is found', (done) => {
+    chai
+      .request(app)
+      .post(`${baseUrl}/articles/100/likes`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({
+        liked: 'true'
+      })
+      .end((err, res) => {
+        const { status } = res.body;
+        expect(status).to.equal(404);
+        done();
+      });
+  });
 
   it('should get all articles', (done) => {
     chai

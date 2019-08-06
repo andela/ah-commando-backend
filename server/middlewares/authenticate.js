@@ -42,7 +42,7 @@ class Authenticate {
     if (!user) {
       return errorStat(res, 404, 'user not found');
     }
-    req.user = user.dataValues;
+    req.user = user;
     next();
   }
 

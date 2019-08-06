@@ -12,11 +12,13 @@ const {
   getOneArticle,
   editArticle,
   deleteArticle,
+  likeOrDislikeArticle,
 } = ArticleController;
 router.post('/', verifyToken, validateArticle, createArticle);
 router.get('/', getAllArticles);
 router.get('/:slug', getOneArticle);
 router.put('/:slug/edit', verifyToken, multerUploads, editArticle);
 router.delete('/:slug', verifyToken, deleteArticle);
+router.post('/:articleId/likes', verifyToken, likeOrDislikeArticle);
 
 export default router;

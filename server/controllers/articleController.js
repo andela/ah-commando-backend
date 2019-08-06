@@ -76,12 +76,24 @@ class ArticleController {
         attributes: ['firstname', 'lastname', 'username', 'image', 'email']
       }]
     });
+
     if (!article) {
       return utils.errorStat(res, 404, 'Article not found');
     }
+
+    const totalLikes = await article.countLikes({
+      where: { likes: true }
+    });
+
+    const totalDislikes = await article.countLikes({
+      where: { likes: false }
+    });
+
     let comments = await article.getComment();
     comments = Object.values(comments).map(comment => comment.dataValues);
-    return utils.successStat(res, 200, 'article', { article, comments, noOfComments: comments.length });
+    return utils.successStat(res, 200, 'article', {
+      article, totalLikes, totalDislikes, comments, noOfComments: comments.length
+    });
   }
 
   /**
@@ -147,6 +159,48 @@ class ArticleController {
       'message',
       'Article deleted successfully'
     );
+  }
+
+  /**
+   * @description Like or Dislike an Article
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @returns {String} returns a message indicating that the article was liked or disliked
+  */
+  static async likeOrDislikeArticle(req, res) {
+    const { user } = req;
+    const { liked } = req.body;
+    const { articleId } = req.params;
+
+    const article = await models.Article.findByPk(articleId);
+    if (!article) return utils.errorStat(res, 404, 'Article not found');
+
+    const likedArticle = await models.Likes.findOne({
+      where: { articleId, userId: user.id }
+    });
+
+    if (likedArticle && likedArticle.likes.toString() === liked) {
+      await models.Likes.destroy({ where: { articleId, userId: user.id } });
+    } else if (likedArticle && likedArticle.likes.toString() !== liked) {
+      await models.Likes.update({ likes: liked }, { where: { articleId, userId: user.id } });
+    } else {
+      await user.createLike({
+        likes: liked,
+        articleId
+      });
+    }
+
+    const totalLikes = await article.countLikes({
+      where: { likes: true }
+    });
+
+    const totalDislikes = await article.countLikes({
+      where: { likes: false }
+    });
+
+    return utils.successStat(res, 200, 'Likes', {
+      totalLikes, totalDislikes
+    });
   }
 }
 
