@@ -9,7 +9,8 @@ const {
   validateArticle,
   validateProfileUpdate,
   validatePasswordReset,
-  validateEmail
+  validateEmail,
+  validateCommentMessage
 } = InputValidator;
 
 export default {
@@ -22,4 +23,5 @@ export default {
   validatePasswordReset,
   validateEmail,
   optionalLogin,
+  validateCommentMessage
 };

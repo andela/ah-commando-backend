@@ -5,6 +5,7 @@ import userRoute from './user';
 import profileRoute from './profile';
 import articleRoute from './article';
 import imageRoute from './image';
+import commentRouter from './comment';
 import { cloudinaryConfig } from '../db/config/cloudinaryConfig';
 
 
@@ -24,5 +25,6 @@ router.use('/users', userRoute);
 router.use('/articles', articleRoute);
 router.use('/image', imageRoute);
 router.use('/', profileRoute);
+router.use('/comment', commentRouter);
 
 export default router;

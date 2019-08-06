@@ -79,7 +79,9 @@ class ArticleController {
     if (!article) {
       return utils.errorStat(res, 404, 'Article not found');
     }
-    return utils.successStat(res, 200, 'article', article);
+    let comments = await article.getComment();
+    comments = Object.values(comments).map(comment => comment.dataValues);
+    return utils.successStat(res, 200, 'article', { article, comments, noOfComments: comments.length });
   }
 
   /**

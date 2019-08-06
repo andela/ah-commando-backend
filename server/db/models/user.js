@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: false,
     });
     User.hasMany(models.Article, { as: 'authorId', foreignKey: 'authorId', onDelete: 'CASCADE' });
+    User.hasMany(models.Comment, { foreignKey: 'authorId', onDelete: 'CASCADE' });
   };
   return User;
 };

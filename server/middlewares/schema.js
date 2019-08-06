@@ -173,3 +173,8 @@ export const resetEmailSchema = {
     .email({ minDomainSegments: 2 })
     .required()
 };
+export const commentBodySchema = {
+  comment: Joi.string()
+    .trim()
+    .required()
+};
