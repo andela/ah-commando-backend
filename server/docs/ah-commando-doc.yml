@@ -764,7 +764,7 @@ paths:
   /comment/{postId}/:
     post:
       tags:
-        - Articles
+        - Comments
       security:
         - bearerAuth: []
       summary: comment on an article
@@ -804,53 +804,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
-  /user/bookmark/:
     get:
       tags:
-        - Bookmarks
+        - Comments
       security:
         - bearerAuth: []
-      summary: bookmark an article for reading later
-      description: An endpoint to get all bookmarked articles
-      responses:
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/successResponse"
-        '401':
-          description: Authorization error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/errorResponse"
-        '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/errorResponse"
-        '500':
-          description: Server error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/errorResponse"
-    /user/bookmark/{articleId}:
-    post:
-      tags:
-        - Bookmarks
-      security:
-        - bearerAuth: []
-      summary: bookmark an article for reading later
+      summary: get all comments on an article
       parameters:
         - in: path
-          name: articleId
+          name: postId
           schema:
             type: integer
           required: true
-      description: An endpoint to bookmark an article
+          description: Id of the post to get
+      description: An endpoint to get all comments on an Article
       responses:
         '200':
           description: Success
@@ -864,32 +831,36 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
-        '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/errorResponse"
         '500':
           description: Server error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
-    /user/bookmark/{articleId}:
-    delete:
+  /comment/{commentId}/:
+    put:
       tags:
-        - Bookmarks
+        - Comments
       security:
         - bearerAuth: []
-      summary: Unbookmark an article
+      summary: edit a comment on an article
       parameters:
         - in: path
-          name: articleId
+          name: commentId
           schema:
-            type: string
+            type: integer
           required: true
-      description: A reader can unbookmark an article
+          description: Id of the comment to edit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string
+      description: An endpoint to edit comment on an article
       responses:
         '200':
           description: Success
@@ -903,26 +874,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
-        '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/errorResponse"
         '500':
           description: Server error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
-    /user/bookmark/:
     delete:
       tags:
-        - Bookmarks
+        - Comments
       security:
         - bearerAuth: []
-      summary: Unbookmark all articles
-      description: A reader can unbookmark all articles
+      summary: delete a comment on an article
+      parameters:
+        - in: path
+          name: commentId
+          schema:
+            type: integer
+          required: true
+          description: Id of the comment to delete
+      description: An endpoint to delete comment on an article
       responses:
         '200':
           description: Success
@@ -936,25 +907,17 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
-        '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/errorResponse"
         '500':
           description: Server error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
-    
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
-
   schemas:
     user:
       type: object
