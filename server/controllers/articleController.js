@@ -3,6 +3,7 @@ import sequelize from 'sequelize';
 import models from '../db/models';
 import helpers from '../helpers';
 import Paginate from '../helpers/paginate';
+import Notification from '../helpers/notifications';
 
 const { Op } = sequelize;
 const { paginateArticles } = Paginate;
@@ -35,7 +36,6 @@ class ArticleController {
       image
     } = req.body.article;
     const readTime = Math.floor(articleBody.split(' ').length / 200);
-
     const article = await models.Article.create({
       title,
       description,
@@ -47,6 +47,24 @@ class ArticleController {
       readTime
     });
     article.tagList = [...article.dataValues.tagList.split(' ')];
+    const author = await article.getAuthor({
+      attributes: ['username'],
+      include: [{
+        model: models.User,
+        through: {
+          attributes: []
+        },
+        as: 'followers',
+        attributes: ['id', 'username', 'email', 'newPostEmailSub'],
+      }],
+    });
+
+    const payload = {
+      resourceType: 'article',
+      resourceId: article.slug,
+      message: `${author.username} just posted a new article`,
+    };
+    Notification.notify(author.followers, payload);
     return successStat(res, 201, 'articles', article);
   }
 

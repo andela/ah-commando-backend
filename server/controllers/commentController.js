@@ -1,6 +1,7 @@
 import Sequelize from 'sequelize';
 import models from '../db/models';
 import helpers from '../helpers';
+import Notification from '../helpers/notifications';
 
 const { successStat, errorStat } = helpers;
 
@@ -45,6 +46,15 @@ export default class CommentController {
         ]
       }
     });
+    const author = await post.getAuthor({
+      attributes: ['id', 'username', 'email', 'newPostEmailSub']
+    });
+    const payload = {
+      resourceType: 'comment',
+      resourceId: post.slug,
+      message: `${commentResponse.author.username} commented on your article`,
+    };
+    Notification.notify([author], payload);
     return successStat(res, 201, 'comment', commentResponse);
   }
 

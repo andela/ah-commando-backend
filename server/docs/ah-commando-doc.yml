@@ -467,6 +467,16 @@ paths:
       responses:
         '200':
           description: successfully view all articles
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/article"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
         '500':
           description: Server error
           content:
@@ -951,6 +961,147 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+  /notifications:
+    get:
+      tags:
+        - Notifications
+      security:
+        - bearerAuth: []
+      summary: Get all notifications for a user
+      description: An endpoint for getting all notifications belonging to the signed in user
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /notifications/{id}/read:
+    patch:
+      tags:
+        - Notifications
+      security:
+        - bearerAuth: []
+      summary: mark a specific notification as read
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Id of the notification to mark as read
+      description: An endpoint for marking specific notifications as read
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /notifications/read:
+    patch:
+      tags:
+        - Notifications
+      security:
+        - bearerAuth: []
+      summary: Mark all notifications as read
+      description: An endpoint to mark all notifications of a user as read
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /notifications/email/subscribe:
+    patch:
+      tags:
+        - Notifications
+      security:
+        - bearerAuth: []
+      summary: Turn on email notification subscription
+      description: An endpoint to turn on email notifications
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+    delete:
+      tags:
+        - Notifications
+      security:
+        - bearerAuth: []
+      summary: Turn off email notification subscription
+      description: An endpoint to turn off email notifications
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
 components:
   securitySchemes:
     bearerAuth:
@@ -1021,6 +1172,8 @@ components:
           type: string
         tagList:
           type: array
+          items:
+            type: object
         createdAt:
           type: string
         updatedAt:
@@ -1033,11 +1186,6 @@ components:
           type: object
         readTime:
           type: number
-    image:
-      type: object
-      properties:
-        image:
-          type: string
     errorResponse:
       type: object
       properties:
@@ -1045,7 +1193,6 @@ components:
           type: number
         error:
           type: string
-
     successResponse:
       type: object
       properties:
