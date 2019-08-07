@@ -2,8 +2,6 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../index';
 import userData from './testData/user.data';
-import articleData from './testData/article.data';
-
 
 const { expect } = chai;
 chai.use(chaiHttp);
@@ -119,18 +117,15 @@ describe('Test admin functionality', () => {
         .request(app)
         .post(`${baseUrl}/articles/`)
         .set('Authorization', adminToken)
-        .send(articleData[11])
-        .end((err, res) => {
-          articleId = res.body.articles.id;
-          done();
-        });
-    });
-    before('create an article', (done) => {
-      chai
-        .request(app)
-        .post(`${baseUrl}/articles/`)
-        .set('Authorization', adminToken)
-        .send(articleData[12])
+        .send({
+          article: {
+            title: 'Love frequently',
+            description: 'You can love frequently',
+            articleBody: 'Just love',
+            tagList: 'love',
+            image: 'love.jpg'
+          }
+        })
         .end((err, res) => {
           articleId = res.body.articles.id;
           done();
