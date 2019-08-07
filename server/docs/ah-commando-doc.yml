@@ -414,7 +414,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
-   
+
     get:
       tags:
         - Articles
@@ -540,17 +540,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
-  /articles/{articleId}/likes:
+
+  /likes/{resourceId}:
     post:
       tags:
-        - Articles
+        - likes
       security:
         - bearerAuth: []
-      summary: Like or Dislike an article
+      summary: Like or Dislike an article or comment
       description: Authorised users canlike or dislike an article
       parameters:
         - in: path
-          name: articleId
+          name: resourceId
           schema:
             type: integer
           required: true
@@ -563,6 +564,8 @@ paths:
               properties:
                 liked:
                   type: boolean
+                type:
+                  type: string
       responses:
         '200':
           description: successfully like an article
@@ -614,7 +617,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/errorResponse" 
+                $ref: "#/components/schemas/errorResponse"
   /profiles/{username}:
     get:
       tags:
@@ -790,9 +793,9 @@ components:
     password:
       type: object
       properties:
-        status: 
+        status:
           type: integer
-        message: 
+        message:
           type: string
     profile:
       type: object
@@ -814,8 +817,8 @@ components:
         followers:
           type: object
         followings:
-          type: object                 
-    article:    
+          type: object
+    article:
       type: object
       properties:
         slug:
@@ -842,7 +845,7 @@ components:
       type: object
       properties:
         image:
-          type: string  
+          type: string
     errorResponse:
       type: object
       properties:

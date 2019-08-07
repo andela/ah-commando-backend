@@ -181,5 +181,6 @@ export const commentBodySchema = {
 
 export const likesSchema = {
   liked: Joi.string().valid('true', 'false').required(),
-  articleId: Joi.number().integer().required().min(1)
+  type: Joi.string().valid('article', 'comment').required(),
+  resourceId: Joi.number().integer().required().min(1)
 };

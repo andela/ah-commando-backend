@@ -33,7 +33,14 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'articleId', onDelete: 'CASCADE', as: 'comment', hooks: true
     });
     Article.belongsTo(models.User, { foreignKey: 'authorId', onDelete: 'CASCADE' });
-    Article.hasMany(models.Likes, { foreignKey: 'articleId', timestamps: false, onDelete: 'CASCADE' });
+    Article.hasMany(models.Likes, {
+      foreignKey: 'resourceId',
+      timestamps: false,
+      onDelete: 'CASCADE',
+      scope: {
+        type: 'article'
+      }
+    });
   };
   return Article;
 };

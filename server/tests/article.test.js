@@ -95,10 +95,13 @@ describe('Article test', () => {
   it('should dislike an article', (done) => {
     chai
       .request(app)
-      .post(`${baseUrl}/articles/1/likes`)
+      .post(`${baseUrl}/likes/1`)
       .set('Authorization', `Bearer ${userToken}`)
       .send({
-        liked: 'false'
+        liked: {
+          liked: 'false',
+          type: 'article'
+        }
       })
       .end((err, res) => {
         const { status } = res.body;
@@ -110,10 +113,13 @@ describe('Article test', () => {
   it('should like an article', (done) => {
     chai
       .request(app)
-      .post(`${baseUrl}/articles/1/likes`)
+      .post(`${baseUrl}/likes/1`)
       .set('Authorization', `Bearer ${userToken}`)
       .send({
-        liked: 'true'
+        liked: {
+          liked: 'true',
+          type: 'article'
+        }
       })
       .end((err, res) => {
         const { status } = res.body;
@@ -125,10 +131,13 @@ describe('Article test', () => {
   it('should unlike an already liked article', (done) => {
     chai
       .request(app)
-      .post(`${baseUrl}/articles/1/likes`)
+      .post(`${baseUrl}/likes/1`)
       .set('Authorization', `Bearer ${userToken}`)
       .send({
-        liked: 'true'
+        liked: {
+          liked: 'true',
+          type: 'article'
+        }
       })
       .end((err, res) => {
         const { status } = res.body;
@@ -140,10 +149,13 @@ describe('Article test', () => {
   it('should should return an error if no article is found', (done) => {
     chai
       .request(app)
-      .post(`${baseUrl}/articles/100/likes`)
+      .post(`${baseUrl}/likes/100`)
       .set('Authorization', `Bearer ${userToken}`)
       .send({
-        liked: 'true'
+        liked: {
+          liked: 'true',
+          type: 'article'
+        }
       })
       .end((err, res) => {
         const { status } = res.body;
