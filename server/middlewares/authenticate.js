@@ -61,6 +61,35 @@ class Authenticate {
     if (!authorizationHeader) return next();
     return Authenticate.verifyToken(req, res, next);
   }
+
+  /**
+   * @static
+   * @descripttion Middleware to check if user is active before they can perform certain actions
+   * @param {*} req  - Request Obj
+   * @param {*} res  - Response Obj
+   * @param {*} next - Next function call
+   * @returns {object} Json
+   * @returns {Function} - next function call
+   */
+  static async isActive(req, res, next) {
+    const { isActive } = req.user;
+    if (!isActive) return errorStat(res, 401, 'Authorization error');
+    return next();
+  }
+
+  /**
+   *
+   * @param {*} req - Request Obj
+   * @param {*} res - Response Obj
+   * @param {*} next - Next function call
+   * @returns {object} Json
+   * @return {Function} - next function call
+   */
+  static async isJustAUser(req, res, next) {
+    const { role } = req.user;
+    if (role === 'user') return errorStat(res, 401, 'Authorization error');
+    return next();
+  }
 }
 
 export default Authenticate;

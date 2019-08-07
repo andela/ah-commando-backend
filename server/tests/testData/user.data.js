@@ -194,6 +194,103 @@ const user = [
       email: 'test@testerdomain.com',
       password: 'P@ssword123'
     }
+  },
+  // this user is NOT active 22
+  {
+    user: {
+      firstname: 'inactive',
+      lastname: 'test',
+      username: 'testinactiveuser',
+      email: 'test@inactive.com',
+      password: 'P@ssword123',
+      isActive: false
+    }
+  },
+  // change the role of an existing user 23
+  {
+    newRole: 'moderator',
+    username: 'admin'
+  },
+  // this user is an admin 24
+  {
+    user: {
+      firstname: 'admin',
+      lastname: 'admin',
+      username: 'admin',
+      email: 'admin@admin.com',
+      password: 'P@ssword123',
+      role: 'admin'
+    }
+  },
+  // this user is a moderator 25
+  {
+    user: {
+      firstname: 'moderator',
+      lastname: 'moderator',
+      username: 'moderator',
+      email: 'moderator@moderator.com',
+      password: 'P@ssword123',
+      role: 'moderator'
+    }
+  },
+  // this user is a god 26
+  {
+    user: {
+      firstname: 'god',
+      lastname: 'god',
+      username: 'god',
+      email: 'god@god.com',
+      password: 'P@ssword123',
+      role: 'god'
+    }
+  },
+  // sign in inactive user 27
+  {
+    user: {
+      email: 'test@inactive.com',
+      password: 'P@ssword123',
+    }
+  },
+  // sign in an admin 28
+  {
+    user: {
+      email: 'admin@admin.com',
+      password: 'P@ssword123',
+    }
+  },
+  // wrong choice of role type 29
+  {
+    newRole: 'chux',
+    username: 'testinactiveuser'
+  },
+  // sign in a moderator 30
+  {
+    user: {
+      email: 'moderator@moderator.com',
+      password: 'P@ssword123',
+    }
+  },
+  // change the role of an existing user 31
+  {
+    newRole: 'moderator',
+    username: 'idonotexist'
+  },
+  // role type god 32
+  {
+    newRole: 'god',
+    username: 'testinactiveuser'
+  },
+  // role type admin 33
+  {
+    newRole: 'admin',
+    username: 'testinactiveuser'
+  },
+  // sign in a god 34
+  {
+    user: {
+      email: 'god@god.com',
+      password: 'P@ssword123'
+    }
   }
 ];
 
