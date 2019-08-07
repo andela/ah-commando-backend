@@ -7,6 +7,7 @@ import {
   resetEmailSchema,
   commentBodySchema,
   bookmarkParamSchema,
+  likesSchema
 } from './schema';
 
 import validate from '../helpers/validate';
@@ -119,6 +120,19 @@ class InputValidator {
   static validateBookmark(req, res, next) {
     const articleId = req.params;
     return validate(articleId, bookmarkParamSchema, req, res, next);
+  }
+
+    /**
+   * @method validateLikes
+   * @description Validates article likes
+   * @param {object} req - The Request Object
+   * @param {object} res - The Response Object
+   * @param {function} next - The next function to point to the next middleware
+   * @returns {function} validate() - An execucted validate function
+   */
+  static validateLikes(req, res, next) {
+    const likes = { ...req.body, ...req.params };
+    return validate(likes, likesSchema, req, res, next);
   }
 }
 

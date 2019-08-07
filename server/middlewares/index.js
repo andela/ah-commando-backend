@@ -12,7 +12,8 @@ const {
   validateProfileUpdate,
   validatePasswordReset,
   validateEmail,
-  validateCommentMessage
+  validateCommentMessage,
+  validateLikes
 } = InputValidator;
 
 export default {
@@ -27,5 +28,6 @@ export default {
   optionalLogin,
   validateCommentMessage,
   validateFilter,
-  validateKeyword
+  validateKeyword,
+  validateLikes
 };
