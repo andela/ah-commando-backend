@@ -206,7 +206,7 @@ export const searchQuerySchema = {
   searchQuery: Joi.string().allow('').trim().min(2),
   page: Joi.number().integer().optional(),
   limit: Joi.number().integer().optional()
-};
+}
 export const roleBodySchema = {
   newRole: Joi.string()
     .trim()

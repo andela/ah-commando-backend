@@ -10,8 +10,7 @@ import {
   likesSchema,
   idSchema,
   reportArticleSchema,
-  highlightDataSchema,
-  getHighlightSchema
+  roleBodySchema
 } from './schema';
 
 import validate from '../helpers/validate';
@@ -166,30 +165,30 @@ class InputValidator {
     return validate(reportId, reportArticleSchema, req, res, next);
   }
 
-
   /**
-   * @method validateHighlightdata
-   * @description Validate the highligh data as given from the frontend
+   * @method validateParamsInput
+   * @description Validate query parameter supplied
    * @param {object} req - The Request Object
    * @param {object} res - The Response Object
    * @param {function} next - The next function to point to the next middleware
    * @returns {function} validate() - An execucted validate function
    */
-  static validateHighlightData(req, res, next) {
-    const highlightData = { ...req.body.highlight, ...req.params };
-    return validate(highlightData, highlightDataSchema, req, res, next);
-  }
-
-  /**
-* @method validateHighlightdata
-* @description Validate the highligh id
-* @param {object} req - The Request Object
-* @param {object} res - The Response Object
-* @param {function} next - The next function to point to the next middleware
-* @returns {function} validate() - An execucted validate function
-*/
-  static validateGetHighlight(req, res, next) {
-    return validate(req.params, getHighlightSchema, req, res, next);
+  static validateParamsInput(req, res, next) {
+    const { username, id } = req.params;
+    if (username) {
+      const regex = /^[0-9a-zA-Z\\/_-]+$/;
+      if (!regex.test(username)) {
+        return util.errorStat(res, 400, 'Invalid type for username: type should be a string');
+      }
+    }
+    if (id) {
+      const regex = /^[0-9]+$/;
+      /* istanbul ignore next-line */
+      if (!regex.test(id)) {
+        return util.errorStat(res, 400, 'Invalid type for id: type should be an integer');
+      }
+    }
+    return next();
   }
 }
 
