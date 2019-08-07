@@ -24,8 +24,6 @@ class ArticleController {
       description,
       tagList,
       articleBody,
-      favorited,
-      favoriteCounts,
       image
     } = req.body.article;
     const article = await models.Article.create({
@@ -33,9 +31,7 @@ class ArticleController {
       description,
       tagList,
       articleBody,
-      favorited,
       uuid: uuid.v1().split('-')[0],
-      favoriteCounts,
       authorId: req.user.id,
       image
     });
