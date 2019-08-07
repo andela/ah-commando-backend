@@ -117,7 +117,6 @@ export const articleSchema = {
     .required(),
   categoryList: Joi.string().trim().min(2),
   tagList: Joi.string()
-    .required()
     // eslint-disable-next-line no-useless-escape
     .regex(/^[a-zA-Z0-9\ \-]+$/)
     .error((errors) => {
@@ -206,7 +205,7 @@ export const searchQuerySchema = {
   searchQuery: Joi.string().allow('').trim().min(2),
   page: Joi.number().integer().optional(),
   limit: Joi.number().integer().optional()
-}
+};
 export const roleBodySchema = {
   newRole: Joi.string()
     .trim()

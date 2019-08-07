@@ -18,6 +18,8 @@ const {
   validateLikes,
   validateId,
   validateReportArticle,
+  validateHighlightData,
+  validateGetHighlight,
   validateRoleInput,
   validateParamsInput
 } = InputValidator;
@@ -39,6 +41,8 @@ export default {
   validateLikes,
   validateId,
   validateReportArticle,
+  validateHighlightData,
+  validateGetHighlight,
   isActive,
   validateRoleInput,
   validateParamsInput

@@ -264,7 +264,7 @@ describe('Test admin functionality', () => {
     it('Should should fail if the supplied request username is not a valid string', (done) => {
       chai
         .request(app)
-        .put(`${baseUrl}/admin/setActiveStatus/${1232}`)
+        .put(`${baseUrl}/admin/setActiveStatus/&&&&`)
         .set('Authorization', adminToken)
         .end((err, res) => {
           const { status, error } = res.body;

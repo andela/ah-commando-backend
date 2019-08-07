@@ -12,6 +12,7 @@ module.exports = {
       uuid: faker.random.number({ max: '300' }),
       slug: faker.lorem.words(),
       image: faker.lorem.sentence(),
+      readTime: faker.random.number({ min: 1, max: 10 }),
       authorId: faker.random.number({
         min: 1,
         max: 12

@@ -10,6 +10,8 @@ import {
   likesSchema,
   idSchema,
   reportArticleSchema,
+  highlightDataSchema,
+  getHighlightSchema,
   roleBodySchema
 } from './schema';
 
@@ -166,6 +168,31 @@ class InputValidator {
   }
 
   /**
+   * @method validateHighlightdata
+   * @description Validate the highligh data as given from the frontend
+   * @param {object} req - The Request Object
+   * @param {object} res - The Response Object
+   * @param {function} next - The next function to point to the next middleware
+   * @returns {function} validate() - An execucted validate function
+   */
+  static validateHighlightData(req, res, next) {
+    const highlightData = { ...req.body.highlight, ...req.params };
+    return validate(highlightData, highlightDataSchema, req, res, next);
+  }
+
+  /**
+  * @method validateHighlightdata
+  * @description Validate the highligh id
+  * @param {object} req - The Request Object
+  * @param {object} res - The Response Object
+  * @param {function} next - The next function to point to the next middleware
+  * @returns {function} validate() - An execucted validate function
+  */
+  static validateGetHighlight(req, res, next) {
+    return validate(req.params, getHighlightSchema, req, res, next);
+  }
+
+  /**
    * @method validateParamsInput
    * @description Validate query parameter supplied
    * @param {object} req - The Request Object
@@ -189,6 +216,19 @@ class InputValidator {
       }
     }
     return next();
+  }
+
+  /**
+   * @method validateRoleInput
+   * @description Validate role input made by user
+   * @param {object} req - The Request Object
+   * @param {object} res - The Response Object
+   * @param {function} next - The next function to point to the next middleware
+   * @returns {function} validate() - An execucted validate function
+   */
+  static validateRoleInput(req, res, next) {
+    const role = { ...req.body };
+    return validate(role, roleBodySchema, req, res, next);
   }
 }
 
