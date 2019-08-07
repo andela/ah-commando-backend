@@ -19,13 +19,13 @@ class BookmarkController {
     const userId = req.user.id;
     const { articleId } = req.params;
     const article = await models.Article.findByPk(articleId);
-    if (!article) return utils.errorStat(res, 400, 'Article not found');
+    if (!article) return utils.errorStat(res, 404, 'Article not found');
     const bookmarked = await models.Bookmark.findOne({
       where: {
         [Op.or]: [{ articleId }]
       }
     });
-    if (bookmarked) return utils.errorStat(res, 400, 'Article already bookmarked');
+    if (bookmarked) return utils.errorStat(res, 409, 'Aticle already bookmarked');
     const addBookmark = await models.Bookmark.findOrCreate({
       where: { articleId, userId },
       defaults: { articleId, userId }
@@ -43,13 +43,13 @@ class BookmarkController {
     const userId = req.user.id;
     const { articleId } = req.params;
     const article = await models.Article.findByPk(articleId);
-    if (!article) return utils.errorStat(res, 400, 'Article not found');
+    if (!article) return utils.errorStat(res, 404, 'Article not found');
     const bookmarked = await models.Bookmark.findOne({
       where: {
         [Op.or]: [{ articleId }]
       }
     });
-    if (!bookmarked) return utils.errorStat(res, 400, 'Article not found among bookmarks');
+    if (!bookmarked) return utils.errorStat(res, 404, 'Article not found among bookmarks');
     await models.Bookmark.destroy({
       where: { articleId, userId },
       defaults: { articleId, userId }

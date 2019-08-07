@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Bookmarks', {
     id: {
@@ -31,7 +33,5 @@ module.exports = {
       type: Sequelize.DATE
     }
   }),
-  down: (queryInterface) => {
-    queryInterface.dropTable('Bookmarks');
-  }
+  down: queryInterface => queryInterface.dropTable('Bookmarks')
 };

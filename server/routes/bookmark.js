@@ -9,10 +9,10 @@ const router = express.Router();
 
 router.post('/bookmark/:articleId', verifyToken, validateParam.validateBookmark, BookmarkController.bookmarkArticle);
 
+router.delete('/bookmark/:articleId', verifyToken, validateParam.validateBookmark, BookmarkController.unbookmarkArticle);
+
 router.get('/bookmark', verifyToken, BookmarkController.getBookmarkedArticles);
 
-router.delete('/unbookmark/:articleId', verifyToken, validateParam.validateBookmark, BookmarkController.unbookmarkArticle);
-
-router.delete('/bookmark/removeAll', verifyToken, BookmarkController.unbookmarkAllArticles);
+router.delete('/bookmark', verifyToken, BookmarkController.unbookmarkAllArticles);
 
 export default router;
