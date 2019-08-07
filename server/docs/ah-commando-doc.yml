@@ -540,6 +540,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+  /articles/{articleId}/likes:
+    post:
+      tags:
+        - Articles
+      security:
+        - bearerAuth: []
+      summary: Like or Dislike an article
+      description: Authorised users canlike or dislike an article
+      parameters:
+        - in: path
+          name: articleId
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                liked:
+                  type: boolean
+      responses:
+        '200':
+          description: successfully like an article
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
   /image:
     post:
       tags:

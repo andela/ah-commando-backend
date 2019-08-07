@@ -178,3 +178,8 @@ export const commentBodySchema = {
     .trim()
     .required()
 };
+
+export const likesSchema = {
+  liked: Joi.string().valid('true', 'false').required(),
+  articleId: Joi.number().integer().required().min(1)
+};

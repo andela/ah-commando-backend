@@ -4,7 +4,9 @@ import middlewares from '../middlewares';
 
 const router = express.Router();
 
-const { validateArticle, multerUploads, verifyToken } = middlewares;
+const {
+  validateArticle, multerUploads, verifyToken, validateLikes
+} = middlewares;
 
 const {
   createArticle,
@@ -19,6 +21,6 @@ router.get('/', getAllArticles);
 router.get('/:slug', getOneArticle);
 router.put('/:slug/edit', verifyToken, multerUploads, editArticle);
 router.delete('/:slug', verifyToken, deleteArticle);
-router.post('/:articleId/likes', verifyToken, likeOrDislikeArticle);
+router.post('/:articleId/likes', verifyToken, validateLikes, likeOrDislikeArticle);
 
 export default router;

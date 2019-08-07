@@ -1,11 +1,17 @@
 import uuid from 'uuid';
 import sequelize from 'sequelize';
 import models from '../db/models';
-import utils from '../helpers/Utilities';
 import Paginate from '../helpers/paginate';
+import Utilites from '../helpers/Utilities';
 
 const { Op } = sequelize;
 const { paginateArticles } = Paginate;
+const { errorStat, successStat } = Utilites;
+
+const parseBool = (string) => {
+  if (string === 'true') return true;
+  return false;
+};
 /**
  * @Module ArticleController
  * @description Controlls all activities related to Articles
@@ -36,7 +42,7 @@ class ArticleController {
       image
     });
     article.tagList = [...article.dataValues.tagList.split(' ')];
-    return utils.successStat(res, 201, 'articles', article);
+    return successStat(res, 201, 'articles', article);
   }
 
   /**
@@ -52,7 +58,7 @@ class ArticleController {
       const articles = await models.Article.findAll({
         include: [{ model: models.User, as: 'author', attributes: ['firstname', 'lastname', 'username', 'image', 'email'] }]
       });
-      return utils.successStat(res, 200, 'articles', articles);
+      return successStat(res, 200, 'articles', articles);
     }
     paginateArticles(req, res);
   }
@@ -78,7 +84,7 @@ class ArticleController {
     });
 
     if (!article) {
-      return utils.errorStat(res, 404, 'Article not found');
+      return errorStat(res, 404, 'Article not found');
     }
 
     const totalLikes = await article.countLikes({
@@ -91,7 +97,7 @@ class ArticleController {
 
     let comments = await article.getComment();
     comments = Object.values(comments).map(comment => comment.dataValues);
-    return utils.successStat(res, 200, 'article', {
+    return successStat(res, 200, 'article', {
       article, totalLikes, totalDislikes, comments, noOfComments: comments.length
     });
   }
@@ -128,11 +134,11 @@ class ArticleController {
     );
 
     if (editedArticle[1].length < 1) {
-      return utils.errorStat(res, 404, 'Article not found');
+      return errorStat(res, 404, 'Article not found');
     }
 
     const article = editedArticle[1][editedArticle[1].length - 1].dataValues;
-    return utils.successStat(res, 200, 'article', article);
+    return successStat(res, 200, 'article', article);
   }
 
   /**
@@ -151,9 +157,9 @@ class ArticleController {
     });
 
     if (!deletedArticle) {
-      return utils.errorStat(res, 404, 'Article not found');
+      return errorStat(res, 404, 'Article not found');
     }
-    return utils.successStat(
+    return successStat(
       res,
       200,
       'message',
@@ -171,21 +177,22 @@ class ArticleController {
     const { user } = req;
     const { liked } = req.body;
     const { articleId } = req.params;
+    const likes = parseBool(liked);
 
     const article = await models.Article.findByPk(articleId);
-    if (!article) return utils.errorStat(res, 404, 'Article not found');
+    if (!article) return errorStat(res, 404, 'Article not found');
 
     const likedArticle = await models.Likes.findOne({
       where: { articleId, userId: user.id }
     });
 
-    if (likedArticle && likedArticle.likes.toString() === liked) {
+    if (likedArticle && likedArticle.likes === likes) {
       await models.Likes.destroy({ where: { articleId, userId: user.id } });
-    } else if (likedArticle && likedArticle.likes.toString() !== liked) {
-      await models.Likes.update({ likes: liked }, { where: { articleId, userId: user.id } });
+    } else if (likedArticle && likedArticle.likes !== likes) {
+      await models.Likes.update({ likes }, { where: { articleId, userId: user.id } });
     } else {
       await user.createLike({
-        likes: liked,
+        likes,
         articleId
       });
     }
@@ -198,7 +205,7 @@ class ArticleController {
       where: { likes: false }
     });
 
-    return utils.successStat(res, 200, 'Likes', {
+    return successStat(res, 200, 'Likes', {
       totalLikes, totalDislikes
     });
   }

@@ -9,7 +9,7 @@ module.exports = {
 
   down: (queryInterface, Sequelize) => queryInterface
     .changeColumn('Articles', 'articleBody', {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: false
     }),
 };

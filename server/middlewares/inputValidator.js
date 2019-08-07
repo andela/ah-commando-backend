@@ -5,7 +5,8 @@ import {
   articleSchema,
   resetPasswordSchema,
   resetEmailSchema,
-  commentBodySchema
+  commentBodySchema,
+  likesSchema
 } from './schema';
 import validate from '../helpers/validate';
 
@@ -104,6 +105,19 @@ class InputValidator {
   static validateCommentMessage(req, res, next) {
     const comment = { ...req.body };
     return validate(comment, commentBodySchema, req, res, next);
+  }
+
+  /**
+   * @method validateCommentMessage
+   * @description Validate message input made by user
+   * @param {object} req - The Request Object
+   * @param {object} res - The Response Object
+   * @param {function} next - The next function to point to the next middleware
+   * @returns {function} validate() - An execucted validate function
+   */
+  static validateLikes(req, res, next) {
+    const likes = { ...req.body, ...req.params };
+    return validate(likes, likesSchema, req, res, next);
   }
 }
 
