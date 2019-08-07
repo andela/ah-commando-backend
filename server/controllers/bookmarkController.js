@@ -78,7 +78,7 @@ class BookmarkController {
    * @param {Object} res - response object
    * @returns {Object} Bookmarked Articles
    */
-  static async removeAllBookmarkedArticle(req, res) {
+  static async unbookmarkAllArticles(req, res) {
     const userId = req.user.id;
     const bookmarks = await models.Bookmark.findAll({
       where: { userId }

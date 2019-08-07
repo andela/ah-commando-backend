@@ -205,3 +205,8 @@ export const commentBodySchema = {
     .trim()
     .required()
 };
+
+export const bookmarkParamSchema = {
+  articleId: Joi.number()
+    .required()
+};

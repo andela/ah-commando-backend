@@ -5,8 +5,10 @@ import {
   articleSchema,
   resetPasswordSchema,
   resetEmailSchema,
-  commentBodySchema
+  commentBodySchema,
+  bookmarkParamSchema,
 } from './schema';
+
 import validate from '../helpers/validate';
 
 /**
@@ -104,6 +106,20 @@ class InputValidator {
   static validateCommentMessage(req, res, next) {
     const comment = { ...req.body };
     return validate(comment, commentBodySchema, req, res, next);
+  }
+
+  /**
+   * @method validateBookmark
+   * @description Validates user details on signup
+   * @param {object} req - The Request Object
+   * @param {object} res - The Response Object
+   * @param {function} next - The next function to point to the next middleware
+   * @returns {function} validate() - An execucted validate function
+   */
+  static validateBookmark(req, res, next) {
+    console.log('articleId', req.params);
+    const articleId = req.params;
+    return validate(articleId, bookmarkParamSchema, req, res, next);
   }
 }
 
