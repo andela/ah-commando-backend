@@ -117,7 +117,6 @@ class InputValidator {
    * @returns {function} validate() - An execucted validate function
    */
   static validateBookmark(req, res, next) {
-    console.log('articleId', req.params);
     const articleId = req.params;
     return validate(articleId, bookmarkParamSchema, req, res, next);
   }
