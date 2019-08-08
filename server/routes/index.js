@@ -9,6 +9,7 @@ import bookmarkRoute from './bookmark';
 import commentRouter from './comment';
 import likesRouter from './likes';
 import notificationRoute from './notification';
+import reportRoute from './report';
 import { cloudinaryConfig } from '../db/config/cloudinaryConfig';
 
 const router = express();
@@ -31,5 +32,6 @@ router.use('/user', bookmarkRoute);
 router.use('/comment', commentRouter);
 router.use('/likes', likesRouter);
 router.use('/notifications', notificationRoute);
+router.use('/report', reportRoute);
 
 export default router;

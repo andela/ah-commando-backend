@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import Joi from '@hapi/joi';
 
 export const userSchema = {
@@ -207,4 +208,8 @@ export const searchQuerySchema = {
 
 export const idSchema = {
   id: Joi.number().min(1).required()
+};
+
+export const reportArticleSchema = {
+  reportId: Joi.number()
 };
