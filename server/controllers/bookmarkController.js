@@ -23,7 +23,7 @@ class BookmarkController {
       where: { articleId, userId },
       defaults: { articleId, userId }
     });
-    return utils.successStat(res, 201, 'Article bookmarked successfully', addBookmark);
+    return utils.successStat(res, 201, 'Bookmarked_article', addBookmark);
   }
 
   /**
