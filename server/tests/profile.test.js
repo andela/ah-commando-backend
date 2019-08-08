@@ -399,4 +399,49 @@ describe('Profile Test', () => {
         });
     });
   });
+
+  describe('List all users test', () => {
+    let authToken = '';
+    before((done) => {
+      chai.request(app)
+        .post(`${baseUrl}/users/login`)
+        .send({
+          user: {
+            email: 'john.doe@test.com',
+            password: 'P@ssword123'
+          }
+        })
+        .end((err, res) => {
+          const { token } = res.body.user;
+          authToken = token;
+          done();
+        });
+    });
+    it('Get a list of all the users', (done) => {
+      chai.request(app)
+        .get(`${baseUrl}/profiles`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .end((err, res) => {
+          const { status, Users } = res.body;
+          expect(status).to.equal(200);
+          expect(Users).to.be.a('array');
+          done();
+        });
+    });
+
+    it('should paginate the list of all the users', (done) => {
+      chai.request(app)
+        .get(`${baseUrl}/profiles/?limit=1&page=1`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .end((err, res) => {
+          const { status, Users } = res.body;
+          expect(status).to.equal(200);
+          expect(Users).to.have.property('page');
+          expect(Users).to.have.property('numberOfPages');
+          expect(Users).to.have.property('data');
+          expect(Users.data).to.be.a('array');
+          done();
+        });
+    });
+  });
 });

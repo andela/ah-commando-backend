@@ -10,8 +10,9 @@ const { Op } = sequelize;
 const { PasswordResetTokens } = models;
 const {
   addToBlacklist, generateToken, errorStat, successStat,
-  comparePassword, hashPassword, verifyToken, Mail
+  comparePassword, hashPassword, verifyToken, Mail, paginate
 } = helpers;
+
 
 /**
   * @Module UserController
@@ -373,6 +374,24 @@ class UserController {
     }
 
     return successStat(res, 200, 'message', 'successful');
+  }
+
+  /**
+    * @static
+    * @description Get a list of users
+    * @param {Object} req - Request object
+    * @param {Object} res - Response object
+    * @returns {Object} object containing the users
+    * @memberof UserController
+    */
+  static async listUsers(req, res) {
+    const { page, limit } = req.query;
+    if (!page && !limit) {
+      const users = await models.User.findAll();
+
+      return successStat(res, 200, 'Users', users);
+    }
+    paginate(page, limit, models.User, 'Users', res);
   }
 }
 

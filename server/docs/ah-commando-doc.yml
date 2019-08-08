@@ -458,6 +458,17 @@ paths:
       tags:
         - Articles
       summary: get all articles. Limit to searchQuery if it is supplied
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: The page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: The number of articles to return
       description: user can get all articles
       parameters:
         - in: query
@@ -814,8 +825,51 @@ paths:
           content:
             application/json:
               schema:
+<<<<<<< HEAD
                 $ref: "#/components/schemas/errorResponse"
 
+=======
+                $ref: "#/components/schemas/errorResponse" 
+              
+  /profiles:
+    get:
+      tags:
+        - Profiles
+      security:
+        - bearerAuth: []
+      summary: List all Users
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: The page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: The number of users to return
+      description: The endpoint to get list of all users
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+>>>>>>> “feat(Users) : list users
   /profiles/{username}:
     get:
       tags:
@@ -1482,6 +1536,6 @@ components:
       type: object
       properties:
         status:
-          type: number
+          type: integer
         message:
           type: string
