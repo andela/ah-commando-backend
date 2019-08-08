@@ -825,12 +825,7 @@ paths:
           content:
             application/json:
               schema:
-<<<<<<< HEAD
-                $ref: "#/components/schemas/errorResponse"
-
-=======
-                $ref: "#/components/schemas/errorResponse" 
-              
+                $ref: "#/components/schemas/errorResponse"  
   /profiles:
     get:
       tags:
@@ -869,7 +864,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
->>>>>>> “feat(Users) : list users
   /profiles/{username}:
     get:
       tags:

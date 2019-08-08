@@ -391,7 +391,7 @@ class UserController {
 
       return successStat(res, 200, 'Users', users);
     }
-    paginate(page, limit, models.User, 'Users', res);
+    paginate(page, limit, models.User, 'Users', res, req);
   }
 }
 
