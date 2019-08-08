@@ -122,7 +122,7 @@ class InputValidator {
     return validate(articleId, bookmarkParamSchema, req, res, next);
   }
 
-    /**
+  /**
    * @method validateLikes
    * @description Validates article likes
    * @param {object} req - The Request Object
