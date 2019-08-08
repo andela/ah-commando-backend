@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-escape */
 import Joi from '@hapi/joi';
 
 export const userSchema = {
@@ -179,10 +178,12 @@ export const commentBodySchema = {
     .trim()
     .required()
 };
+
 export const bookmarkParamSchema = {
   articleId: Joi.number()
     .required()
 };
+
 export const searchFilterSchema = {
   searchQuery: Joi.string().trim().min(2),
   page: Joi.number().integer().optional(),
@@ -201,4 +202,8 @@ export const searchQuerySchema = {
 export const likesSchema = {
   liked: Joi.string().valid('true', 'false').required(),
   articleId: Joi.number().integer().required().min(1)
+};
+
+export const idSchema = {
+  id: Joi.number().min(1).required()
 };

@@ -7,6 +7,7 @@ import articleRoute from './article';
 import imageRoute from './image';
 import bookmarkRoute from './bookmark';
 import commentRouter from './comment';
+import notificationRoute from './notification';
 import { cloudinaryConfig } from '../db/config/cloudinaryConfig';
 
 const router = express();
@@ -27,5 +28,6 @@ router.use('/image', imageRoute);
 router.use('/', profileRoute);
 router.use('/user', bookmarkRoute);
 router.use('/comment', commentRouter);
+router.use('/notifications', notificationRoute);
 
 export default router;

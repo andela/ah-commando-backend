@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.STRING,
     socialId: DataTypes.STRING,
     verified: DataTypes.BOOLEAN,
+    newPostEmailSub: DataTypes.BOOLEAN,
   }, {});
   User.associate = (models) => {
     User.belongsToMany(models.User, {
@@ -37,12 +38,11 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId',
       onDelete: 'CASCADE'
     });
-    User.hasMany(models.Article, { as: 'authorId', foreignKey: 'authorId', onDelete: 'CASCADE' });
     User.hasMany(models.Comment, { foreignKey: 'authorId', onDelete: 'CASCADE' });
-    User.hasMany(models.Article, { foreignKey: 'authorId', onDelete: 'CASCADE' });
     User.hasMany(models.Likes, {
       foreignKey: 'userId', as: 'likes', timestamps: false, onDelete: 'CASCADE'
     });
+    User.hasMany(models.Notification, { foreignKey: 'userId', onDelete: 'CASCADE' });
   };
   return User;
 };

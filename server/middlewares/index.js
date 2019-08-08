@@ -13,7 +13,8 @@ const {
   validatePasswordReset,
   validateEmail,
   validateCommentMessage,
-  validateLikes
+  validateLikes,
+  validateId,
 } = InputValidator;
 
 export default {
@@ -29,5 +30,6 @@ export default {
   validateCommentMessage,
   validateFilter,
   validateKeyword,
-  validateLikes
+  validateLikes,
+  validateId,
 };
