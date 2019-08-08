@@ -7,10 +7,20 @@ const {
   validateCommentMessage
 } = middlewares;
 
-const { addAComment } = CommentController;
+const {
+  addAComment,
+  getCommentsOnASingleArticle,
+  editOwnComment,
+  deleteOwnComment,
+  getAllCommentsForAllPosts
+} = CommentController;
 
 const commentRouter = express();
 
 commentRouter.post('/:postId', verifyToken, validateCommentMessage, addAComment);
+commentRouter.get('/:postId', verifyToken, getCommentsOnASingleArticle);
+commentRouter.put('/:commentId', verifyToken, validateCommentMessage, editOwnComment);
+commentRouter.delete('/:commentId', verifyToken, deleteOwnComment);
+commentRouter.get('/', verifyToken, getAllCommentsForAllPosts);
 
 export default commentRouter;
