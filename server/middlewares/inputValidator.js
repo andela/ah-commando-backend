@@ -9,6 +9,7 @@ import {
   bookmarkParamSchema,
   likesSchema,
   idSchema,
+  reportArticleSchema
 } from './schema';
 
 import validate from '../helpers/validate';
@@ -149,6 +150,20 @@ class InputValidator {
    */
   static validateId(req, res, next) {
     return validate(req.params, idSchema, req, res, next);
+  }
+
+
+  /**
+   * @method validateReportArticle
+   * @description Validate report article
+   * @param {object} req - The Request Object
+   * @param {object} res - The Response Object
+   * @param {function} next - The next function to point to the next middleware
+   * @returns {function} validate() - An execucted validate function
+   */
+  static validateReportArticle(req, res, next) {
+    const reportId = { ...req.params };
+    return validate(reportId, reportArticleSchema, req, res, next);
   }
 }
 

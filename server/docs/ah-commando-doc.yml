@@ -522,7 +522,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
- 
+
   /articles/{slug}:
     get:
       tags:
@@ -550,7 +550,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
-  
+
   /articles/{slug}/edit:
     put:
       tags:
@@ -600,7 +600,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
- 
+
   /articles/{slug}/:
     delete:
       tags:
@@ -659,6 +659,113 @@ paths:
       responses:
         '200':
           description: successfully like an article
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /report/${slug}:
+    post:
+      tags:
+        - Reports
+      security:
+        - bearerAuth: []
+      summary: Report Article
+      description: Only authorized users can report an article
+      parameters:
+        - in: path
+          name: slug
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                report:
+                  type: object
+                  properties:
+                    reportDetails:
+                      type: string
+                    reportType:
+                      type: string
+      responses:
+        '201':
+          description: successfully reported an article
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '404':
+          description: Article you are trying to report does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '409':
+          description: The same user cannot report an Article twice
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /report/:
+    get:
+      tags:
+        - Reports
+      security:
+        - bearerAuth: []
+      summary: get all reports
+      description: user can get all reports
+      responses:
+        '200':
+          description: successfully view all reports
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /report/${reportId}:
+    get:
+      tags:
+        - Reports
+      security:
+        - bearerAuth: []
+      summary: get a single report by reportId
+      description: user can get a single report
+      parameters:
+        - in: path
+          name: reportId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: successfully view a single report on an article
         '401':
           description: Unauthorized
           content:
@@ -1014,6 +1121,8 @@ paths:
                 $ref: "#/components/schemas/successResponse"
         '401':
           description: Authorization error
+        '404':
+          description: Not found
           content:
             application/json:
               schema:
@@ -1045,6 +1154,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
         '500':
           description: Server error
           content:
@@ -1072,12 +1187,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
         '500':
           description: Server error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
     delete:
       tags:
         - Notifications
@@ -1085,6 +1207,12 @@ paths:
         - bearerAuth: []
       summary: Turn off email notification subscription
       description: An endpoint to turn off email notifications
+      parameters:
+        - in: path
+          name: articleId
+          schema:
+            type: string
+          required: true
       responses:
         '200':
           description: Success
@@ -1094,6 +1222,154 @@ paths:
                 $ref: "#/components/schemas/successResponse"
         '401':
           description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /user/bookmark/:
+    get:
+      tags:
+        - Bookmarks
+      security:
+        - bearerAuth: []
+      summary: bookmark an article for reading later
+      description: An endpoint to get all bookmarked articles
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+    delete:
+      tags:
+        - Bookmarks
+      security:
+        - bearerAuth: []
+      summary: Unbookmark all articles
+      description: A reader can unbookmark all articles
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /user/bookmark/{articleId}:
+    post:
+      tags:
+        - Bookmarks
+      security:
+        - bearerAuth: []
+      summary: bookmark an article for reading later
+      parameters:
+        - in: path
+          name: articleId
+          schema:
+            type: integer
+          required: true
+      description: An endpoint to bookmark an article
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+    delete:
+      tags:
+        - Bookmarks
+      security:
+        - bearerAuth: []
+      summary: Unbookmark an article
+      parameters:
+        - in: path
+          name: articleId
+          schema:
+            type: string
+          required: true
+      description: A reader can unbookmark an article
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '404':
+          description: Not found
           content:
             application/json:
               schema:
