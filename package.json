@@ -44,6 +44,7 @@
     "express": "^4.16.3",
     "faker": "^4.1.0",
     "jsonwebtoken": "^8.3.0",
+    "lodash": "^4.17.15",
     "morgan": "^1.9.1",
     "multer": "^1.4.2",
     "node-cron": "^2.0.3",

@@ -1,11 +1,14 @@
 import uuid from 'uuid';
 import sequelize from 'sequelize';
 import models from '../db/models';
+import helpers from '../helpers';
 import utils from '../helpers/Utilities';
+
 import Paginate from '../helpers/paginate';
 
 const { Op } = sequelize;
 const { paginateArticles } = Paginate;
+const { querySearch, filterSearch } = helpers;
 /**
  * @Module ArticleController
  * @description Controlls all activities related to Articles
@@ -47,11 +50,20 @@ class ArticleController {
    * @memberof ArticleController
    */
   static async getAllArticles(req, res) {
+    const { searchQuery } = req.query;
+    const queryFilters = req.body;
+    let articles;
     const { page, limit } = req.query;
     if (!page && !limit) {
-      const articles = await models.Article.findAll({
-        include: [{ model: models.User, as: 'author', attributes: ['firstname', 'lastname', 'username', 'image', 'email'] }]
-      });
+      if (!searchQuery) {
+        articles = await models.Article.findAll({
+          include: [{ model: models.User, as: 'author', attributes: ['firstname', 'lastname', 'username', 'image', 'email'] }]
+        });
+      } else if (searchQuery && Object.keys(queryFilters)[0] !== 'undefined') {
+        articles = await filterSearch(searchQuery, queryFilters);
+      } else {
+        articles = await querySearch(searchQuery);
+      }
       return utils.successStat(res, 200, 'articles', articles);
     }
     paginateArticles(req, res);
