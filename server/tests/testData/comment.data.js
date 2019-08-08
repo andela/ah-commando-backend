@@ -6,7 +6,11 @@ const comment = [
   // incorrect message details 1
   {
     comment: ''
-  }
+  },
+  // correct message detail 2
+  {
+    comment: 'That is how we role'
+  },
 
 ];
 
