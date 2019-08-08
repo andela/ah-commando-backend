@@ -35,7 +35,7 @@ class Mailer {
     this.iButton = iButton || false;
     this.iTemplate = iTemplate || false;
     this.subject = subject;
-    this.header = 'Welcome to Authors Haven' || header;
+    this.header = header || 'Welcome to Authors Haven';
     this.buttonTemp = '';
     this.bodyStyle = '';
     this.headerStyle = '';

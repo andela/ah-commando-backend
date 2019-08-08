@@ -1,8 +1,10 @@
 import Authenticate from './authenticate';
 import InputValidator from './inputValidator';
 import { multerUploads } from './multer';
+import searchValidator from './searchValidator';
 
 const { verifyToken, optionalLogin } = Authenticate;
+const { validateFilter, validateKeyword } = searchValidator;
 const {
   validateLogin,
   validateUser,
@@ -11,7 +13,8 @@ const {
   validatePasswordReset,
   validateEmail,
   validateCommentMessage,
-  validateLikes
+  validateLikes,
+  validateId,
 } = InputValidator;
 
 export default {
@@ -25,5 +28,8 @@ export default {
   validateEmail,
   optionalLogin,
   validateCommentMessage,
-  validateLikes
+  validateFilter,
+  validateKeyword,
+  validateLikes,
+  validateId,
 };

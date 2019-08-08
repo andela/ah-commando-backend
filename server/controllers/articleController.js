@@ -1,12 +1,15 @@
 import uuid from 'uuid';
 import sequelize from 'sequelize';
 import models from '../db/models';
+import helpers from '../helpers';
 import Paginate from '../helpers/paginate';
-import Utilites from '../helpers/Utilities';
+import Notification from '../helpers/notifications';
 
 const { Op } = sequelize;
 const { paginateArticles } = Paginate;
-const { errorStat, successStat } = Utilites;
+const {
+  querySearch, filterSearch, errorStat, successStat
+} = helpers;
 
 const parseBool = (string) => {
   if (string === 'true') return true;
@@ -32,6 +35,7 @@ class ArticleController {
       articleBody,
       image
     } = req.body.article;
+    const readTime = Math.floor(articleBody.split(' ').length / 200);
     const article = await models.Article.create({
       title,
       description,
@@ -39,9 +43,28 @@ class ArticleController {
       articleBody,
       uuid: uuid.v1().split('-')[0],
       authorId: req.user.id,
-      image
+      image,
+      readTime
     });
     article.tagList = [...article.dataValues.tagList.split(' ')];
+    const author = await article.getAuthor({
+      attributes: ['username'],
+      include: [{
+        model: models.User,
+        through: {
+          attributes: []
+        },
+        as: 'followers',
+        attributes: ['id', 'username', 'email', 'newPostEmailSub'],
+      }],
+    });
+
+    const payload = {
+      resourceType: 'article',
+      resourceId: article.slug,
+      message: `${author.username} just posted a new article`,
+    };
+    Notification.notify(author.followers, payload);
     return successStat(res, 201, 'articles', article);
   }
 
@@ -53,11 +76,20 @@ class ArticleController {
    * @memberof ArticleController
    */
   static async getAllArticles(req, res) {
+    const { searchQuery } = req.query;
+    const queryFilters = req.body;
+    let articles;
     const { page, limit } = req.query;
     if (!page && !limit) {
-      const articles = await models.Article.findAll({
-        include: [{ model: models.User, as: 'author', attributes: ['firstname', 'lastname', 'username', 'image', 'email'] }]
-      });
+      if (!searchQuery) {
+        articles = await models.Article.findAll({
+          include: [{ model: models.User, as: 'author', attributes: ['firstname', 'lastname', 'username', 'image', 'email'] }]
+        });
+      } else if (searchQuery && Object.keys(queryFilters)[0] !== 'undefined') {
+        articles = await filterSearch(searchQuery, queryFilters);
+      } else {
+        articles = await querySearch(searchQuery);
+      }
       return successStat(res, 200, 'articles', articles);
     }
     paginateArticles(req, res);

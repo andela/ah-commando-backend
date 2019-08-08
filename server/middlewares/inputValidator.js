@@ -6,8 +6,11 @@ import {
   resetPasswordSchema,
   resetEmailSchema,
   commentBodySchema,
-  likesSchema
+  bookmarkParamSchema,
+  likesSchema,
+  idSchema,
 } from './schema';
+
 import validate from '../helpers/validate';
 
 /**
@@ -108,8 +111,22 @@ class InputValidator {
   }
 
   /**
-   * @method validateCommentMessage
-   * @description Validate message input made by user
+
+   * @method validateBookmark
+   * @description Validates user details on signup
+   * @param {object} req - The Request Object
+   * @param {object} res - The Response Object
+   * @param {function} next - The next function to point to the next middleware
+   * @returns {function} validate() - An execucted validate function
+   */
+  static validateBookmark(req, res, next) {
+    const articleId = req.params;
+    return validate(articleId, bookmarkParamSchema, req, res, next);
+  }
+
+  /**
+   * @method validateLikes
+   * @description Validates article likes
    * @param {object} req - The Request Object
    * @param {object} res - The Response Object
    * @param {function} next - The next function to point to the next middleware
@@ -118,6 +135,20 @@ class InputValidator {
   static validateLikes(req, res, next) {
     const likes = { ...req.body.liked, ...req.params };
     return validate(likes, likesSchema, req, res, next);
+  }
+
+  /**
+   * @method validateId
+   * @description Validates user details on signup
+   * @method validateId
+   * @description Validate id
+   * @param {object} req - The Request Object
+   * @param {object} res - The Response Object
+   * @param {function} next - The next function to point to the next middleware
+   * @returns {function} validate() - An execucted validate function
+   */
+  static validateId(req, res, next) {
+    return validate(req.params, idSchema, req, res, next);
   }
 }
 

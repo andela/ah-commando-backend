@@ -5,7 +5,7 @@ import middlewares from '../middlewares';
 const router = express.Router();
 
 const {
-  validateArticle, multerUploads, verifyToken
+  validateArticle, multerUploads, verifyToken, validateFilter, validateKeyword, validateLikes
 } = middlewares;
 
 const {
@@ -14,11 +14,18 @@ const {
   getOneArticle,
   editArticle,
   deleteArticle,
+  likeOrDislikeArticle,
 } = ArticleController;
 router.post('/', verifyToken, validateArticle, createArticle);
-router.get('/', getAllArticles);
+
+// gets all article with option of passing a keyoword as query
+router.get('/', validateKeyword, getAllArticles);
 router.get('/:slug', getOneArticle);
 router.put('/:slug/edit', verifyToken, multerUploads, editArticle);
 router.delete('/:slug', verifyToken, deleteArticle);
+router.post('/:articleId/likes', verifyToken, validateLikes, likeOrDislikeArticle);
+
+// filters article search result based on selected filters
+router.post('/search/filter', validateFilter, getAllArticles);
 
 export default router;

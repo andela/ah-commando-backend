@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-escape */
 import Joi from '@hapi/joi';
 
 export const userSchema = {
@@ -173,6 +172,7 @@ export const resetEmailSchema = {
     .email({ minDomainSegments: 2 })
     .required()
 };
+
 export const commentBodySchema = {
   comment: Joi.string()
     .trim()
@@ -183,4 +183,28 @@ export const likesSchema = {
   liked: Joi.string().valid('true', 'false').required(),
   type: Joi.string().valid('article', 'comment').required(),
   resourceId: Joi.number().integer().required().min(1)
+};
+
+export const bookmarkParamSchema = {
+  articleId: Joi.number()
+    .required()
+};
+
+export const searchFilterSchema = {
+  searchQuery: Joi.string().trim().min(2),
+  page: Joi.number().integer().optional(),
+  limit: Joi.number().integer().optional(),
+  categories: Joi.string().allow('').trim(),
+  authorNames: Joi.string().allow('').trim(),
+  tags: Joi.string().allow('').trim(),
+};
+
+export const searchQuerySchema = {
+  searchQuery: Joi.string().allow('').trim().min(2),
+  page: Joi.number().integer().optional(),
+  limit: Joi.number().integer().optional()
+};
+
+export const idSchema = {
+  id: Joi.number().min(1).required()
 };

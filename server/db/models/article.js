@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         unique: true
       },
+      readTime: DataTypes.INTEGER,
       favorited: DataTypes.BOOLEAN,
       favoriteCounts: DataTypes.INTEGER,
       image: DataTypes.STRING,
@@ -27,12 +28,15 @@ module.exports = (sequelize, DataTypes) => {
     suffixSource: ['uuid'],
     slugOptions: { lower: true }
   });
-  Article.associate = function (models) {
+  Article.associate = (models) => {
+    Article.hasMany(models.Bookmark, {
+      foreignKey: 'articleId',
+      onDelete: 'CASCADE'
+    });
     Article.belongsTo(models.User, { as: 'author', foreignKey: 'authorId', onDelete: 'CASCADE' });
     Article.hasMany(models.Comment, {
       foreignKey: 'articleId', onDelete: 'CASCADE', as: 'comment', hooks: true
     });
-    Article.belongsTo(models.User, { foreignKey: 'authorId', onDelete: 'CASCADE' });
     Article.hasMany(models.Likes, {
       foreignKey: 'resourceId',
       timestamps: false,
@@ -40,6 +44,14 @@ module.exports = (sequelize, DataTypes) => {
       scope: {
         type: 'article'
       }
+    });
+    Article.belongsToMany(models.Categories, {
+      through: 'ArticleCategories',
+      foreignKey: 'articleId'
+    });
+    Article.belongsToMany(models.Tags, {
+      through: 'ArticleTags',
+      foreignKey: 'articleId'
     });
   };
   return Article;

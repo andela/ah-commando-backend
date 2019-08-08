@@ -139,7 +139,7 @@ paths:
   /users/google:
     get:
       tags:
-        - Social user
+        - Users
       summary: User login
       description: An endpoint to login a user via social media accounts
       responses:
@@ -161,10 +161,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
   /users/facebook:
     get:
       tags:
-        - users
+        - Users
       summary: User login
       description: An endpoint to login a user via social media accounts
       responses:
@@ -198,6 +199,7 @@ paths:
           description: Logout successful
         '401':
           description: Invalid login details
+
   /user:
     get:
       tags:
@@ -247,6 +249,7 @@ paths:
                 $ref: "#/components/schemas/profile"
         '401':
           description: Authorization error
+
   /users/passwordReset:
     post:
       tags:
@@ -284,6 +287,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
   /users/resetPassword/{id}/{token}:
     put:
       tags:
@@ -330,7 +334,8 @@ paths:
                 $ref: "#/components/schemas/errorResponse"
         '500':
           description: Server error
-  /user/confirmEmail:
+
+  /users/confirmEmail:
     get:
       tags:
         - Users
@@ -356,6 +361,40 @@ paths:
                 $ref: "#/components/schemas/successResponse"
         400:
           description: Bad request due to Invalid verification link
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+
+    put:
+      tags:
+        - Profiles
+      security:
+        - bearerAuth: []
+      summary: User's profile
+      description: The endpoint to edit user's profile
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                bio:
+                  type: string
+                email:
+                  type: string
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/profile"
+        '401':
+          description: Authorization error
           content:
             application/json:
               schema:
@@ -418,11 +457,20 @@ paths:
     get:
       tags:
         - Articles
-      summary: get all articles
+      summary: get all articles. Limit to searchQuery if it is supplied
       description: user can get all articles
+      parameters:
+        - in: query
+          name: searchQuery
+          schema:
+            type: string
       responses:
         '200':
           description: successfully view all articles
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/article"
         '401':
           description: Unauthorized
           content:
@@ -435,6 +483,46 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+  /articles/search/filter:
+    post:
+      tags:
+        - Articles
+      summary: get all articles marching the search query and filters supplied
+      description: users can get a single article
+      parameters:
+        - in: query
+          name: searchQuery
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                categories:
+                  type: string
+                authorNqmes:
+                  type: string
+                tags:
+                  type: string
+      responses:
+        '200':
+          description: successfully viewed an articles
+        '400':
+          description: validationError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+ 
   /articles/{slug}:
     get:
       tags:
@@ -462,6 +550,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+  
   /articles/{slug}/edit:
     put:
       tags:
@@ -511,6 +600,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+ 
   /articles/{slug}/:
     delete:
       tags:
@@ -618,6 +708,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
   /profiles/{username}:
     get:
       tags:
@@ -650,6 +741,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
   /profiles/{username}/follow:
     post:
       tags:
@@ -684,6 +776,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
     delete:
       tags:
         - Profiles
@@ -717,10 +810,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
   /comment/{postId}/:
     post:
       tags:
-        - Articles
+        - Comments
       security:
         - bearerAuth: []
       summary: comment on an article
@@ -760,12 +854,261 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+    get:
+      tags:
+        - Comments
+      security:
+        - bearerAuth: []
+      summary: get all comments on an article
+      parameters:
+        - in: path
+          name: postId
+          schema:
+            type: integer
+          required: true
+          description: Id of the post to get
+      description: An endpoint to get all comments on an Article
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /comment/{commentId}/:
+    put:
+      tags:
+        - Comments
+      security:
+        - bearerAuth: []
+      summary: edit a comment on an article
+      parameters:
+        - in: path
+          name: commentId
+          schema:
+            type: integer
+          required: true
+          description: Id of the comment to edit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string
+      description: An endpoint to edit comment on an article
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+    delete:
+      tags:
+        - Comments
+      security:
+        - bearerAuth: []
+      summary: delete a comment on an article
+      parameters:
+        - in: path
+          name: commentId
+          schema:
+            type: integer
+          required: true
+          description: Id of the comment to delete
+      description: An endpoint to delete comment on an article
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /notifications:
+    get:
+      tags:
+        - Notifications
+      security:
+        - bearerAuth: []
+      summary: Get all notifications for a user
+      description: An endpoint for getting all notifications belonging to the signed in user
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /notifications/{id}/read:
+    patch:
+      tags:
+        - Notifications
+      security:
+        - bearerAuth: []
+      summary: mark a specific notification as read
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Id of the notification to mark as read
+      description: An endpoint for marking specific notifications as read
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /notifications/read:
+    patch:
+      tags:
+        - Notifications
+      security:
+        - bearerAuth: []
+      summary: Mark all notifications as read
+      description: An endpoint to mark all notifications of a user as read
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /notifications/email/subscribe:
+    patch:
+      tags:
+        - Notifications
+      security:
+        - bearerAuth: []
+      summary: Turn on email notification subscription
+      description: An endpoint to turn on email notifications
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+    delete:
+      tags:
+        - Notifications
+      security:
+        - bearerAuth: []
+      summary: Turn off email notification subscription
+      description: An endpoint to turn off email notifications
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
-
   schemas:
     user:
       type: object
@@ -831,6 +1174,8 @@ components:
           type: string
         tagList:
           type: array
+          items:
+            type: object
         createdAt:
           type: string
         updatedAt:
@@ -840,12 +1185,16 @@ components:
         favoritesCount:
           type: string
         author:
-          type: object
+          type: object  
+        readTime:
+          type: number
+  
     image:
       type: object
       properties:
         image:
           type: string
+
     errorResponse:
       type: object
       properties:
@@ -853,7 +1202,6 @@ components:
           type: number
         error:
           type: string
-
     successResponse:
       type: object
       properties:

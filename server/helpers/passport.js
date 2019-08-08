@@ -38,7 +38,7 @@ const facebookStrat = {
 
 passport.use(
   'google',
-  process.env.NODE_ENV === 'production' ? new googleStrategy.Strategy(
+  process.env.NODE_ENV === 'development' ? new googleStrategy.Strategy(
     googleStrat,
     (request, accessToken, refreshToken, profile, done) => {
       const profilePix = profile.photos[0].value;
@@ -52,7 +52,7 @@ passport.use(
 
 passport.use(
   'facebook',
-  process.env.NODE_ENV === 'production' ? new facebook.Strategy(
+  process.env.NODE_ENV === 'development' ? new facebook.Strategy(
     facebookStrat,
     (accessToken, refreshToken, profile, done) => {
       const profilePix = profile.photos[0].value;
