@@ -5,6 +5,7 @@ import middlewares from '../middlewares';
 const { verifyToken, validateProfileUpdate, optionalLogin } = middlewares;
 const {
   userProfile,
+  listUsers,
   getAuserProfile,
   editProfile,
   follow
@@ -12,6 +13,7 @@ const {
 
 const profileRoute = express();
 
+profileRoute.get('/profiles', verifyToken, listUsers);
 profileRoute.get('/profiles/:username', optionalLogin, getAuserProfile);
 profileRoute
   .route('/user')

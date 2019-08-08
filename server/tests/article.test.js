@@ -483,8 +483,8 @@ describe('Search for an article', () => {
       .end((err, res) => {
         expect(res).to.have.a.status(200);
         expect(res.body).to.include.all.keys('status', 'articles');
-        expect(res.body.articles.rows).to.be.an('array');
-        expect(res.body.articles.rows[0]).to.include.all.keys('title', 'articleBody', 'description', 'author', 'Categories', 'Tags');
+        expect(res.body.articles.data).to.be.an('array');
+        expect(res.body.articles.data[0]).to.include.all.keys('title', 'articleBody', 'description', 'author', 'Categories', 'Tags');
         done();
       });
   });
@@ -525,8 +525,8 @@ describe('Search for an article', () => {
       .end((err, res) => {
         expect(res).to.have.a.status(200);
         expect(res.body).to.include.all.keys('status', 'articles');
-        expect(res.body.articles.rows).to.be.an('array');
-        expect(res.body.articles.rows[0]).to.include.all.keys('title', 'articleBody', 'description', 'author', 'Categories', 'Tags');
+        expect(res.body.articles.data).to.be.an('array');
+        expect(res.body.articles.data[0]).to.include.all.keys('title', 'articleBody', 'description', 'author', 'Categories', 'Tags');
         done();
       });
   });

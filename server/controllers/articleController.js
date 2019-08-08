@@ -6,7 +6,6 @@ import Paginate from '../helpers/paginate';
 import Notification from '../helpers/notifications';
 
 const { Op } = sequelize;
-const { paginateArticles } = Paginate;
 const {
   querySearch, filterSearch, errorStat, successStat
 } = helpers;
@@ -15,6 +14,7 @@ const parseBool = (string) => {
   if (string === 'true') return true;
   return false;
 };
+const { paginate } = Paginate;
 /**
  * @Module ArticleController
  * @description Controlls all activities related to Articles
@@ -92,7 +92,7 @@ class ArticleController {
       }
       return successStat(res, 200, 'articles', articles);
     }
-    paginateArticles(req, res);
+    paginate(page, limit, models.Article, 'articles', res, req);
   }
 
   /**
