@@ -331,3 +331,163 @@ describe('Article test', () => {
       });
   });
 });
+
+describe('Search for an article', () => {
+  it('Should return 400 if categories is a number', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/articles/search/filter`)
+      .send({
+        categories: 543234
+      })
+      .end((err, res) => {
+        expect(res.body).to.have.a.status(400);
+        expect(res.body).to.include.all.keys('status', 'error');
+        expect(res.body.error[0]).to.be.equal('categories must be a string');
+        done();
+      });
+  });
+  it('Should return 400 if searchQuery is less than two characters', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/articles/search/filter?searchQuery=a`)
+      .send({
+        categories: 'technoloy'
+      })
+      .end((err, res) => {
+        expect(res.body).to.have.a.status(400);
+        expect(res.body).to.include.all.keys('status', 'error');
+        expect(res.body.error[0]).to.be.equal('searchQuery length must be at least 2 characters long');
+        done();
+      });
+  });
+  it('Should return 400 if authorNames is a number', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/articles/search/filter`)
+      .send({
+        authorNames: 543234
+      })
+      .end((err, res) => {
+        expect(res).to.have.a.status(400);
+        expect(res.body).to.include.all.keys('status', 'error');
+        expect(res.body.error[0]).to.be.equal('authorNames must be a string');
+        done();
+      });
+  });
+  it('Should return 400 if authorNames is a number', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/articles/search/filter`)
+      .send({
+        tags: 543234
+      })
+      .end((err, res) => {
+        expect(res).to.have.a.status(400);
+        expect(res.body).to.include.all.keys('status', 'error');
+        expect(res.body.error[0]).to.be.equal('tags must be a string');
+        done();
+      });
+  });
+  it('Should return 400 if limit or page is not a number', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/articles?limit=erwer`)
+      .end((err, res) => {
+        expect(res).to.have.a.status(400);
+        expect(res.body).to.include.all.keys('status', 'error');
+        expect(res.body.error[0]).to.be.equal('limit must be a number');
+        done();
+      });
+  });
+  it('Should get all articles with search query provided', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/articles?searchQuery=on`)
+      .end((err, res) => {
+        expect(res).to.have.a.status(200);
+        expect(res.body).to.include.all.keys('status', 'articles');
+        expect(res.body.articles.rows).to.be.an('array');
+        expect(res.body.articles.rows[0]).to.include.all.keys('title', 'articleBody', 'description', 'author', 'Categories', 'Tags');
+        done();
+      });
+  });
+  it('Should get all articles with search query provided include limit and/or page', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/articles?searchQuery=on&limit=20&page=1`)
+      .end((err, res) => {
+        expect(res).to.have.a.status(200);
+        expect(res.body).to.include.all.keys('status', 'articles');
+        expect(res.body.articles.rows).to.be.an('array');
+        expect(res.body.articles.rows[0]).to.include.all.keys('title', 'articleBody', 'description', 'author', 'Categories', 'Tags');
+        done();
+      });
+  });
+  it('Should get all articles with the query string a categories listed', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/articles/search/filter?searchQuery=an`)
+      .send({
+        categories: 'technology,health,fashion,lifestyle,education'
+      })
+      .end((err, res) => {
+        expect(res).to.have.a.status(200);
+        expect(res.body).to.include.all.keys('status', 'articles');
+        expect(res.body.articles.rows).to.be.an('array');
+        expect(res.body.articles.rows[0]).to.include.all.keys('title', 'articleBody', 'description', 'author', 'Categories', 'Tags');
+        done();
+      });
+  });
+  it('Should get all articles that include the query string and the tag(s) listed', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/articles/search/filter?searchQuery=an`)
+      .send({
+        tags: 'javascript,love,ai,react,tutorial,believe'
+      })
+      .end((err, res) => {
+        expect(res).to.have.a.status(200);
+        expect(res.body).to.include.all.keys('status', 'articles');
+        expect(res.body.articles.rows).to.be.an('array');
+        expect(res.body.articles.rows[0]).to.include.all.keys('title', 'articleBody', 'description', 'author', 'Categories', 'Tags');
+        done();
+      });
+  });
+  it('Should get all articles that include the query string ad the tag(s) listed including limit and/or page', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/articles/search/filter?searchQuery=an&limit=10&page=1`)
+      .send({
+        tags: 'javascript,love,ai,react,tutorial,believe'
+      })
+      .end((err, res) => {
+        expect(res).to.have.a.status(200);
+        expect(res.body).to.include.all.keys('status', 'articles');
+        expect(res.body.articles.rows).to.be.an('array');
+        expect(res.body.articles.rows[0]).to.include.all.keys('title', 'articleBody', 'description', 'author', 'Categories', 'Tags');
+        done();
+      });
+  });
+  it('Should get all articles with query string, the categories and the tags', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/articles/search/filter?searchQuery=an`)
+      .send({
+        categories: 'fashion,technology,health,lifestyle,education',
+        tags: 'believe,race,react,tutorial,knowledge,javascript'
+      })
+      .end((err, res) => {
+        expect(res).to.have.a.status(200);
+        expect(res.body).to.include.all.keys('status', 'articles');
+        expect(res.body.articles.rows).to.be.an('array');
+        expect(res.body.articles.rows[0]).to.include.all.keys('title', 'articleBody', 'description', 'author', 'Categories', 'Tags');
+        done();
+      });
+  });
+  it('Should get all articles with the query string, categories, tags and authorName', (done) => {
+    chai.request(app)
+      .post(`${baseUrl}/articles/search/filter?searchQuery=an`)
+      .send({
+        categories: 'fashion,technology,health,fashion,lifestyle,education',
+        tags: 'believe,race,react,tutorial,knowledge,javascript,ai',
+        authorNames: 'dominic,monday,jude,kafilat,chukwudi,martins'
+      })
+      .end((err, res) => {
+        expect(res).to.have.a.status(200);
+        expect(res.body).to.include.all.keys('status', 'articles');
+        expect(res.body.articles.rows).to.be.an('array');
+        expect(res.body.articles.rows[0]).to.include.all.keys('title', 'articleBody', 'description', 'author', 'Categories', 'Tags');
+        done();
+      });
+  });
+});

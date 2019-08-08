@@ -1,5 +1,8 @@
 import models from '../db/models';
 import utils from './Utilities';
+import articleSearch from './articleSearch';
+
+const { querySearch, filterSearch } = articleSearch;
 
 /**
  * @Module Paginate
@@ -14,15 +17,24 @@ class Paginate {
    * @memberof Paginate
    */
   static async paginateArticles(req, res) {
+    const { searchQuery } = req.query;
     let { page, limit } = req.query;
+    const queryFilters = req.body;
     limit = parseInt(limit, 10) ? limit : 5;
     page = parseInt(page, 10) > 0 ? page : 1;
     const offset = (page - 1) * limit;
-    const articles = await models.Article.findAndCountAll({
-      where: {},
-      offset,
-      limit
-    });
+    let articles;
+    if (!searchQuery) {
+      articles = await models.Article.findAndCountAll({
+        where: {},
+        offset,
+        limit
+      });
+    } else if (searchQuery && Object.keys(queryFilters)[0] !== 'undefined') {
+      articles = await filterSearch(searchQuery, queryFilters, limit, offset);
+    } else {
+      articles = await querySearch(searchQuery, limit, offset);
+    }
     if (articles.rows.length < 1) {
       return utils.errorStat(res, 404, 'Page not found');
     }
