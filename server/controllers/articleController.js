@@ -78,6 +78,7 @@ class ArticleController {
   static async getAllArticles(req, res) {
     const { searchQuery } = req.query;
     const queryFilters = req.body;
+
     let articles;
     const { page, limit } = req.query;
     if (!page && !limit) {
@@ -256,6 +257,49 @@ class ArticleController {
       likes: totalLikes,
       dislikes: totalDislikes
     });
+  }
+
+  /**
+ * @static
+ * @description Allows a user to highlight a Article text and add an optional comment
+ * @param {*} req Request object
+ * @param {*} res Response object
+ * @returns {Object} Object containing the user comment, author, and timestaps
+ * @memberof CommentController
+ */
+  static async highlightText(req, res) {
+    const { body: { highlight: { comment, id, slug } }, user } = req;
+    const post = await models.Article.findOne({
+      where: {
+        slug,
+      }
+    });
+    if (!post) return errorStat(res, 404, 'Post not found');
+    const newComment = {
+      highlightUser: user.id,
+      body: comment,
+      articleId: post.id,
+      highlightId: id,
+      authorId: user.id,
+    };
+    const userComment = await models.Comment.create(newComment);
+    await post.addComment(userComment);
+    const commentResponse = await models.Comment.findOne({
+      where: { id: userComment.id },
+      include: [
+        {
+          as: 'author',
+          model: models.User,
+          attributes: ['firstname', 'lastname', 'image', 'username']
+        }
+      ],
+      attributes: {
+        exclude: [
+          'authorId'
+        ]
+      }
+    });
+    return successStat(res, 201, 'comment', commentResponse);
   }
 }
 

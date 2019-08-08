@@ -403,6 +403,90 @@ describe('Article test', () => {
   });
 });
 
+describe('Highlight and comment on a post', () => {
+  it('Should allow a user highlight a text and comment on it', () => {
+    chai
+      .request(app)
+      .post(`${baseUrl}/articles/the-title/highlight`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({
+        highlight: {
+          id: 1,
+          comment: 'I love this line you wrote here'
+        }
+      })
+      .end((err, res) => {
+        const { status, comment } = res.body;
+        expect(status).to.equal(201);
+        expect(comment).to.not.equal(null);
+      });
+  });
+
+  it('Should throw an error if the article is not found', () => {
+    chai
+      .request(app)
+      .post(`${baseUrl}/articles/the-titles-not-available/highlight`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({
+        highlight: {
+          id: 1,
+          comment: 'I love this line you wrote here'
+        }
+      })
+      .end((err, res) => {
+        const { status, error } = res.body;
+        expect(status).to.equal(404);
+        expect(error).to.equal('Post not found');
+      });
+  });
+
+  it('Should allow a comment on an already existing highlight', () => {
+    chai
+      .request(app)
+      .post(`${baseUrl}/comment/1/highlight`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({
+        highlight: {
+          comment: 'Yes I really do'
+        }
+      })
+      .end((err, res) => {
+        const { status, comment } = res.body;
+        expect(status).to.equal(201);
+        expect(comment).to.not.equal(null);
+      });
+  });
+
+  it('Should throw an error if the highligh is not found', () => {
+    chai
+      .request(app)
+      .post(`${baseUrl}/comment/100/highlight`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({
+        highlight: {
+          comment: 'yes I do too'
+        }
+      })
+      .end((err, res) => {
+        const { status, error } = res.body;
+        expect(status).to.equal(404);
+        expect(error).to.equal('Post not found');
+      });
+  });
+
+  it('Should get all the comments for an article', () => {
+    chai
+      .request(app)
+      .get(`${baseUrl}/comment/1/highlight`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .end((err, res) => {
+        const { status, comment } = res.body;
+        expect(status).to.equal(200);
+        expect(comment).to.not.equal(null);
+      });
+  });
+});
+
 describe('Search for an article', () => {
   it('Should return 400 if categories is a number', (done) => {
     chai.request(app)

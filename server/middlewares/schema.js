@@ -116,7 +116,7 @@ export const articleSchema = {
 
   tagList: Joi.string()
     .required()
-    .regex(/^[a-zA-Z0-9\ \-]+$/)
+    .regex(/^[a-zA-Z0-9 -]+$/)
     .error((errors) => {
       errors.forEach((err) => {
         if (err.type === 'string.regex.base') {
@@ -212,4 +212,14 @@ export const idSchema = {
 
 export const reportArticleSchema = {
   reportId: Joi.number()
+};
+
+export const highlightDataSchema = {
+  id: Joi.number().integer().required().min(1),
+  comment: Joi.string().trim().required(),
+  slug: Joi.string()
+};
+
+export const getHighlightSchema = {
+  id: Joi.number().integer().required().min(1)
 };

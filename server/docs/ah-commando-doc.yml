@@ -626,6 +626,50 @@ paths:
           schema:
             type: string
           required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                article:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    comment:
+                      type: string
+      responses:
+        '200':
+          description: successfully delete an article
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+
+  /articles/{slug}/highlight:
+    post:
+      tags:
+        - Articles
+      security:
+        - bearerAuth: []
+      summary: Allows a user higlight a text and add a comment to that text
+      description: Only logged in users can do this
+      parameters:
+        - in: path
+          name: slug
+          schema:
+            type: string
+          required: true
       responses:
         '200':
           description: successfully delete an article
@@ -946,6 +990,41 @@ paths:
           required: true
           description: Username of the user to unfollow
       description: An endpoint to unfollow a user
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+
+  /comment/{id}/highlight:
+    get:
+      tags:
+        - Comments
+      security:
+        - bearerAuth: []
+      summary: comment on an article
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Id of the post to comment on
+      description: An endpoint to make a comment on Articles
       responses:
         '200':
           description: Success
@@ -1509,10 +1588,10 @@ components:
         favoritesCount:
           type: string
         author:
-          type: object  
+          type: object
         readTime:
           type: number
-  
+
     image:
       type: object
       properties:

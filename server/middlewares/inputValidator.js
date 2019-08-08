@@ -9,7 +9,9 @@ import {
   bookmarkParamSchema,
   likesSchema,
   idSchema,
-  reportArticleSchema
+  reportArticleSchema,
+  highlightDataSchema,
+  getHighlightSchema
 } from './schema';
 
 import validate from '../helpers/validate';
@@ -112,7 +114,6 @@ class InputValidator {
   }
 
   /**
-
    * @method validateBookmark
    * @description Validates user details on signup
    * @param {object} req - The Request Object
@@ -140,8 +141,6 @@ class InputValidator {
 
   /**
    * @method validateId
-   * @description Validates user details on signup
-   * @method validateId
    * @description Validate id
    * @param {object} req - The Request Object
    * @param {object} res - The Response Object
@@ -164,6 +163,31 @@ class InputValidator {
   static validateReportArticle(req, res, next) {
     const reportId = { ...req.params };
     return validate(reportId, reportArticleSchema, req, res, next);
+  }
+
+  /**
+   * @method validateHighlightdata
+   * @description Validate the highligh data as given from the frontend
+   * @param {object} req - The Request Object
+   * @param {object} res - The Response Object
+   * @param {function} next - The next function to point to the next middleware
+   * @returns {function} validate() - An execucted validate function
+   */
+  static validateHighlightData(req, res, next) {
+    const highlightData = { ...req.body.highlight, ...req.params };
+    return validate(highlightData, highlightDataSchema, req, res, next);
+  }
+
+  /**
+* @method validateHighlightdata
+* @description Validate the highligh id
+* @param {object} req - The Request Object
+* @param {object} res - The Response Object
+* @param {function} next - The next function to point to the next middleware
+* @returns {function} validate() - An execucted validate function
+*/
+  static validateGetHighlight(req, res, next) {
+    return validate(req.params, getHighlightSchema, req, res, next);
   }
 }
 
