@@ -40,6 +40,14 @@ module.exports = (sequelize, DataTypes) => {
     Article.hasMany(models.Comment, {
       foreignKey: 'articleId', onDelete: 'CASCADE', as: 'comment', hooks: true
     });
+    Article.belongsToMany(models.Categories, {
+      through: 'ArticleCategories',
+      foreignKey: 'articleId'
+    });
+    Article.belongsToMany(models.Tags, {
+      through: 'ArticleTags',
+      foreignKey: 'articleId'
+    });
   };
   return Article;
 };
