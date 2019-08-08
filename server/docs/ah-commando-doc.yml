@@ -161,6 +161,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
   /users/facebook:
     get:
       tags:
@@ -198,6 +199,7 @@ paths:
           description: Logout successful
         '401':
           description: Invalid login details
+
   /user:
     get:
       tags:
@@ -247,6 +249,7 @@ paths:
                 $ref: "#/components/schemas/profile"
         '401':
           description: Authorization error
+
   /users/passwordReset:
     post:
       tags:
@@ -284,6 +287,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
   /users/resetPassword/{id}/{token}:
     put:
       tags:
@@ -330,7 +334,8 @@ paths:
                 $ref: "#/components/schemas/errorResponse"
         '500':
           description: Server error
-  /user/confirmEmail:
+
+  /users/confirmEmail:
     get:
       tags:
         - Users
@@ -356,6 +361,40 @@ paths:
                 $ref: "#/components/schemas/successResponse"
         400:
           description: Bad request due to Invalid verification link
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+
+    put:
+      tags:
+        - Profiles
+      security:
+        - bearerAuth: []
+      summary: User's profile
+      description: The endpoint to edit user's profile
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                bio:
+                  type: string
+                email:
+                  type: string
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/profile"
+        '401':
+          description: Authorization error
           content:
             application/json:
               schema:
@@ -414,7 +453,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
-   
+
     get:
       tags:
         - Articles
@@ -435,6 +474,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+ 
   /articles/{slug}:
     get:
       tags:
@@ -462,6 +502,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+  
   /articles/{slug}/edit:
     put:
       tags:
@@ -511,6 +552,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+ 
   /articles/{slug}/:
     delete:
       tags:
@@ -540,6 +582,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
   /image:
     post:
       tags:
@@ -576,7 +619,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/errorResponse" 
+                $ref: "#/components/schemas/errorResponse"
+
   /profiles/{username}:
     get:
       tags:
@@ -609,6 +653,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
   /profiles/{username}/follow:
     post:
       tags:
@@ -643,6 +688,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
     delete:
       tags:
         - Profiles
@@ -676,6 +722,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+
   /comment/{postId}/:
     post:
       tags:
@@ -863,6 +910,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+    
 components:
   securitySchemes:
     bearerAuth:
@@ -896,9 +944,9 @@ components:
     password:
       type: object
       properties:
-        status: 
+        status:
           type: integer
-        message: 
+        message:
           type: string
     profile:
       type: object
@@ -920,8 +968,8 @@ components:
         followers:
           type: object
         followings:
-          type: object                 
-    article:    
+          type: object
+    article:
       type: object
       properties:
         slug:
@@ -948,7 +996,7 @@ components:
       type: object
       properties:
         image:
-          type: string  
+          type: string
     errorResponse:
       type: object
       properties:
