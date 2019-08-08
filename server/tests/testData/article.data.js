@@ -57,37 +57,6 @@ const article = [
       tagList: 'health programming',
     }
   },
-
-  {
-    // wrong title format
-    article: {
-      title: 'this is the@',
-      description: 'article description one',
-      articleBody: 'this the body of the article',
-      tagList: 'health programming',
-      image: 'image.jpg'
-    }
-  },
-  {
-    // wrong description format
-    article: {
-      title: 'this is the',
-      description: 'article description@',
-      articleBody: 'this the body of the article',
-      tagList: 'health programming',
-      image: 'image.jpg'
-    }
-  },
-  {
-    // wrong articleBody format
-    article: {
-      title: 'this is the',
-      description: 'article description',
-      articleBody: 'this the body@',
-      tagList: 'health programming',
-      image: 'image.jpg'
-    }
-  },
   {
     // wrong tagList format
     article: {
