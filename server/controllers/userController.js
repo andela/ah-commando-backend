@@ -44,7 +44,7 @@ class UserController {
 
     const mail = new Mail({
       to: user.email,
-      subject: 'Password Reset',
+      subject: "Welcome to Authors' Haven",
       messageHeader: `Hi, ${user.firstname}!`,
       messageBody: 'We are exicted to get you started. First, you have to verify your account. Just click on the link below',
       iButton: true
@@ -147,16 +147,11 @@ class UserController {
     if (!user) return errorStat(res, 404, 'No user found');
     const isTokenAvailable = await PasswordResetTokens.findOne({ where: { userId: id, token, } });
     const payload = await verifyToken(token, (err, decoded) => decoded);
-    /* istanbul ignore next */
     if (!payload
       || payload.id !== Number(id)
-      /* istanbul ignore next */
       || !isTokenAvailable) return errorStat(res, 401, 'Invalid Reset Token');
-    /* istanbul ignore next */
     await models.User.update({ password }, { where: { id: user.id } });
-    /* istanbul ignore next */
     PasswordResetTokens.destroy({ where: { userId: id } });
-    /* istanbul ignore next */
     return successStat(res, 200, 'message', 'Success, Password Reset Successfully');
   }
 

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node build/index.js",
-    "dev": "export NODE_ENV=production && DEBUG=dev && nodemon --exec babel-node server/index.js",
+    "dev": "export DEBUG=dev && NODE_ENV=production && nodemon --exec babel-node server/index.js",
     "debug": "export DEBUG=dev && nodemon --exec babel-node server/index.js --inspect",
     "clean": "rm -rf build && mkdir build && npm run copy-docs",
     "build": "npm run clean && npm run migrate && babel -d ./build ./server",
@@ -42,6 +42,7 @@
     "dotenv": "^6.0.0",
     "errorhandler": "^1.5.0",
     "express": "^4.16.3",
+    "faker": "^4.1.0",
     "jsonwebtoken": "^8.3.0",
     "morgan": "^1.9.1",
     "multer": "^1.4.2",
