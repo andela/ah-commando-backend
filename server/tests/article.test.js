@@ -1,5 +1,6 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import chaiInteger from 'chai-integer';
 import jwt from 'jsonwebtoken';
 import path from 'path';
 import dotenv from 'dotenv';
@@ -10,6 +11,8 @@ import articleData from './testData/article.data';
 dotenv.config();
 const { expect } = chai;
 chai.use(chaiHttp);
+chai.use(chaiInteger);
+
 const baseUrl = '/api/v1';
 const wrongToken = 'wrongtoken';
 
@@ -86,8 +89,10 @@ describe('Article test', () => {
       .set('Authorization', `Bearer ${userToken}`)
       .send(articleData[0])
       .end((err, res) => {
-        const { status } = res.body;
+        const { status, articles } = res.body;
         expect(status).to.equal(201);
+        expect(articles).to.have.property('readTime');
+        expect(articles.readTime).to.be.an.integer();
         done();
       });
   });

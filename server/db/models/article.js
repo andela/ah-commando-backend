@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         unique: true
       },
+      readTime: DataTypes.INTEGER,
       favorited: DataTypes.BOOLEAN,
       favoriteCounts: DataTypes.INTEGER,
       image: DataTypes.STRING,

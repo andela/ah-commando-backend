@@ -1030,6 +1030,8 @@ components:
           type: string
         author:
           type: object
+        readTime:
+          type: number
     image:
       type: object
       properties:
