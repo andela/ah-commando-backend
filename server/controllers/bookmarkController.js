@@ -1,8 +1,5 @@
-import sequelize from 'sequelize';
 import models from '../db/models';
 import utils from '../helpers/Utilities';
-
-const { Op } = sequelize;
 
 /**
  * @Module BookmarkController
@@ -20,11 +17,7 @@ class BookmarkController {
     const { articleId } = req.params;
     const article = await models.Article.findByPk(articleId);
     if (!article) return utils.errorStat(res, 404, 'Article not found');
-    const bookmarked = await models.Bookmark.findOne({
-      where: {
-        [Op.or]: [{ articleId }]
-      }
-    });
+    const bookmarked = await models.Bookmark.findOne({ where: { articleId } });
     if (bookmarked) return utils.errorStat(res, 409, 'Aticle already bookmarked');
     const addBookmark = await models.Bookmark.findOrCreate({
       where: { articleId, userId },
@@ -44,11 +37,7 @@ class BookmarkController {
     const { articleId } = req.params;
     const article = await models.Article.findByPk(articleId);
     if (!article) return utils.errorStat(res, 404, 'Article not found');
-    const bookmarked = await models.Bookmark.findOne({
-      where: {
-        [Op.or]: [{ articleId }]
-      }
-    });
+    const bookmarked = await models.Bookmark.findOne({ where: { articleId } });
     if (!bookmarked) return utils.errorStat(res, 404, 'Article not found among bookmarks');
     await models.Bookmark.destroy({
       where: { articleId, userId },

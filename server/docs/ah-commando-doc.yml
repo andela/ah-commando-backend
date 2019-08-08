@@ -164,7 +164,7 @@ paths:
   /users/facebook:
     get:
       tags:
-        - users
+        - Users
       summary: User login
       description: An endpoint to login a user via social media accounts
       responses:
