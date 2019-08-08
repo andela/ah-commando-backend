@@ -7,6 +7,7 @@ import articleRoute from './article';
 import imageRoute from './image';
 import bookmarkRoute from './bookmark';
 import commentRouter from './comment';
+import likesRouter from './likes';
 import notificationRoute from './notification';
 import { cloudinaryConfig } from '../db/config/cloudinaryConfig';
 
@@ -28,6 +29,7 @@ router.use('/image', imageRoute);
 router.use('/', profileRoute);
 router.use('/user', bookmarkRoute);
 router.use('/comment', commentRouter);
+router.use('/likes', likesRouter);
 router.use('/notifications', notificationRoute);
 
 export default router;

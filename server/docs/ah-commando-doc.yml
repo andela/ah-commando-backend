@@ -631,17 +631,17 @@ paths:
               schema:
                 $ref: "#/components/schemas/errorResponse"
 
-  /articles/{articleId}/likes:
+  /likes/{resourceId}:
     post:
       tags:
-        - Articles
+        - likes
       security:
         - bearerAuth: []
-      summary: Like or Dislike an article
+      summary: Like or Dislike an article or comment
       description: Authorised users canlike or dislike an article
       parameters:
         - in: path
-          name: articleId
+          name: resourceId
           schema:
             type: integer
           required: true
@@ -654,6 +654,8 @@ paths:
               properties:
                 liked:
                   type: boolean
+                type:
+                  type: string
       responses:
         '200':
           description: successfully like an article
@@ -1183,9 +1185,16 @@ components:
         favoritesCount:
           type: string
         author:
-          type: object
+          type: object  
         readTime:
           type: number
+  
+    image:
+      type: object
+      properties:
+        image:
+          type: string
+
     errorResponse:
       type: object
       properties:

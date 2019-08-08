@@ -8,6 +8,14 @@ module.exports = (sequelize, DataTypes) => {
   Comment.associate = (models) => {
     Comment.belongsTo(models.Article, { as: 'article' });
     Comment.belongsTo(models.User, { as: 'author' });
+    Comment.hasMany(models.Likes, {
+      foreignKey: 'resourceId',
+      timestamps: false,
+      onDelete: 'CASCADE',
+      scope: {
+        type: 'comment'
+      }
+    });
   };
   return Comment;
 };

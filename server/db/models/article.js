@@ -29,10 +29,6 @@ module.exports = (sequelize, DataTypes) => {
     slugOptions: { lower: true }
   });
   Article.associate = (models) => {
-    Article.belongsTo(models.User, {
-      foreignKey: 'id',
-      onDelete: 'CASCADE'
-    });
     Article.hasMany(models.Bookmark, {
       foreignKey: 'articleId',
       onDelete: 'CASCADE'
@@ -40,6 +36,14 @@ module.exports = (sequelize, DataTypes) => {
     Article.belongsTo(models.User, { as: 'author', foreignKey: 'authorId', onDelete: 'CASCADE' });
     Article.hasMany(models.Comment, {
       foreignKey: 'articleId', onDelete: 'CASCADE', as: 'comment', hooks: true
+    });
+    Article.hasMany(models.Likes, {
+      foreignKey: 'resourceId',
+      timestamps: false,
+      onDelete: 'CASCADE',
+      scope: {
+        type: 'article'
+      }
     });
     Article.belongsToMany(models.Categories, {
       through: 'ArticleCategories',
@@ -49,8 +53,6 @@ module.exports = (sequelize, DataTypes) => {
       through: 'ArticleTags',
       foreignKey: 'articleId'
     });
-    Article.belongsTo(models.User, { foreignKey: 'authorId', onDelete: 'CASCADE' });
-    Article.hasMany(models.Likes, { foreignKey: 'articleId', timestamps: false, onDelete: 'CASCADE' });
   };
   return Article;
 };

@@ -179,6 +179,12 @@ export const commentBodySchema = {
     .required()
 };
 
+export const likesSchema = {
+  liked: Joi.string().valid('true', 'false').required(),
+  type: Joi.string().valid('article', 'comment').required(),
+  resourceId: Joi.number().integer().required().min(1)
+};
+
 export const bookmarkParamSchema = {
   articleId: Joi.number()
     .required()
@@ -197,11 +203,6 @@ export const searchQuerySchema = {
   searchQuery: Joi.string().allow('').trim().min(2),
   page: Joi.number().integer().optional(),
   limit: Joi.number().integer().optional()
-};
-
-export const likesSchema = {
-  liked: Joi.string().valid('true', 'false').required(),
-  articleId: Joi.number().integer().required().min(1)
 };
 
 export const idSchema = {

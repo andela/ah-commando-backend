@@ -119,18 +119,32 @@ class ArticleController {
       return errorStat(res, 404, 'Article not found');
     }
 
-    const totalLikes = await article.countLikes({
+    const likes = await article.countLikes({
       where: { likes: true }
     });
 
-    const totalDislikes = await article.countLikes({
+    const dislikes = await article.countLikes({
       where: { likes: false }
     });
 
-    let comments = await article.getComment();
-    comments = Object.values(comments).map(comment => comment.dataValues);
+    const comments = await models.Comment.findAll({
+      where: { articleId: article.id },
+      attributes: {
+        include: [
+          [sequelize.fn('SUM', sequelize.literal('CASE likes WHEN false THEN 1 ELSE 0 END')), 'dislikes'],
+          [sequelize.fn('SUM', sequelize.literal('CASE likes WHEN true THEN 1 ELSE 0 END')), 'likes']
+        ],
+      },
+      include: [
+        {
+          model: models.Likes,
+          attributes: [],
+        }
+      ],
+      group: ['Comment.id']
+    });
     return successStat(res, 200, 'article', {
-      article, totalLikes, totalDislikes, comments, noOfComments: comments.length
+      article, likes, dislikes, comments, noOfComments: comments.length
     });
   }
 
@@ -207,38 +221,40 @@ class ArticleController {
   */
   static async likeOrDislikeArticle(req, res) {
     const { user } = req;
-    const { liked } = req.body.liked;
-    const { articleId } = req.params;
+    const { liked, resourceId, type } = req.body.liked;
     const likes = parseBool(liked);
+    const modelType = type.charAt(0).toUpperCase() + type.slice(1);
 
-    const article = await models.Article.findByPk(articleId);
-    if (!article) return errorStat(res, 404, 'Article not found');
+    const tableType = await models[modelType].findByPk(resourceId);
+    if (!tableType) return errorStat(res, 404, `${tableType} not found`);
 
     const likedArticle = await models.Likes.findOne({
-      where: { articleId, userId: user.id }
+      where: { resourceId, userId: user.id }
     });
 
     if (likedArticle && likedArticle.likes === likes) {
-      await models.Likes.destroy({ where: { articleId, userId: user.id } });
+      await models.Likes.destroy({ where: { resourceId, userId: user.id } });
     } else if (likedArticle && likedArticle.likes !== likes) {
-      await models.Likes.update({ likes }, { where: { articleId, userId: user.id } });
+      await models.Likes.update({ likes }, { where: { resourceId, userId: user.id } });
     } else {
       await user.createLike({
         likes,
-        articleId
+        resourceId,
+        type
       });
     }
 
-    const totalLikes = await article.countLikes({
+    const totalLikes = await tableType.countLikes({
       where: { likes: true }
     });
 
-    const totalDislikes = await article.countLikes({
+    const totalDislikes = await tableType.countLikes({
       where: { likes: false }
     });
 
-    return successStat(res, 200, 'Likes', {
-      totalLikes, totalDislikes
+    return successStat(res, 200, `${type} Likes`, {
+      likes: totalLikes,
+      dislikes: totalDislikes
     });
   }
 }

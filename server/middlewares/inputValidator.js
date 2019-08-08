@@ -111,6 +111,7 @@ class InputValidator {
   }
 
   /**
+
    * @method validateBookmark
    * @description Validates user details on signup
    * @param {object} req - The Request Object
@@ -132,12 +133,12 @@ class InputValidator {
    * @returns {function} validate() - An execucted validate function
    */
   static validateLikes(req, res, next) {
-    const likes = { ...req.body, ...req.params };
+    const likes = { ...req.body.liked, ...req.params };
     return validate(likes, likesSchema, req, res, next);
   }
 
   /**
-   * @method validateBookmark
+   * @method validateId
    * @description Validates user details on signup
    * @method validateId
    * @description Validate id
