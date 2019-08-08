@@ -173,8 +173,24 @@ export const resetEmailSchema = {
     .email({ minDomainSegments: 2 })
     .required()
 };
+
 export const commentBodySchema = {
   comment: Joi.string()
     .trim()
     .required()
+};
+
+export const searchFilterSchema = {
+  searchQuery: Joi.string().trim().min(2),
+  page: Joi.number().integer().optional(),
+  limit: Joi.number().integer().optional(),
+  categories: Joi.string().allow('').trim(),
+  authorNames: Joi.string().allow('').trim(),
+  tags: Joi.string().allow('').trim(),
+};
+
+export const searchQuerySchema = {
+  searchQuery: Joi.string().allow('').trim().min(2),
+  page: Joi.number().integer().optional(),
+  limit: Joi.number().integer().optional()
 };

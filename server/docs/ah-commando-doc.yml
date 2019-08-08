@@ -457,13 +457,51 @@ paths:
     get:
       tags:
         - Articles
-      summary: get all articles
+      summary: get all articles. Limit to searchQuery if it is supplied
       description: user can get all articles
+      parameters:
+        - in: query
+          name: searchQuery
+          schema:
+            type: string
       responses:
         '200':
           description: successfully view all articles
-        '401':
-          description: Unauthorized
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /articles/search/filter:
+    post:
+      tags:
+        - Articles
+      summary: get all articles marching the search query and filters supplied
+      description: users can get a single article
+      parameters:
+        - in: query
+          name: searchQuery
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                categories:
+                  type: string
+                authorNqmes:
+                  type: string
+                tags:
+                  type: string
+      responses:
+        '200':
+          description: successfully viewed an articles
+        '400':
+          description: validationError
           content:
             application/json:
               schema:
