@@ -169,6 +169,20 @@ describe('Article test', () => {
       });
   });
 
+  it('should create an article without tagList', (done) => {
+    chai
+      .request(app)
+      .post(`${baseUrl}/articles`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send(articleData[8])
+      .end((err, res) => {
+        const { status } = res.body;
+        expect(status).to.equal(201);
+        done();
+      });
+  });
+
+
   it('should get all articles', (done) => {
     chai
       .request(app)
@@ -346,7 +360,7 @@ describe('Article test', () => {
       });
   });
 
-  it('no tagList: should throw an error if tagList is not provided', (done) => {
+  it('should return 400 if a string', (done) => {
     chai
       .request(app)
       .post(`${baseUrl}/articles`)
@@ -355,11 +369,10 @@ describe('Article test', () => {
       .end((err, res) => {
         const { status, error } = res.body;
         expect(status).to.equal(400);
-        expect(error[0]).to.equal('tagList is required');
+        expect(error[0]).to.equal('tagList must be a string');
         done();
       });
   });
-
   it('no image: should throw an error if image is not provided', (done) => {
     chai
       .request(app)
@@ -572,11 +585,11 @@ describe('Search for an article', () => {
         done();
       });
   });
-  it('Should get all articles with the query string a categories listed', (done) => {
+  it('Should get all articles with the query string an categories listed', (done) => {
     chai.request(app)
       .post(`${baseUrl}/articles/search/filter?searchQuery=an`)
       .send({
-        categories: 'technology,health,fashion,lifestyle,education'
+        categories: 'technology,health,fashion,lifestyle,education,science,culture'
       })
       .end((err, res) => {
         expect(res).to.have.a.status(200);
@@ -590,7 +603,7 @@ describe('Search for an article', () => {
     chai.request(app)
       .post(`${baseUrl}/articles/search/filter?searchQuery=an`)
       .send({
-        tags: 'javascript,love,ai,react,tutorial,believe'
+        tags: 'javascript,love,ai,react,tutorial,believe,travel'
       })
       .end((err, res) => {
         expect(res).to.have.a.status(200);
@@ -604,7 +617,7 @@ describe('Search for an article', () => {
     chai.request(app)
       .post(`${baseUrl}/articles/search/filter?searchQuery=an&limit=10&page=1`)
       .send({
-        tags: 'javascript,love,ai,react,tutorial,believe'
+        tags: 'javascript,love,ai,react,tutorial,believe,travel'
       })
       .end((err, res) => {
         expect(res).to.have.a.status(200);
@@ -618,7 +631,7 @@ describe('Search for an article', () => {
     chai.request(app)
       .post(`${baseUrl}/articles/search/filter?searchQuery=an`)
       .send({
-        categories: 'fashion,technology,health,lifestyle,education',
+        categories: 'fashion,technology,health,lifestyle,education,culture',
         tags: 'believe,race,react,tutorial,knowledge,javascript'
       })
       .end((err, res) => {
@@ -633,15 +646,69 @@ describe('Search for an article', () => {
     chai.request(app)
       .post(`${baseUrl}/articles/search/filter?searchQuery=an`)
       .send({
-        categories: 'fashion,technology,health,fashion,lifestyle,education',
-        tags: 'believe,race,react,tutorial,knowledge,javascript,ai',
-        authorNames: 'dominic,monday,jude,kafilat,chukwudi,martins'
+        categories: 'fashion,technology,health,fashion,lifestyle,education,culture',
+        tags: 'believe,race,react,tutorial,knowledge,javascript,ai,travel',
+        authorNames: 'dominic,monday,jude,kafilat,chukwudi,martins,malik'
       })
       .end((err, res) => {
         expect(res).to.have.a.status(200);
         expect(res.body).to.include.all.keys('status', 'articles');
         expect(res.body.articles.rows).to.be.an('array');
         expect(res.body.articles.rows[0]).to.include.all.keys('title', 'articleBody', 'description', 'author', 'Categories', 'Tags');
+        done();
+      });
+  });
+});
+
+
+describe('create or get all tags and categories', () => {
+  it('Should get all the tags in the database', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/articles/tags/get`)
+      .end((err, res) => {
+        expect(res.body).to.have.a.status(200);
+        expect(res.body).to.include.all.keys('status', 'tags');
+        expect(res.body.tags).to.be.an('array');
+        expect(res.body.tags[0]).to.include.all.keys('name', 'description');
+        done();
+      });
+  });
+  it('Should get all the categories in the database', (done) => {
+    chai.request(app)
+      .get(`${baseUrl}/articles/categories/get`)
+      .end((err, res) => {
+        expect(res.body).to.have.a.status(200);
+        expect(res.body).to.include.all.keys('status', 'categories');
+        expect(res.body.categories).to.be.an('array');
+        expect(res.body.categories[0]).to.include.all.keys('name', 'description');
+        done();
+      });
+  });
+  it('should create a new tag in the database', (done) => {
+    chai
+      .request(app)
+      .post(`${baseUrl}/articles/tags/create`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({
+        tagName: 'newtag'
+      })
+      .end((err, res) => {
+        expect(res.body).to.have.a.status(200);
+        expect(res.body.tag[0]).to.include.all.keys('name', 'description');
+        done();
+      });
+  });
+  it('should create a new category in the database', (done) => {
+    chai
+      .request(app)
+      .post(`${baseUrl}/articles/categories/create`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({
+        categoryName: 'newtag'
+      })
+      .end((err, res) => {
+        expect(res.body).to.have.a.status(200);
+        expect(res.body.category[0]).to.include.all.keys('name', 'description');
         done();
       });
   });

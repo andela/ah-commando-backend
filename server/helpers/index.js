@@ -6,6 +6,7 @@ import Mail from './mail/mail';
 import articleSearch from './articleSearch';
 import Paginate from './paginate';
 
+import tagCategory from './tag_categoryHelper';
 
 const { generateToken, verifyToken } = Auth;
 const { hashPassword, comparePassword } = passwordHash;
@@ -13,6 +14,7 @@ const { errorStat, successStat } = Utilities;
 const { addToBlacklist, checkBlacklist } = blacklistToken;
 const { querySearch, filterSearch } = articleSearch;
 const { paginate } = Paginate;
+const { addTags, addCategories } = tagCategory;
 
 export default {
   addToBlacklist,
@@ -26,5 +28,7 @@ export default {
   Mail,
   querySearch,
   filterSearch,
-  paginate
+  paginate,
+  addTags,
+  addCategories
 };

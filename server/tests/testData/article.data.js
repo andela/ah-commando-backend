@@ -7,6 +7,7 @@ const article = [
       description: 'article description one',
       articleBody: 'this the body of the article',
       tagList: 'health programming',
+      categoryList: 'programming',
       image: 'image.jpg'
     }
   },
@@ -39,11 +40,12 @@ const article = [
   },
 
   {
-    // no tagList
+    // does not follow specified format
     article: {
       title: 'this is the first title',
       description: 'article description one',
       articleBody: 'this the body of the article',
+      tagList: 12343,
       image: 'image.jpg'
     }
   },
@@ -74,6 +76,16 @@ const article = [
       description: 'article description one',
       articleBody: 'this the body of the article',
       tagList: 'health programming',
+      image: 'image.jpg'
+    }
+  },
+  {
+    // correct data
+    article: {
+      title: 'this is the first title',
+      description: 'article description one',
+      articleBody: 'this the body of the article',
+      categoryList: 'programming',
       image: 'image.jpg'
     }
   },

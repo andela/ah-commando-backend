@@ -7,7 +7,7 @@ import Notification from '../helpers/notifications';
 
 const { Op } = sequelize;
 const {
-  querySearch, filterSearch, errorStat, successStat
+  querySearch, filterSearch, errorStat, successStat, addTags, addCategories,
 } = helpers;
 
 const parseBool = (string) => {
@@ -15,6 +15,7 @@ const parseBool = (string) => {
   return false;
 };
 const { paginate } = Paginate;
+const { Tags, Categories } = models;
 /**
  * @Module ArticleController
  * @description Controlls all activities related to Articles
@@ -32,6 +33,7 @@ class ArticleController {
       title,
       description,
       tagList,
+      categoryList,
       articleBody,
       image
     } = req.body.article;
@@ -46,7 +48,13 @@ class ArticleController {
       image,
       readTime
     });
-    article.tagList = [...article.dataValues.tagList.split(' ')];
+    if (tagList && tagList.length) {
+      await addTags(tagList, article.dataValues.id);
+    }
+    if (categoryList && categoryList.length) {
+      await addCategories(categoryList, article.dataValues.id);
+    }
+    article.tagList = tagList && tagList.split(/[ ,]/);
     const author = await article.getAuthor({
       attributes: ['username'],
       include: [{
@@ -300,6 +308,58 @@ class ArticleController {
       }
     });
     return successStat(res, 201, 'comment', commentResponse);
+  }
+
+  /**
+   * @description creates a new tag
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @returns {String} returns a message indicating that the article was deleted
+   * @memberof ArticleController
+   */
+  static async createTag(req, res) {
+    const { tagName, description } = req.body;
+    const tag = await Tags.findOrCreate({ where: { name: tagName }, defaults: { description } });
+    return successStat(res, 200, 'tag', tag);
+  }
+
+  /**
+   * @description creates a new tag
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @returns {String} returns a message indicating that the article was deleted
+   * @memberof ArticleController
+   */
+  static async createCategory(req, res) {
+    const { categoryName, description } = req.body;
+    const category = await Categories.findOrCreate({
+      where: { name: categoryName }, defaults: { description }
+    });
+    return successStat(res, 200, 'category', category);
+  }
+
+  /**
+   * @description get all the tags in the database
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @returns {String} returns a message indicating that the article was deleted
+   * @memberof ArticleController
+   */
+  static async getAllTags(req, res) {
+    const tags = await Tags.findAll();
+    return successStat(res, 200, 'tags', tags);
+  }
+
+  /**
+   * @description get all the categories in the database
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @returns {String} returns a message indicating that the article was deleted
+   * @memberof ArticleController
+   */
+  static async getAllCategories(req, res) {
+    const categories = await Categories.findAll();
+    return successStat(res, 200, 'categories', categories);
   }
 }
 
