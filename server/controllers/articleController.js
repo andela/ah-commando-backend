@@ -2,13 +2,18 @@ import uuid from 'uuid';
 import sequelize from 'sequelize';
 import models from '../db/models';
 import helpers from '../helpers';
-import utils from '../helpers/Utilities';
-
 import Paginate from '../helpers/paginate';
 
 const { Op } = sequelize;
 const { paginateArticles } = Paginate;
-const { querySearch, filterSearch } = helpers;
+const {
+  querySearch, filterSearch, errorStat, successStat
+} = helpers;
+
+const parseBool = (string) => {
+  if (string === 'true') return true;
+  return false;
+};
 /**
  * @Module ArticleController
  * @description Controlls all activities related to Articles
@@ -42,7 +47,7 @@ class ArticleController {
       readTime
     });
     article.tagList = [...article.dataValues.tagList.split(' ')];
-    return utils.successStat(res, 201, 'articles', article);
+    return successStat(res, 201, 'articles', article);
   }
 
   /**
@@ -67,7 +72,7 @@ class ArticleController {
       } else {
         articles = await querySearch(searchQuery);
       }
-      return utils.successStat(res, 200, 'articles', articles);
+      return successStat(res, 200, 'articles', articles);
     }
     paginateArticles(req, res);
   }
@@ -91,12 +96,24 @@ class ArticleController {
         attributes: ['firstname', 'lastname', 'username', 'image', 'email']
       }]
     });
+
     if (!article) {
-      return utils.errorStat(res, 404, 'Article not found');
+      return errorStat(res, 404, 'Article not found');
     }
+
+    const totalLikes = await article.countLikes({
+      where: { likes: true }
+    });
+
+    const totalDislikes = await article.countLikes({
+      where: { likes: false }
+    });
+
     let comments = await article.getComment();
     comments = Object.values(comments).map(comment => comment.dataValues);
-    return utils.successStat(res, 200, 'article', { article, comments, noOfComments: comments.length });
+    return successStat(res, 200, 'article', {
+      article, totalLikes, totalDislikes, comments, noOfComments: comments.length
+    });
   }
 
   /**
@@ -131,11 +148,11 @@ class ArticleController {
     );
 
     if (editedArticle[1].length < 1) {
-      return utils.errorStat(res, 404, 'Article not found');
+      return errorStat(res, 404, 'Article not found');
     }
 
     const article = editedArticle[1][editedArticle[1].length - 1].dataValues;
-    return utils.successStat(res, 200, 'article', article);
+    return successStat(res, 200, 'article', article);
   }
 
   /**
@@ -154,14 +171,57 @@ class ArticleController {
     });
 
     if (!deletedArticle) {
-      return utils.errorStat(res, 404, 'Article not found');
+      return errorStat(res, 404, 'Article not found');
     }
-    return utils.successStat(
+    return successStat(
       res,
       200,
       'message',
       'Article deleted successfully'
     );
+  }
+
+  /**
+   * @description Like or Dislike an Article
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @returns {String} returns a message indicating that the article was liked or disliked
+  */
+  static async likeOrDislikeArticle(req, res) {
+    const { user } = req;
+    const { liked } = req.body.liked;
+    const { articleId } = req.params;
+    const likes = parseBool(liked);
+
+    const article = await models.Article.findByPk(articleId);
+    if (!article) return errorStat(res, 404, 'Article not found');
+
+    const likedArticle = await models.Likes.findOne({
+      where: { articleId, userId: user.id }
+    });
+
+    if (likedArticle && likedArticle.likes === likes) {
+      await models.Likes.destroy({ where: { articleId, userId: user.id } });
+    } else if (likedArticle && likedArticle.likes !== likes) {
+      await models.Likes.update({ likes }, { where: { articleId, userId: user.id } });
+    } else {
+      await user.createLike({
+        likes,
+        articleId
+      });
+    }
+
+    const totalLikes = await article.countLikes({
+      where: { likes: true }
+    });
+
+    const totalDislikes = await article.countLikes({
+      where: { likes: false }
+    });
+
+    return successStat(res, 200, 'Likes', {
+      totalLikes, totalDislikes
+    });
   }
 }
 

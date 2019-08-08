@@ -49,6 +49,8 @@ module.exports = (sequelize, DataTypes) => {
       through: 'ArticleTags',
       foreignKey: 'articleId'
     });
+    Article.belongsTo(models.User, { foreignKey: 'authorId', onDelete: 'CASCADE' });
+    Article.hasMany(models.Likes, { foreignKey: 'articleId', timestamps: false, onDelete: 'CASCADE' });
   };
   return Article;
 };

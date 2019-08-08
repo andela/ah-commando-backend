@@ -197,3 +197,8 @@ export const searchQuerySchema = {
   page: Joi.number().integer().optional(),
   limit: Joi.number().integer().optional()
 };
+
+export const likesSchema = {
+  liked: Joi.string().valid('true', 'false').required(),
+  articleId: Joi.number().integer().required().min(1)
+};
