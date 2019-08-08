@@ -29,7 +29,15 @@ module.exports = (sequelize, DataTypes) => {
       hooks: true,
       timestamps: false,
     });
-    User.hasMany(models.Article, { foreignKey: 'id', onDelete: 'CASCADE' });
+    User.hasMany(models.Article, {
+      foreignKey: 'authorId',
+      onDelete: 'CASCADE'
+    });
+    User.hasMany(models.Bookmark, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE'
+    });
+    User.hasMany(models.Article, { as: 'authorId', foreignKey: 'authorId', onDelete: 'CASCADE' });
     User.hasMany(models.Comment, { foreignKey: 'authorId', onDelete: 'CASCADE' });
   };
   return User;

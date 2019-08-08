@@ -139,7 +139,7 @@ paths:
   /users/google:
     get:
       tags:
-        - Social user
+        - Users
       summary: User login
       description: An endpoint to login a user via social media accounts
       responses:
@@ -165,7 +165,7 @@ paths:
   /users/facebook:
     get:
       tags:
-        - users
+        - Users
       summary: User login
       description: An endpoint to login a user via social media accounts
       responses:
@@ -804,7 +804,151 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
-  
+  /user/bookmark/:
+    get:
+      tags:
+        - Bookmarks
+      security:
+        - bearerAuth: []
+      summary: bookmark an article for reading later
+      description: An endpoint to get all bookmarked articles
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+    /user/bookmark/{articleId}:
+    post:
+      tags:
+        - Bookmarks
+      security:
+        - bearerAuth: []
+      summary: bookmark an article for reading later
+      parameters:
+        - in: path
+          name: articleId
+          schema:
+            type: integer
+          required: true
+      description: An endpoint to bookmark an article
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+    /user/bookmark/{articleId}:
+    delete:
+      tags:
+        - Bookmarks
+      security:
+        - bearerAuth: []
+      summary: Unbookmark an article
+      parameters:
+        - in: path
+          name: articleId
+          schema:
+            type: string
+          required: true
+      description: A reader can unbookmark an article
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+    /user/bookmark/:
+    delete:
+      tags:
+        - Bookmarks
+      security:
+        - bearerAuth: []
+      summary: Unbookmark all articles
+      description: A reader can unbookmark all articles
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+    
 components:
   securitySchemes:
     bearerAuth:

@@ -165,12 +165,7 @@ class UserController {
   * @memberof UserController
   */
   static async socialSignin(req, res) {
-    /* istanbul ignore next */
-    if (!req.user) {
-      return errorStat(res, 404, 'Account not found');
-    }
     const userDetails = req.user;
-
     const firstname = userDetails.displayName.split(' ')[0];
     const lastname = userDetails.displayName.split(' ')[1];
     const username = userDetails.emails[0].value;

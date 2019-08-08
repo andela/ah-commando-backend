@@ -179,7 +179,10 @@ export const commentBodySchema = {
     .trim()
     .required()
 };
-
+export const bookmarkParamSchema = {
+  articleId: Joi.number()
+    .required()
+};
 export const searchFilterSchema = {
   searchQuery: Joi.string().trim().min(2),
   page: Joi.number().integer().optional(),
