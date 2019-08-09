@@ -113,10 +113,9 @@ export const articleSchema = {
   articleBody: Joi.string()
     .trim()
     .required(),
-
+  categoryList: Joi.string().trim().min(2),
   tagList: Joi.string()
-    .required()
-    .regex(/^[a-zA-Z0-9 -]+$/)
+    .regex(/^[a-zA-Z0-9\ \-]+$/)
     .error((errors) => {
       errors.forEach((err) => {
         if (err.type === 'string.regex.base') {
