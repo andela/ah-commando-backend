@@ -6,7 +6,8 @@ const {
   verifyToken,
   validateCommentMessage,
   validateHighlightData,
-  validateGetHighlight
+  validateGetHighlight,
+  isActive
 } = middlewares;
 
 const {
@@ -21,12 +22,12 @@ const {
 
 const commentRouter = express();
 
-commentRouter.post('/:postId', verifyToken, validateCommentMessage, addAComment);
+commentRouter.post('/:postId', verifyToken, isActive, validateCommentMessage, addAComment);
 commentRouter.get('/:postId', verifyToken, getCommentsOnASingleArticle);
-commentRouter.put('/:commentId', verifyToken, validateCommentMessage, editOwnComment);
-commentRouter.delete('/:commentId', verifyToken, deleteOwnComment);
+commentRouter.put('/:commentId', verifyToken, isActive, validateCommentMessage, editOwnComment);
+commentRouter.delete('/:commentId', verifyToken, isActive, deleteOwnComment);
 commentRouter.get('/', verifyToken, getAllCommentsForAllPosts);
-commentRouter.post('/:id/highlight', verifyToken, validateHighlightData, commentAhighligh);
-commentRouter.get('/:id/highlight', verifyToken, validateGetHighlight, getHighlightComment);
+commentRouter.post('/:id/highlight', verifyToken, isActive, validateHighlightData, commentAhighligh);
+commentRouter.get('/:id/highlight', verifyToken, isActive, validateGetHighlight, getHighlightComment);
 
 export default commentRouter;

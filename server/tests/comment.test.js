@@ -10,7 +10,7 @@ chai.use(chaiHttp);
 const baseUrl = '/api/v1';
 
 describe('Handle Comment', () => {
-  let userToken, postId, commentId, anotherUserToken;
+  let userToken, postId, anotherUserToken, commentId;
   before('sign up a user', (done) => {
     chai
       .request(app)
@@ -24,7 +24,15 @@ describe('Handle Comment', () => {
     chai
       .request(app)
       .post(`${baseUrl}/users/`)
-      .send(userData[28])
+      .send({
+        user: {
+          firstname: 'nopost',
+          lastname: 'nopost',
+          username: 'nopostuser',
+          email: 'test@testingdomain.com',
+          password: 'P@ssword123...x',
+        }
+      })
       .end(() => {
         done();
       });
@@ -44,7 +52,12 @@ describe('Handle Comment', () => {
       chai
         .request(app)
         .post(`${baseUrl}/users/login`)
-        .send(userData[29])
+        .send({
+          user: {
+            email: 'test@testingdomain.com',
+            password: 'P@ssword123...x',
+          }
+        })
         .end((err, res) => {
           anotherUserToken = res.body.user.token;
           done();
@@ -261,6 +274,76 @@ describe('Handle Comment', () => {
           .end((err, res) => {
             const { status } = res.body;
             expect(status).to.equal(200);
+            done();
+          });
+      });
+      before('add a post', (done) => {
+        chai
+          .request(app)
+          .post(`${baseUrl}/articles`)
+          .set('Authorization', `${userToken}`)
+          .send({
+            article: {
+              title: 'Hello',
+              description: 'i say hello',
+              articleBody: 'hhh',
+              tagList: 'jssd',
+              image: 'hs.jpg'
+            }
+          })
+          .end((err, res) => {
+            postId = res.body.articles.id;
+            done();
+          });
+      });
+      it('Should fail if user isn\'t logged in', (done) => {
+        chai
+          .request(app)
+          .post(`${baseUrl}/comment/${postId}`)
+          .send(commentData[0])
+          .end((err, res) => {
+            const { status, error } = res.body;
+            expect(status).to.equal(401);
+            expect(error).to.equal('Authorization error');
+            done();
+          });
+      });
+      it('Should fail if message is empty', (done) => {
+        chai
+          .request(app)
+          .post(`${baseUrl}/comment/${postId}`)
+          .set('Authorization', `${userToken}`)
+          .send(commentData[1])
+          .end((err, res) => {
+            const { status, error } = res.body;
+            expect(status).to.equal(400);
+            expect(error[0]).to.equal('comment is not allowed to be empty');
+            done();
+          });
+      });
+      it('Should fail if post is not found', (done) => {
+        chai
+          .request(app)
+          .post(`${baseUrl}/comment/${230}`)
+          .set('Authorization', `${userToken}`)
+          .send(commentData[0])
+          .end((err, res) => {
+            const { status, error } = res.body;
+            expect(status).to.equal(404);
+            expect(error).to.equal('Post not found');
+            done();
+          });
+      });
+      it('Should pass if user is a valid one and is logged in', (done) => {
+        chai
+          .request(app)
+          .post(`${baseUrl}/comment/${postId}`)
+          .set('Authorization', `${userToken}`)
+          .send(commentData[0])
+          .end((err, res) => {
+            const { status } = res.body;
+            expect(status).to.equal(201);
+            expect(res.body.comment).to.be.an('object');
             done();
           });
       });

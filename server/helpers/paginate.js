@@ -40,7 +40,6 @@ class Paginate {
     } else {
       resultFromDb = await querySearch(searchQuery, limit, offset);
     }
-
     if (resultFromDb.rows.length < 1) {
       return errorStat(res, 404, 'Page not found');
     }

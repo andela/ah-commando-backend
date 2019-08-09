@@ -1,4 +1,3 @@
-
 const article = [
   {
     // correct data

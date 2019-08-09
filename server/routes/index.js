@@ -4,6 +4,7 @@ import yaml from 'yamljs';
 import userRoute from './user';
 import profileRoute from './profile';
 import articleRoute from './article';
+import adminRoute from './admin';
 import imageRoute from './image';
 import bookmarkRoute from './bookmark';
 import commentRouter from './comment';
@@ -33,5 +34,6 @@ router.use('/comment', commentRouter);
 router.use('/likes', likesRouter);
 router.use('/notifications', notificationRoute);
 router.use('/report', reportRoute);
+router.use('/admin', adminRoute);
 
 export default router;

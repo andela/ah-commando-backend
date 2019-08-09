@@ -3,11 +3,11 @@ import reportController from '../controllers/reportController';
 import middlewares from '../middlewares';
 
 const router = express.Router();
-const { verifyToken, validateReportArticle } = middlewares;
+const { verifyToken, validateReportArticle, isActive } = middlewares;
 
 const { reportArticle, getAllArticleReports, getOneReport } = reportController;
-router.post('/:slug', verifyToken, reportArticle);
-router.get('/', verifyToken, getAllArticleReports);
-router.get('/:reportId', verifyToken, validateReportArticle, getOneReport);
+router.post('/:slug', verifyToken, isActive, reportArticle);
+router.get('/', verifyToken, isActive, getAllArticleReports);
+router.get('/:reportId', verifyToken, isActive, validateReportArticle, getOneReport);
 
 export default router;

@@ -1,4 +1,4 @@
-/* eslint-disable no-useless-escape */
+
 import Joi from '@hapi/joi';
 
 export const userSchema = {
@@ -59,6 +59,8 @@ export const userSchema = {
     .lowercase()
     .email({ minDomainSegments: 2 })
     .required(),
+  isActive: Joi.boolean(),
+  role: Joi.string().valid('god', 'admin', 'moderator', 'user'),
   password: Joi.string()
     .min(8)
     .required()
@@ -115,6 +117,7 @@ export const articleSchema = {
     .required(),
   categoryList: Joi.string().trim().min(2),
   tagList: Joi.string()
+    // eslint-disable-next-line no-useless-escape
     .regex(/^[a-zA-Z0-9\ \-]+$/)
     .error((errors) => {
       errors.forEach((err) => {
@@ -155,16 +158,15 @@ export const resetPasswordSchema = {
     .required()
     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
     .error((errors) => {
-      /* istanbul ignore next */
       errors.forEach((err) => {
         if (err.type === 'string.regex.base') {
           err.message = 'password must contain at least 1 uppercase, 1 lowercase, 1 number and 1 special character';
         }
       });
-      /* istanbul ignore next */
       return errors;
     })
 };
+
 export const resetEmailSchema = {
   email: Joi.string()
     .trim()
@@ -204,15 +206,21 @@ export const searchQuerySchema = {
   page: Joi.number().integer().optional(),
   limit: Joi.number().integer().optional()
 };
-
+export const roleBodySchema = {
+  newRole: Joi.string()
+    .trim()
+    .valid('god', 'admin', 'moderator', 'user')
+    .required(),
+  username: Joi.string()
+    .trim()
+    .required()
+};
 export const idSchema = {
   id: Joi.number().min(1).required()
 };
-
 export const reportArticleSchema = {
   reportId: Joi.number()
 };
-
 export const highlightDataSchema = {
   id: Joi.number().integer().required().min(1),
   comment: Joi.string().trim().required(),

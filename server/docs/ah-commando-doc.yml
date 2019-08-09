@@ -1507,6 +1507,176 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponse"
+  /admin/assignRole/:
+    put:
+      tags:
+        - Admin - Role based
+      security:
+        - bearerAuth: []
+      summary: assign roles to users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newRole:
+                  type: string
+                username:
+                  type: string
+      description: An endpoint that assigns role to users
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /admin/setActiveStatus/{username}:
+    put:
+      tags:
+        - Admin - Role based
+      security:
+        - bearerAuth: []
+      summary: set user isActive status
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+      description: An endpoint that automatically change the active state of users
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /admin/deleteUser/{username}:
+    delete:
+      tags:
+        - Admin - Role based
+      security:
+        - bearerAuth: []
+      summary: deletes a user
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+      description: An endpoint that deletes a user off the platform
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /admin/deleteArticle/{id}:
+    delete:
+      tags:
+        - Admin - Role based
+      security:
+        - bearerAuth: []
+      summary: deletes an article
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      description: An endpoint that deletes an article off the platform
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /admin/deleteComment/{id}:
+    delete:
+      tags:
+        - Admin - Role based
+      security:
+        - bearerAuth: []
+      summary: deletes a comment
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      description: An endpoint that deletes a comment off the platform
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
 components:
   securitySchemes:
     bearerAuth:

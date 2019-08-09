@@ -10,6 +10,11 @@ module.exports = (sequelize, DataTypes) => {
     socialId: DataTypes.STRING,
     verified: DataTypes.BOOLEAN,
     newPostEmailSub: DataTypes.BOOLEAN,
+    role: {
+      type: DataTypes.STRING,
+      defaultValue: 'user'
+    },
+    isActive: DataTypes.BOOLEAN,
   }, {});
   User.associate = (models) => {
     User.belongsToMany(models.User, {
