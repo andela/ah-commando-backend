@@ -162,4 +162,42 @@ export default class CommentController {
     if (userPosts.length <= 0) return successStat(res, 200, 'message', 'You have not made any post so far...');
     return successStat(res, 200, 'data', userPosts);
   }
+
+  /**
+   * @static
+   * @description allows a user add a comment to an already highlighted text
+   * @param {*} req Request object
+   * @param {*} res Response object
+   * @returns {Object} Object containing the user comment, author, and timestaps
+   * @memberof CommentController
+   */
+  static async commentAhighligh(req, res) {
+    const { body: { highlight: { comment, id } }, user } = req;
+    const highlightedComment = await models.Comment.findOne({ where: { highlightId: id } });
+    if (!highlightedComment) return errorStat(res, 404, 'Post not found');
+    const { highlightUser, articleId, highlightId } = highlightedComment;
+    const newComment = {
+      highlightUser,
+      body: comment,
+      articleId,
+      highlightId,
+      authorId: user.id,
+    };
+    const userComment = await models.Comment.create(newComment);
+    return successStat(res, 201, 'comment', userComment);
+  }
+
+  /**
+ * @static
+ * @description returns all comments for a highlight
+ * @param {*} req Request object
+ * @param {*} res Response object
+ * @returns {Object} Object containing the user comment, author, and timestaps
+ * @memberof CommentController
+ */
+  static async getHighlightComment(req, res) {
+    const { user, params: { id } } = req;
+    const comments = await user.getComments({ where: { highlightId: id } });
+    return successStat(res, 200, 'comment', comments);
+  }
 }

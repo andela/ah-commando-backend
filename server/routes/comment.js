@@ -4,7 +4,9 @@ import CommentController from '../controllers/commentController';
 
 const {
   verifyToken,
-  validateCommentMessage
+  validateCommentMessage,
+  validateHighlightData,
+  validateGetHighlight
 } = middlewares;
 
 const {
@@ -12,7 +14,9 @@ const {
   getCommentsOnASingleArticle,
   editOwnComment,
   deleteOwnComment,
-  getAllCommentsForAllPosts
+  getAllCommentsForAllPosts,
+  commentAhighligh,
+  getHighlightComment
 } = CommentController;
 
 const commentRouter = express();
@@ -22,5 +26,7 @@ commentRouter.get('/:postId', verifyToken, getCommentsOnASingleArticle);
 commentRouter.put('/:commentId', verifyToken, validateCommentMessage, editOwnComment);
 commentRouter.delete('/:commentId', verifyToken, deleteOwnComment);
 commentRouter.get('/', verifyToken, getAllCommentsForAllPosts);
+commentRouter.post('/:id/highlight', verifyToken, validateHighlightData, commentAhighligh);
+commentRouter.get('/:id/highlight', verifyToken, validateGetHighlight, getHighlightComment);
 
 export default commentRouter;
