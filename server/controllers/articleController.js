@@ -361,6 +361,40 @@ class ArticleController {
     const categories = await Categories.findAll();
     return successStat(res, 200, 'categories', categories);
   }
+
+  /**
+   * @description sharing an article on facebook
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @returns {String} returns a link to the article on facebook website
+  */
+  static async shareOnFacebook(req, res) {
+    const article = await models.Article.findOne({
+      where: { slug: req.params.slug }
+    });
+    if (!article) {
+      return errorStat(res, 404, 'not found');
+    }
+    const facebookSDK = `https://www.facebook.com/sharer/sharer.php?u=https://a-haven-staging-pr-41.herokuapp.com/api/v1/articles/${article.slug}`;
+    return res.redirect(`${facebookSDK}`);
+  }
+
+  /**
+   * @description sharing an article on tweeter
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @returns {String} returns a link to the article on twitter website
+  */
+  static async shareOnTweeter(req, res) {
+    const article = await models.Article.findOne({
+      where: { slug: req.params.slug }
+    });
+    if (!article) {
+      return errorStat(res, 404, 'not found');
+    }
+    const tweetSDK = `https://twitter.com/share?url=https://a-haven-staging-pr-41.herokuapp.com/api/v1/articles/${article.slug}`;
+    return res.redirect(`${tweetSDK}`);
+  }
 }
 
 export default ArticleController;
