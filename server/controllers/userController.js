@@ -418,7 +418,7 @@ class UserController {
       where: { userId },
       attributes: ['articleId', 'createdAt']
     });
-    return successStat(res, 200, 'Number_Of_Articles_Read', userReadStats.count);
+    return successStat(res, 200, 'Articles_Read', userReadStats.count);
   }
 }
 
