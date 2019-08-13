@@ -125,6 +125,10 @@ class ArticleController {
       }]
     });
 
+    if (!article) {
+      return errorStat(res, 404, 'Article not found');
+    }
+
     if (req.user) {
       const userId = req.user.id;
       await models.Reading.findOrCreate({
@@ -136,10 +140,6 @@ class ArticleController {
         },
       });
       await models.Article.increment({ readCount: 1 }, { where: { slug } });
-    }
-
-    if (!article) {
-      return errorStat(res, 404, 'Article not found');
     }
 
     const likes = await article.countLikes({

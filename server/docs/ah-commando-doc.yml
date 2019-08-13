@@ -400,6 +400,30 @@ paths:
               schema:
                 $ref: "#/components/schemas/errorResponse"
 
+    /user/readStat:
+    get:
+      tags:
+        - Profiles
+      security:
+        - bearerAuth: []
+      summary: Get read statistics
+      description: Get the statistics of articles an author has read
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '400':
+          description: Bad request due to Invalid verification link
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '401':
+          description: Authorization error
+
   /articles:
     post:
       tags:

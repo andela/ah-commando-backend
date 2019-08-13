@@ -256,6 +256,17 @@ describe('Article test', () => {
       });
   });
 
+  it('should get a single article if user is not authenticated', (done) => {
+    chai
+      .request(app)
+      .get(`${baseUrl}/articles/this-is-the-first-title`)
+      .end((err, res) => {
+        const { status } = res.body;
+        expect(status).to.equal(200);
+        done();
+      });
+  });
+
   it('get single article: should throw an error if article does not exist', (done) => {
     chai
       .request(app)
