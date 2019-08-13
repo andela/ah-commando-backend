@@ -24,7 +24,6 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: '0',
       },
     },
-    {}
   );
 
   SequelizeSlugify.slugifyModel(Article, {
@@ -55,6 +54,9 @@ module.exports = (sequelize, DataTypes) => {
     });
     Article.belongsToMany(models.Tags, {
       through: 'ArticleTags',
+      foreignKey: 'articleId'
+    });
+    Article.hasMany(models.Reading, {
       foreignKey: 'articleId'
     });
   };
