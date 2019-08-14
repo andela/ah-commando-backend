@@ -21,7 +21,12 @@ const {
   editArticle,
   deleteArticle,
   highlightText,
-  createTag, createCategory, getAllTags, getAllCategories
+  createTag,
+  createCategory,
+  getAllTags,
+  getAllCategories,
+  shareOnFacebook,
+  shareOnTweeter,
 } = ArticleController;
 
 
@@ -42,5 +47,10 @@ router.post('/tags/create', verifyToken, isActive, createTag);
 
 // get and create a category
 router.get('/categories/get', getAllCategories);
+
+// share an article
+router.get('/:slug/facebook-share', shareOnFacebook);
+router.get('/:slug/twitter-share', shareOnTweeter);
+
 router.post('/categories/create', verifyToken, isActive, createCategory);
 export default router;

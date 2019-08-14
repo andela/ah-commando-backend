@@ -660,7 +660,6 @@ describe('Search for an article', () => {
   });
 });
 
-
 describe('create or get all tags and categories', () => {
   it('Should get all the tags in the database', (done) => {
     chai.request(app)
@@ -709,6 +708,81 @@ describe('create or get all tags and categories', () => {
       .end((err, res) => {
         expect(res.body).to.have.a.status(200);
         expect(res.body.category[0]).to.include.all.keys('name', 'description');
+        done();
+      });
+  });
+});
+
+describe('social media sharing', () => {
+  let articleSlug;
+  const wrongSlug = 'wrong slug';
+  before((done) => {
+    chai
+      .request(app)
+      .post(`${baseUrl}/articles`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({
+        article: {
+          title: 'share on facebook',
+          description: 'description',
+          articleBody: 'article body',
+          tagList: 'android dragons',
+          image: 'image.png'
+        }
+      })
+      .end((err, res) => {
+        const {
+          articles: { slug }
+        } = res.body;
+        articleSlug = slug;
+        done();
+      });
+  });
+
+  it('should share an article on facebook', (done) => {
+    chai
+      .request(app)
+      .get(`${baseUrl}/articles/${articleSlug}/facebook-share`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .end((err, res) => {
+        const { redirects } = res;
+        expect(redirects[0]).to.equal(`https://www.facebook.com/sharer/sharer.php?u=${process.env.APP_URL}/api/v1/articles/share-on-facebook`);
+        done();
+      });
+  });
+
+  it('should throw an error if article does not exist', (done) => {
+    chai
+      .request(app)
+      .get(`${baseUrl}/articles/${wrongSlug}/facebook-share`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .end((err, res) => {
+        const { status } = res.body;
+        expect(status).to.equal(404);
+        done();
+      });
+  });
+
+  it('should share an article on twitter', (done) => {
+    chai
+      .request(app)
+      .get(`${baseUrl}/articles/${articleSlug}/twitter-share`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .end((err, res) => {
+        const { redirects } = res;
+        expect(redirects[0]).to.equal(`https://twitter.com/share?url=${process.env.APP_URL}/api/v1/articles/share-on-facebook`);
+        done();
+      });
+  });
+
+  it('should throw an error if article does not exist', (done) => {
+    chai
+      .request(app)
+      .get(`${baseUrl}/articles/${wrongSlug}/twitter-share`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .end((err, res) => {
+        const { status } = res.body;
+        expect(status).to.equal(404);
         done();
       });
   });

@@ -34,7 +34,7 @@ class reportController {
     if (article) {
       const authorId = req.user.id;
       const articleId = article.id;
-      const { reportDetails, reportType } = req.body;
+      const { reportDetails, reportType } = req.body.report;
       const findReport = await models.Report.findOne({
         where: { authorId, articleId }
       });
