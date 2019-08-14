@@ -291,6 +291,25 @@ const user = [
       email: 'god@god.com',
       password: 'P@ssword123'
     }
+  },
+  // god creates a user 35
+  {
+    user: {
+      firstname: 'newfirstname',
+      lastname: 'newlastname',
+      username: 'firstlastname',
+      role: 'moderator',
+      email: 'newfirstname@email.com'
+    }
+  },
+  // god updates a user 36
+  {
+    user: {
+      firstname: 'newupdate',
+      username: 'updatelastname',
+      role: 'moderator',
+      email: 'newfirstname@email.com'
+    }
   }
 ];
 

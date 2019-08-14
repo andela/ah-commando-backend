@@ -1,7 +1,15 @@
+import sequelize from 'sequelize';
 import models from '../db/models';
 import helpers from '../helpers';
 
-const { errorStat, successStat } = helpers;
+
+const {
+  errorStat, successStat, hashPassword, generateToken, Mail
+} = helpers;
+
+const { Op } = sequelize;
+const { User } = models;
+
 /**
   * @Module AdminController
   * @description Controls all Admin based activity
@@ -133,6 +141,106 @@ class AdminController {
     if (!foundUser) return errorStat(res, 404, 'User not found');
 
     return successStat(res, 200, 'data', foundUser);
+  }
+
+  /**
+    * @static
+    * @description Allows a super-admin to create new user
+    * @param {Object} req - Request object
+    * @param {Object} res - Response object
+    * @returns {Object} object containing user data and access Token
+    * @memberof AdminController
+    */
+  static async createUser(req, res) {
+    const {
+      firstname, lastname, email, username
+    } = req.body.user;
+    const userRole = req.body.user.role;
+    const { role } = req.user;
+    if (role !== 'god') return errorStat(res, 401, 'You cannot perform this action. Please contact a god');
+    const password = process.env.NEW_USER_PASSWORD;
+    const existingUser = await models.User.findOne({
+      where: {
+        [Op.or]: [{ email }]
+      }
+    });
+    if (existingUser) {
+      return errorStat(res, 409, 'User Already Exists');
+    }
+    const newUser = { ...req.body.user, password: hashPassword(password), verified: false };
+    const user = await models.User.create(newUser);
+    const token = generateToken({ id: user.id, email });
+
+    const mail = new Mail({
+      to: user.email,
+      subject: "Welcome to Authors' Haven",
+      messageHeader: `Hi, ${user.firstname}!`,
+      messageBody: `You have being added a/an ${userRole}, your username is ${username} and password ${password} 
+      please, click on the link below to verify your email and change your password as soon as possible`,
+      iButton: true
+    });
+    mail.InitButton({
+      text: 'Verify Email',
+      link: `${process.env.APP_URL}/api/v1/users/confirmEmail?token=${token}&id=${user.id}`,
+    });
+    mail.sendMail();
+    return successStat(res, 201, 'user', {
+      id: user.id,
+      token,
+      firstname,
+      lastname,
+      username,
+      email,
+      role: userRole,
+      isActive: user.isActive
+    });
+  }
+
+  /**
+    * @static
+    * @description Allows a super-admin to update new user
+    * @param {Object} req - Request object
+    * @param {Object} res - Response object
+    * @returns {Object} object containing user data and access Token
+    * @memberof AdminController
+    */
+  static async updateUser(req, res) {
+    const { id } = req.params;
+    const { role } = req.user;
+    if (role !== 'god') return errorStat(res, 401, 'You cannot perform this action. Please contact a god');
+    await User.update(req.body.user, { where: { id }, returning: true });
+    const user = await User.findOne({ where: { id } });
+    return successStat(res, 201, 'user', {
+      id: user.id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      isActive: user.isActive
+    });
+  }
+
+  /**
+    * @static
+    * @description Allows a super-admin to update new user
+    * @param {Object} req - Request object
+    * @param {Object} res - Response object
+    * @returns {Object} object containing user data and access Token
+    * @memberof AdminController
+    */
+  static async getUser(req, res) {
+    const { id } = req.params;
+    const user = await User.findOne({ where: { id } });
+    return successStat(res, 200, 'user', {
+      id: user.id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      isActive: user.isActive
+    });
   }
 }
 
