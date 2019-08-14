@@ -11,10 +11,12 @@ import {
   idSchema,
   reportArticleSchema,
   highlightDataSchema,
-  getHighlightSchema
+  getHighlightSchema,
+  roleBodySchema
 } from './schema';
 
 import validate from '../helpers/validate';
+import util from '../helpers/Utilities';
 
 /**
  * @class InputValidator
@@ -179,15 +181,54 @@ class InputValidator {
   }
 
   /**
-* @method validateHighlightdata
-* @description Validate the highligh id
-* @param {object} req - The Request Object
-* @param {object} res - The Response Object
-* @param {function} next - The next function to point to the next middleware
-* @returns {function} validate() - An execucted validate function
-*/
+  * @method validateHighlightdata
+  * @description Validate the highligh id
+  * @param {object} req - The Request Object
+  * @param {object} res - The Response Object
+  * @param {function} next - The next function to point to the next middleware
+  * @returns {function} validate() - An execucted validate function
+  */
   static validateGetHighlight(req, res, next) {
     return validate(req.params, getHighlightSchema, req, res, next);
+  }
+
+  /**
+   * @method validateParamsInput
+   * @description Validate query parameter supplied
+   * @param {object} req - The Request Object
+   * @param {object} res - The Response Object
+   * @param {function} next - The next function to point to the next middleware
+   * @returns {function} validate() - An execucted validate function
+   */
+  static validateParamsInput(req, res, next) {
+    const { username, id } = req.params;
+    if (username) {
+      const regex = /^[0-9a-zA-Z\\/_-]+$/;
+      if (!regex.test(username)) {
+        return util.errorStat(res, 400, 'Invalid type for username: type should be a string');
+      }
+    }
+    if (id) {
+      const regex = /^[0-9]+$/;
+      /* istanbul ignore next-line */
+      if (!regex.test(id)) {
+        return util.errorStat(res, 400, 'Invalid type for id: type should be an integer');
+      }
+    }
+    return next();
+  }
+
+  /**
+   * @method validateRoleInput
+   * @description Validate role input made by user
+   * @param {object} req - The Request Object
+   * @param {object} res - The Response Object
+   * @param {function} next - The next function to point to the next middleware
+   * @returns {function} validate() - An execucted validate function
+   */
+  static validateRoleInput(req, res, next) {
+    const role = { ...req.body };
+    return validate(role, roleBodySchema, req, res, next);
   }
 }
 

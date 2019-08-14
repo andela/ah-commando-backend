@@ -56,7 +56,14 @@ class UserController {
     });
     mail.sendMail();
     return successStat(res, 201, 'user', {
-      id: user.id, token, username, firstname, lastname, email,
+      id: user.id,
+      token,
+      username,
+      firstname,
+      lastname,
+      email,
+      role: user.role,
+      isActive: user.isActive
     });
   }
 
@@ -84,6 +91,9 @@ class UserController {
       email,
       bio: user.bio,
       image: user.image,
+      role: user.role,
+      isActive: user.isActive
+
     });
   }
 

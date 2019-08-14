@@ -7,7 +7,7 @@ import '../helpers/passport';
 const userRoute = express();
 const {
   verifyToken, validateLogin, validateUser, validatePasswordReset,
-  validateEmail,
+  validateEmail
 } = middlewares;
 const {
   socialSignin,

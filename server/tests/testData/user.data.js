@@ -195,74 +195,103 @@ const user = [
       password: 'P@ssword123'
     }
   },
-  // user correct details 22
+  // this user is NOT active 22
   {
     user: {
-      firstname: 'favour',
-      lastname: 'elemoku',
-      username: 'elemf',
-      email: 'elem@test.com',
-      password: 'P@ssword123'
+      firstname: 'inactive',
+      lastname: 'test',
+      username: 'testinactiveuser',
+      email: 'test@inactive.com',
+      password: 'P@ssword123',
+      isActive: false
     }
   },
-  // user login 23
+  // change the role of an existing user 23
+  {
+    newRole: 'moderator',
+    username: 'admin'
+  },
+  // this user is an admin 24
   {
     user: {
-      email: 'elem@test.com',
-      password: 'P@ssword123'
+      firstname: 'admin',
+      lastname: 'admin',
+      username: 'admin',
+      email: 'admin@admin.com',
+      password: 'P@ssword123',
+      role: 'admin'
     }
   },
-  // user correct details 24
+  // this user is a moderator 25
   {
     user: {
-      firstname: 'favour',
-      lastname: 'elemoku',
-      username: 'elemfavoe',
-      email: 'elesm@test.com',
-      password: 'P@ssword123'
+      firstname: 'moderator',
+      lastname: 'moderator',
+      username: 'moderator',
+      email: 'moderator@moderator.com',
+      password: 'P@ssword123',
+      role: 'moderator'
     }
   },
-  // login data 25
+  // this user is a god 26
   {
     user: {
-      email: 'elesm@test.com',
-      password: 'P@ssword123'
+      firstname: 'god',
+      lastname: 'god',
+      username: 'god',
+      email: 'god@god.com',
+      password: 'P@ssword123',
+      role: 'god'
     }
   },
-  // sign up 26
+  // sign in inactive user 27
   {
     user: {
-      firstname: 'favour',
-      lastname: 'elemoku',
-      username: 'elemavoe',
-      email: 'em@test.com',
-      password: 'P@ssword123'
+      email: 'test@inactive.com',
+      password: 'P@ssword123',
     }
   },
-  // login data 27
+  // sign in an admin 28
   {
     user: {
-      email: 'em@test.com',
-      password: 'P@ssword123'
+      email: 'admin@admin.com',
+      password: 'P@ssword123',
     }
   },
-  // sign up 28
+  // wrong choice of role type 29
+  {
+    newRole: 'chux',
+    username: 'testinactiveuser'
+  },
+  // sign in a moderator 30
   {
     user: {
-      firstname: 'mike',
-      lastname: 'elemoku',
-      username: 'mikeelems',
-      email: 'mikeelems@test.com',
-      password: 'P@ssword123'
+      email: 'moderator@moderator.com',
+      password: 'P@ssword123',
     }
   },
-  // login data 29
+  // change the role of an existing user 31
+  {
+    newRole: 'moderator',
+    username: 'idonotexist'
+  },
+  // role type god 32
+  {
+    newRole: 'god',
+    username: 'testinactiveuser'
+  },
+  // role type admin 33
+  {
+    newRole: 'admin',
+    username: 'testinactiveuser'
+  },
+  // sign in a god 34
   {
     user: {
-      email: 'mikeelems@test.com',
+      email: 'god@god.com',
       password: 'P@ssword123'
     }
-  },
+  }
 ];
 
 export default user;

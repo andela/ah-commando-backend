@@ -159,7 +159,6 @@ export default class CommentController {
         }
       ]
     });
-    if (userPosts.length <= 0) return successStat(res, 200, 'message', 'You have not made any post so far...');
     return successStat(res, 200, 'data', userPosts);
   }
 

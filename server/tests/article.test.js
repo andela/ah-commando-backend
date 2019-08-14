@@ -746,7 +746,7 @@ describe('social media sharing', () => {
       .set('Authorization', `Bearer ${userToken}`)
       .end((err, res) => {
         const { redirects } = res;
-        expect(redirects[0]).to.equal('https://www.facebook.com/sharer/sharer.php?u=https://a-haven-staging-pr-41.herokuapp.com/api/v1/articles/share-on-facebook');
+        expect(redirects[0]).to.equal(`https://www.facebook.com/sharer/sharer.php?u=${process.env.APP_URL}/api/v1/articles/share-on-facebook`);
         done();
       });
   });
@@ -770,7 +770,7 @@ describe('social media sharing', () => {
       .set('Authorization', `Bearer ${userToken}`)
       .end((err, res) => {
         const { redirects } = res;
-        expect(redirects[0]).to.equal(`https://twitter.com/share?url=https://a-haven-staging-pr-41.herokuapp.com/api/v1/articles/${articleSlug}`);
+        expect(redirects[0]).to.equal(`https://twitter.com/share?url=${process.env.APP_URL}/api/v1/articles/share-on-facebook`);
         done();
       });
   });

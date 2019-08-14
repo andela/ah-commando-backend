@@ -1,9 +1,12 @@
 import uuid from 'uuid';
 import sequelize from 'sequelize';
+import dotenv from 'dotenv';
 import models from '../db/models';
 import helpers from '../helpers';
 import Paginate from '../helpers/paginate';
 import Notification from '../helpers/notifications';
+
+dotenv.config();
 
 const { Op } = sequelize;
 const {
@@ -375,8 +378,8 @@ class ArticleController {
     if (!article) {
       return errorStat(res, 404, 'not found');
     }
-    const facebookSDK = `https://www.facebook.com/sharer/sharer.php?u=https://a-haven-staging-pr-41.herokuapp.com/api/v1/articles/${article.slug}`;
-    return res.redirect(`${facebookSDK}`);
+    const facebookSDK = `${process.env.FACEBOOK_SDK}${process.env.APP_URL}/api/v1/articles/${article.slug}`;
+    return res.redirect(facebookSDK);
   }
 
   /**
@@ -392,8 +395,9 @@ class ArticleController {
     if (!article) {
       return errorStat(res, 404, 'not found');
     }
-    const tweetSDK = `https://twitter.com/share?url=https://a-haven-staging-pr-41.herokuapp.com/api/v1/articles/${article.slug}`;
-    return res.redirect(`${tweetSDK}`);
+
+    const tweetSDK = `${process.env.TWITTER_SDK}${process.env.APP_URL}/api/v1/articles/${article.slug}`;
+    return res.redirect(tweetSDK);
   }
 }
 
