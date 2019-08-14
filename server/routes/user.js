@@ -3,6 +3,7 @@ import passport from 'passport';
 import UserController from '../controllers/userController';
 import middlewares from '../middlewares';
 import '../helpers/passport';
+import 'express-async-errors';
 
 const userRoute = express();
 const {

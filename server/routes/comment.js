@@ -1,6 +1,7 @@
 import express from 'express';
 import middlewares from '../middlewares';
 import CommentController from '../controllers/commentController';
+import 'express-async-errors';
 
 const {
   verifyToken,

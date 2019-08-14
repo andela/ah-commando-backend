@@ -1,6 +1,7 @@
 import express from 'express';
 import NotificationController from '../controllers/notificationController';
 import middlewares from '../middlewares';
+import 'express-async-errors';
 
 const { verifyToken, validateId } = middlewares;
 const {

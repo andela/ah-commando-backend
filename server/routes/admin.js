@@ -1,6 +1,7 @@
 import express from 'express';
 import AdminController from '../controllers/adminController';
 import middlewares from '../middlewares';
+import 'express-async-errors';
 
 
 const {

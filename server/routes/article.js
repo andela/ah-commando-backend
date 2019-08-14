@@ -1,6 +1,7 @@
 import express from 'express';
 import ArticleController from '../controllers/articleController';
 import middlewares from '../middlewares';
+import 'express-async-errors';
 
 const router = express.Router();
 
