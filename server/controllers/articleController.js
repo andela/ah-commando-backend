@@ -10,10 +10,6 @@ const {
   querySearch, filterSearch, errorStat, successStat, addTags, addCategories,
 } = helpers;
 
-const parseBool = (string) => {
-  if (string === 'true') return true;
-  return false;
-};
 const { paginate } = Paginate;
 const { Tags, Categories } = models;
 /**
@@ -230,8 +226,7 @@ class ArticleController {
   */
   static async likeOrDislikeArticle(req, res) {
     const { user } = req;
-    const { liked, resourceId, type } = req.body.liked;
-    const likes = parseBool(liked);
+    const { liked: likes, resourceId, type } = req.body.liked;
     const modelType = type.charAt(0).toUpperCase() + type.slice(1);
 
     const tableType = await models[modelType].findByPk(resourceId);
@@ -261,7 +256,7 @@ class ArticleController {
       where: { likes: false }
     });
 
-    return successStat(res, 200, `${type} Likes`, {
+    return successStat(res, 200, `${type}_Likes`, {
       likes: totalLikes,
       dislikes: totalDislikes
     });
