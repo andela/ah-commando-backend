@@ -468,13 +468,12 @@ paths:
           name: limit
           schema:
             type: integer
-          description: The number of articles to return
-      description: user can get all articles
-      parameters:
         - in: query
           name: searchQuery
           schema:
             type: string
+          description: The number of articles to return
+      description: user can get all articles
       responses:
         '200':
           description: successfully view all articles
@@ -1667,6 +1666,35 @@ paths:
                 $ref: "#/components/schemas/successResponse"
         '401':
           description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /admin/getUser/{username}:
+    get:
+      tags:
+        - Admin - Role based
+      security:
+        - bearerAuth: []
+      summary: get a single user by username
+      description: Admin can get single user by username
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: successfully view a single user found by username
+        '401':
+          description: Unauthorized
           content:
             application/json:
               schema:
