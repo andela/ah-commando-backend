@@ -1,7 +1,7 @@
 import express from 'express';
+import 'express-async-errors';
 import ImageUpload from '../helpers/imageUpload';
 import middlewares from '../middlewares';
-import 'express-async-errors';
 
 const router = express.Router();
 const { multerUploads, verifyToken } = middlewares;

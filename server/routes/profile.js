@@ -1,7 +1,7 @@
 import express from 'express';
+import 'express-async-errors';
 import UserController from '../controllers/userController';
 import middlewares from '../middlewares';
-import 'express-async-errors';
 
 const {
   verifyToken, validateProfileUpdate, optionalLogin, isActive
