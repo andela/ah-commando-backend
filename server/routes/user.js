@@ -26,8 +26,6 @@ userRoute.get('/google/callback', passport.authenticate('google', { session: fal
 userRoute.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 userRoute.get('/facebook/callback', passport.authenticate('facebook', { session: false }), socialSignin);
 
-userRoute.post('/logout', verifyToken, logout);
-
 userRoute.get('/confirmEmail', confirmEmail);
 
 userRoute.post('/logout', verifyToken, logout);

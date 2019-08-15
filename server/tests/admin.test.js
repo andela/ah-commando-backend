@@ -424,4 +424,30 @@ describe('Test admin functionality', () => {
         });
     });
   });
+  describe('Handle admin get single user', () => {
+    it('Should fail if username is not found in the platform', (done) => {
+      chai
+        .request(app)
+        .get(`${baseUrl}/admin/getUser/idonotexist`)
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { status, error } = res.body;
+          expect(status).to.equal(404);
+          expect(error).to.equal('User not found');
+          done();
+        });
+    });
+    it('Should pass if username is found', (done) => {
+      chai
+        .request(app)
+        .get(`${baseUrl}/admin/getUser/lundii`)
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { status, data } = res.body;
+          expect(status).to.equal(200);
+          expect(data).to.be.an('object');
+          done();
+        });
+    });
+  });
 });
