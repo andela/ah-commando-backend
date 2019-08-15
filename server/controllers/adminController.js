@@ -114,6 +114,26 @@ class AdminController {
     });
     return successStat(res, 200, 'message', 'Comment deleted successfully');
   }
+
+  /**
+   * @static
+   * @description gets a single user
+   * @param {*} req - Request Object
+   * @param {*} res - Response Object
+   * @returns {object} - user details containing active status
+   */
+  static async getASingleUser(req, res) {
+    const { username } = req.params;
+    const foundUser = await models.User.findOne({
+      where: {
+        username
+      },
+      attributes: ['isActive', 'image', 'username', 'firstname', 'lastname', 'bio']
+    });
+    if (!foundUser) return errorStat(res, 404, 'User not found');
+
+    return successStat(res, 200, 'data', foundUser);
+  }
 }
 
 export default AdminController;

@@ -8,7 +8,7 @@ const {
 } = middlewares;
 
 const {
-  assignRole, setActiveStatus, deleteAUser, deleteAnArticle, deleteAComment
+  assignRole, setActiveStatus, deleteAUser, deleteAnArticle, deleteAComment, getASingleUser
 } = AdminController;
 const adminRoute = express();
 
@@ -17,5 +17,6 @@ adminRoute.put('/setActiveStatus/:username', verifyToken, isActive, isJustAUser,
 adminRoute.delete('/deleteUser/:username', verifyToken, isActive, isJustAUser, validateParamsInput, deleteAUser);
 adminRoute.delete('/deleteArticle/:id', verifyToken, isActive, isJustAUser, validateParamsInput, deleteAnArticle);
 adminRoute.delete('/deleteComment/:id', verifyToken, isActive, isJustAUser, validateParamsInput, deleteAComment);
+adminRoute.get('/getUser/:username', verifyToken, isActive, isJustAUser, validateParamsInput, getASingleUser);
 
 export default adminRoute;
