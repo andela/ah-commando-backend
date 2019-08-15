@@ -182,6 +182,20 @@ module.exports = {
       updatedAt: new Date(),
       role: 'god'
     },
+    {
+      firstname: 'updatefirstname',
+      lastname: 'updatelastname',
+      username: 'updateusername',
+      email: 'new.update@andela.com',
+      password: '$2a$06$loVt9DxXF97PGJxkjyfJj.PVHNz5FUjNhU4yXIzTK4HQ2EesmuoPi',
+      image: null,
+      bio: null,
+      newPostEmailSub: false,
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      role: 'user'
+    }
   ]),
   down: queryInterface => queryInterface.dropAllTables()
 };

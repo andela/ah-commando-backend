@@ -332,7 +332,9 @@ class ArticleController {
    */
   static async createTag(req, res) {
     const { tagName, description } = req.body;
-    const tag = await Tags.findOrCreate({ where: { name: tagName }, defaults: { description } });
+    const existingTag = await Tags.findOne({ where: { name: tagName } });
+    if (existingTag) return errorStat(res, 409, 'Tag already exits');
+    const tag = await Tags.create({ name: tagName, description });
     return successStat(res, 200, 'tag', tag);
   }
 
@@ -345,9 +347,9 @@ class ArticleController {
    */
   static async createCategory(req, res) {
     const { categoryName, description } = req.body;
-    const category = await Categories.findOrCreate({
-      where: { name: categoryName }, defaults: { description }
-    });
+    const existingCategory = await Categories.findOne({ where: { name: categoryName } });
+    if (existingCategory) return errorStat(res, 409, 'Category already exits');
+    const category = await Categories.create({ name: categoryName, description });
     return successStat(res, 200, 'category', category);
   }
 

@@ -10,6 +10,7 @@ const {
 const {
   validateLogin,
   validateUser,
+  validateNewUser,
   validateArticle,
   validateProfileUpdate,
   validatePasswordReset,
@@ -21,7 +22,9 @@ const {
   validateHighlightData,
   validateGetHighlight,
   validateRoleInput,
-  validateParamsInput
+  validateParamsInput,
+  validateUpdateUser,
+  validateGetUser
 } = InputValidator;
 
 export default {
@@ -29,6 +32,7 @@ export default {
   verifyToken,
   validateLogin,
   validateUser,
+  validateNewUser,
   validateProfileUpdate,
   validateArticle,
   validatePasswordReset,
@@ -45,5 +49,7 @@ export default {
   validateGetHighlight,
   isActive,
   validateRoleInput,
-  validateParamsInput
+  validateParamsInput,
+  validateUpdateUser,
+  validateGetUser
 };
