@@ -11,7 +11,8 @@ const {
   validateFilter,
   validateKeyword,
   validateHighlightData,
-  isActive
+  isActive,
+  optionalLogin,
 } = middlewares;
 
 const {
@@ -33,7 +34,7 @@ const {
 // gets all article with option of passing a keyoword as query
 router.get('/', validateKeyword, getAllArticles);
 router.post('/', verifyToken, isActive, validateArticle, createArticle);
-router.get('/:slug', getOneArticle);
+router.get('/:slug', optionalLogin, getOneArticle);
 router.put('/:slug/edit', verifyToken, isActive, multerUploads, editArticle);
 router.delete('/:slug', verifyToken, isActive, deleteArticle);
 

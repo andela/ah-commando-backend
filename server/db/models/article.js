@@ -18,9 +18,12 @@ module.exports = (sequelize, DataTypes) => {
       favorited: DataTypes.BOOLEAN,
       favoriteCounts: DataTypes.INTEGER,
       image: DataTypes.STRING,
-      authorId: DataTypes.INTEGER
+      authorId: DataTypes.INTEGER,
+      readCount: {
+        type: DataTypes.INTEGER,
+        defaultValue: '0',
+      },
     },
-    {}
   );
 
   SequelizeSlugify.slugifyModel(Article, {
@@ -51,6 +54,9 @@ module.exports = (sequelize, DataTypes) => {
     });
     Article.belongsToMany(models.Tags, {
       through: 'ArticleTags',
+      foreignKey: 'articleId'
+    });
+    Article.hasMany(models.Reading, {
       foreignKey: 'articleId'
     });
   };

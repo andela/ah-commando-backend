@@ -403,6 +403,23 @@ class UserController {
     }
     paginate(page, limit, models.User, 'Users', res, req);
   }
+
+  /**
+   * @static
+   * @description Get a list of users
+   * @param {object} req express request object
+   * @param {object} res express response object
+   * @returns {object} returns object response
+   * @memberof UserController
+   */
+  static async articlesUserRead(req, res) {
+    const userId = req.user.id;
+    const userReadStats = await models.Reading.findAndCountAll({
+      where: { userId },
+      attributes: ['articleId', 'createdAt']
+    });
+    return successStat(res, 200, 'Articles_Read', userReadStats.count);
+  }
 }
 
 export default UserController;

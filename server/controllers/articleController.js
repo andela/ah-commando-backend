@@ -116,6 +116,7 @@ class ArticleController {
    */
   static async getOneArticle(req, res) {
     const { slug } = req.params;
+
     const article = await models.Article.findOne({
       where: {
         slug,
@@ -129,6 +130,19 @@ class ArticleController {
 
     if (!article) {
       return errorStat(res, 404, 'Article not found');
+    }
+
+    if (req.user) {
+      const userId = req.user.id;
+      await models.Reading.findOrCreate({
+        where: { userId, articleId: article.id },
+        defaults: {
+          userId,
+          articleId: article.id,
+          slug,
+        },
+      });
+      await models.Article.increment({ readCount: 1 }, { where: { slug } });
     }
 
     const likes = await article.countLikes({
@@ -155,6 +169,7 @@ class ArticleController {
       ],
       group: ['Comment.id']
     });
+
     return successStat(res, 200, 'article', {
       article, likes, dislikes, comments, noOfComments: comments.length
     });

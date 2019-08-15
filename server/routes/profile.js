@@ -10,7 +10,8 @@ const {
   listUsers,
   getAuserProfile,
   editProfile,
-  follow
+  follow,
+  articlesUserRead,
 } = UserController;
 
 const profileRoute = express();
@@ -26,5 +27,7 @@ profileRoute
   .route('/profiles/:username/follow')
   .post(verifyToken, isActive, follow)
   .delete(verifyToken, isActive, follow);
+
+profileRoute.get('/user/readStat', verifyToken, isActive, articlesUserRead);
 
 export default profileRoute;
