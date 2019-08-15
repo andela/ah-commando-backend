@@ -1,4 +1,5 @@
 import express from 'express';
+import 'express-async-errors';
 import BookmarkController from '../controllers/bookmarkController';
 import middlewares from '../middlewares';
 import validateParam from '../middlewares/inputValidator';

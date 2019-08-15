@@ -1,4 +1,5 @@
 import express from 'express';
+import 'express-async-errors';
 import reportController from '../controllers/reportController';
 import middlewares from '../middlewares';
 

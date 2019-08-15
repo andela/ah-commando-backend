@@ -1,5 +1,6 @@
 import express from 'express';
 import passport from 'passport';
+import 'express-async-errors';
 import UserController from '../controllers/userController';
 import middlewares from '../middlewares';
 import '../helpers/passport';
