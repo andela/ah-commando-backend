@@ -354,3 +354,34 @@ export const updateUserSchema = {
 export const getUserSchema = {
   id: Joi.number().required()
 };
+
+export const newSubscriptionSchema = {
+  userId: Joi.number().integer().required(),
+  firstname: Joi.string().trim().lowercase().required(),
+  lastname: Joi.string().trim().lowercase().required(),
+  email: Joi.string().trim().lowercase().required(),
+  planId: Joi.string().trim().lowercase().required(),
+  token: Joi.object().required()
+};
+
+export const unsubscribeSchema = {
+  userId: Joi.number().integer().required()
+};
+
+export const subTokenSchema = {
+  cardNumber: Joi.number().integer().required(),
+  exp_month: Joi.number().integer().required(),
+  exp_year: Joi.number().integer().required(),
+  cvc: Joi.number().integer().required(),
+};
+
+export const planSchema = {
+  name: Joi.string().trim().lowercase().required(),
+  interval: Joi.string().trim().lowercase().required(),
+  amount: Joi.number().integer().required(),
+  currency: Joi.string().trim().lowercase().required(),
+};
+
+export const deleteCusSchema = {
+  userId: Joi.number().integer().required()
+};
