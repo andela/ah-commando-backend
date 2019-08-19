@@ -1,19 +1,18 @@
 import uuid from 'uuid';
 import sequelize from 'sequelize';
+import dotenv from 'dotenv';
 import models from '../db/models';
 import helpers from '../helpers';
 import Paginate from '../helpers/paginate';
 import Notification from '../helpers/notifications';
+
+dotenv.config();
 
 const { Op } = sequelize;
 const {
   querySearch, filterSearch, errorStat, successStat, addTags, addCategories,
 } = helpers;
 
-const parseBool = (string) => {
-  if (string === 'true') return true;
-  return false;
-};
 const { paginate } = Paginate;
 const { Tags, Categories } = models;
 /**
@@ -132,12 +131,7 @@ class ArticleController {
     if (req.user) {
       const userId = req.user.id;
       await models.Reading.findOrCreate({
-        where: { userId, articleId: article.id },
-        defaults: {
-          userId,
-          articleId: article.id,
-          slug,
-        },
+        where: { userId, articleId: article.id }
       });
     }
 
@@ -248,8 +242,7 @@ class ArticleController {
   */
   static async likeOrDislikeArticle(req, res) {
     const { user } = req;
-    const { liked, resourceId, type } = req.body.liked;
-    const likes = parseBool(liked);
+    const { liked: likes, resourceId, type } = req.body.liked;
     const modelType = type.charAt(0).toUpperCase() + type.slice(1);
 
     const tableType = await models[modelType].findByPk(resourceId);
@@ -279,7 +272,7 @@ class ArticleController {
       where: { likes: false }
     });
 
-    return successStat(res, 200, `${type} Likes`, {
+    return successStat(res, 200, `${type}_Likes`, {
       likes: totalLikes,
       dislikes: totalDislikes
     });
@@ -337,7 +330,9 @@ class ArticleController {
    */
   static async createTag(req, res) {
     const { tagName, description } = req.body;
-    const tag = await Tags.findOrCreate({ where: { name: tagName }, defaults: { description } });
+    const existingTag = await Tags.findOne({ where: { name: tagName } });
+    if (existingTag) return errorStat(res, 409, 'Tag already exits');
+    const tag = await Tags.create({ name: tagName, description });
     return successStat(res, 200, 'tag', tag);
   }
 
@@ -350,9 +345,9 @@ class ArticleController {
    */
   static async createCategory(req, res) {
     const { categoryName, description } = req.body;
-    const category = await Categories.findOrCreate({
-      where: { name: categoryName }, defaults: { description }
-    });
+    const existingCategory = await Categories.findOne({ where: { name: categoryName } });
+    if (existingCategory) return errorStat(res, 409, 'Category already exits');
+    const category = await Categories.create({ name: categoryName, description });
     return successStat(res, 200, 'category', category);
   }
 
@@ -378,6 +373,41 @@ class ArticleController {
   static async getAllCategories(req, res) {
     const categories = await Categories.findAll();
     return successStat(res, 200, 'categories', categories);
+  }
+
+  /**
+   * @description sharing an article on facebook
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @returns {String} returns a link to the article on facebook website
+  */
+  static async shareOnFacebook(req, res) {
+    const article = await models.Article.findOne({
+      where: { slug: req.params.slug }
+    });
+    if (!article) {
+      return errorStat(res, 404, 'not found');
+    }
+    const facebookSDK = `${process.env.FACEBOOK_SDK}${process.env.APP_URL}/api/v1/articles/${article.slug}`;
+    return res.redirect(facebookSDK);
+  }
+
+  /**
+   * @description sharing an article on tweeter
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @returns {String} returns a link to the article on twitter website
+  */
+  static async shareOnTweeter(req, res) {
+    const article = await models.Article.findOne({
+      where: { slug: req.params.slug }
+    });
+    if (!article) {
+      return errorStat(res, 404, 'not found');
+    }
+
+    const tweetSDK = `${process.env.TWITTER_SDK}${process.env.APP_URL}/api/v1/articles/${article.slug}`;
+    return res.redirect(tweetSDK);
   }
 }
 

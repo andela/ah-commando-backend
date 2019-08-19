@@ -1,4 +1,5 @@
 import express from 'express';
+import 'express-async-errors';
 import NotificationController from '../controllers/notificationController';
 import middlewares from '../middlewares';
 

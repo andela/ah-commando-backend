@@ -424,4 +424,301 @@ describe('Test admin functionality', () => {
         });
     });
   });
+  describe('Handle admin get single user', () => {
+    it('Should fail if username is not found in the platform', (done) => {
+      chai
+        .request(app)
+        .get(`${baseUrl}/admin/getUser/idonotexist`)
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { status, error } = res.body;
+          expect(status).to.equal(404);
+          expect(error).to.equal('User not found');
+          done();
+        });
+    });
+    it('Should pass if username is found', (done) => {
+      chai
+        .request(app)
+        .get(`${baseUrl}/admin/getUser/lundii`)
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { status, data } = res.body;
+          expect(status).to.equal(200);
+          expect(data).to.be.an('object');
+          done();
+        });
+    });
+  });
+
+  describe('god can create new user', () => {
+    it('create a new user if all details are given', (done) => {
+      chai
+        .request(app)
+        .post(`${baseUrl}/admin/user/`)
+        .send(userData[35])
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { status, user } = res.body;
+          expect(status).to.equal(201);
+          expect(user).to.include.all.keys('firstname', 'lastname', 'email', 'role', 'username');
+          done();
+        });
+    });
+    it('should return 409 if user already exits', (done) => {
+      chai
+        .request(app)
+        .post(`${baseUrl}/admin/user/`)
+        .send(userData[35])
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(409);
+          expect(error).to.equal('User Already Exists');
+          done();
+        });
+    });
+    it('Should fail if user does not have permission', (done) => {
+      chai
+        .request(app)
+        .post(`${baseUrl}/admin/user/`)
+        .set('Authorization', adminToken)
+        .send(userData[35])
+        .end((err, res) => {
+          const { status, error } = res.body;
+          expect(status).to.equal(401);
+          expect(error).to.equal('You cannot perform this action. Please contact a god');
+          done();
+        });
+    });
+    it('Should not register a new user if username is less than 3 characters long', (done) => {
+      chai.request(app)
+        .post(`${baseUrl}/admin/user`)
+        .send(userData[7])
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('username length must be at least 3 characters long');
+          done();
+        });
+    });
+    it('Should not register a new user if username is more than 16 characters long', (done) => {
+      chai.request(app)
+        .post(`${baseUrl}/admin/user`)
+        .send(userData[8])
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('username length must be less than or equal to 16 characters long');
+          done();
+        });
+    });
+
+    it('Should not register a new user if username contains invalid characters', (done) => {
+      chai.request(app)
+        .post(`${baseUrl}/admin/user`)
+        .send(userData[9])
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('usernames can only alphanumeric characters, underscores and hyphens');
+          done();
+        });
+    });
+    it('Should not register a new user if firstname format is invalid', (done) => {
+      chai.request(app)
+        .post(`${baseUrl}/admin/user`)
+        .send(userData[5])
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('firstname can only contain letters');
+          done();
+        });
+    });
+    it('Should not register a new user if firstname is not provided', (done) => {
+      chai.request(app)
+        .post(`${baseUrl}/admin/user`)
+        .send(userData[2])
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('firstname is not allowed to be empty');
+          done();
+        });
+    });
+
+    it('Should not register a new user if lastname is not provided', (done) => {
+      chai.request(app)
+        .post(`${baseUrl}/admin/user`)
+        .send(userData[3])
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('lastname is not allowed to be empty');
+          done();
+        });
+    });
+
+    it('Should not register a new user if lastname format is invalid', (done) => {
+      chai.request(app)
+        .post(`${baseUrl}/admin/user`)
+        .send(userData[6])
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('lastname can only contain letters');
+          done();
+        });
+    });
+  });
+
+  describe('god can get a user', () => {
+    it('should get a user with the id', (done) => {
+      chai
+        .request(app)
+        .get(`${baseUrl}/admin/user/1`)
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { status, user } = res.body;
+          expect(status).to.equal(200);
+          expect(user).to.include.all.keys('firstname', 'lastname', 'email', 'role', 'username');
+          done();
+        });
+    });
+    it('Should return 400 if the id is not a number', (done) => {
+      chai.request(app)
+        .get(`${baseUrl}/admin/user/iiop`)
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('id must be a number');
+          done();
+        });
+    });
+  });
+
+  describe('god can update a user', () => {
+    it('should update a user with the given id', (done) => {
+      chai
+        .request(app)
+        .patch(`${baseUrl}/admin/user/14`)
+        .set('Authorization', godToken)
+        .send(userData[36])
+        .end((err, res) => {
+          const { status, user } = res.body;
+          expect(status).to.equal(201);
+          expect(user).to.include.all.keys('firstname', 'lastname', 'email', 'role', 'username');
+          done();
+        });
+    });
+    it('Should fail if user does not have permission', (done) => {
+      chai
+        .request(app)
+        .patch(`${baseUrl}/admin/user/14`)
+        .set('Authorization', adminToken)
+        .send(userData[36])
+        .end((err, res) => {
+          const { status, error } = res.body;
+          expect(status).to.equal(401);
+          expect(error).to.equal('You cannot perform this action. Please contact a god');
+          done();
+        });
+    });
+    it('Should not register a new user if username is less than 3 characters long', (done) => {
+      chai.request(app)
+        .patch(`${baseUrl}/admin/user/14`)
+        .send(userData[7])
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('username length must be at least 3 characters long');
+          done();
+        });
+    });
+    it('Should not register a new user if username is more than 16 characters long', (done) => {
+      chai.request(app)
+        .patch(`${baseUrl}/admin/user/14`)
+        .send(userData[8])
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('username length must be less than or equal to 16 characters long');
+          done();
+        });
+    });
+
+    it('Should not register a new user if username contains invalid characters', (done) => {
+      chai.request(app)
+        .patch(`${baseUrl}/admin/user/14`)
+        .send(userData[9])
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('usernames can only alphanumeric characters, underscores and hyphens');
+          done();
+        });
+    });
+    it('Should not register a new user if firstname format is invalid', (done) => {
+      chai.request(app)
+        .patch(`${baseUrl}/admin/user/14`)
+        .send(userData[5])
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('firstname can only contain letters');
+          done();
+        });
+    });
+    it('Should not register a new user if firstname is not provided', (done) => {
+      chai.request(app)
+        .patch(`${baseUrl}/admin/user/14`)
+        .send(userData[2])
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('firstname is not allowed to be empty');
+          done();
+        });
+    });
+
+    it('Should not register a new user if lastname is not provided', (done) => {
+      chai.request(app)
+        .patch(`${baseUrl}/admin/user/14`)
+        .send(userData[3])
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('lastname is not allowed to be empty');
+          done();
+        });
+    });
+
+    it('Should not register a new user if lastname format is invalid', (done) => {
+      chai.request(app)
+        .patch(`${baseUrl}/admin/user/14`)
+        .send(userData[6])
+        .set('Authorization', godToken)
+        .end((err, res) => {
+          const { error, status } = res.body;
+          expect(status).to.equal(400);
+          expect(error[0]).to.equal('lastname can only contain letters');
+          done();
+        });
+    });
+  });
 });

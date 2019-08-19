@@ -11,6 +11,7 @@ import commentRouter from './comment';
 import likesRouter from './likes';
 import notificationRoute from './notification';
 import reportRoute from './report';
+import paymentRoute from './payment';
 import { cloudinaryConfig } from '../db/config/cloudinaryConfig';
 
 const router = express();
@@ -35,5 +36,6 @@ router.use('/likes', likesRouter);
 router.use('/notifications', notificationRoute);
 router.use('/report', reportRoute);
 router.use('/admin', adminRoute);
+router.use('/payment', paymentRoute);
 
 export default router;

@@ -22,6 +22,8 @@ tags:
     description: Operations related to User's profile
   - name: Articles
     description: Operations about the Articles
+  - name: god
+    description: god base role
 
 paths:
   /:
@@ -492,13 +494,12 @@ paths:
           name: limit
           schema:
             type: integer
-          description: The number of articles to return
-      description: user can get all articles
-      parameters:
         - in: query
           name: searchQuery
           schema:
             type: string
+          description: The number of articles to return
+      description: user can get all articles
       responses:
         '200':
           description: successfully view all articles
@@ -1689,6 +1690,160 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/successResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /admin/getUser/{username}:
+    get:
+      tags:
+        - Admin - Role based
+      security:
+        - bearerAuth: []
+      summary: get a single user by username
+      description: Admin can get single user by username
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: successfully view a single user found by username
+        '401':
+          description: Unauthorized
+  /admin/user:
+    put:
+      tags:
+        - god
+      security:
+        - bearerAuth: []
+      summary: god creates a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstname:
+                  type: string
+                lastname:
+                  type: string
+                username:
+                  username: string
+                email:
+                  username: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '400':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+  /admin/user/{id}:
+    get:
+      tags:
+        - god
+      security:
+        - bearerAuth: []
+      summary: god gets a user
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '400':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '401':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
+    patch:
+      tags:
+        - god
+      security:
+        - bearerAuth: []
+      summary: god updates a user
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstname:
+                  type: string
+                lastname:
+                  type: string
+                username:
+                  username: string
+                email:
+                  username: string
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/successResponse"
+        '400':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorResponse"
         '401':
           description: Authorization error
           content:

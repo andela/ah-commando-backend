@@ -2,14 +2,20 @@ import Authenticate from './authenticate';
 import InputValidator from './inputValidator';
 import { multerUploads } from './multer';
 import searchValidator from './searchValidator';
+import paymentValidator from './paymentValidator';
 
 const { validateFilter, validateKeyword } = searchValidator;
+const {
+  validateSubscription, validateUnSubscribe, validateCreateToken, validatePlan,
+  validateDeletePlan
+} = paymentValidator;
 const {
   verifyToken, optionalLogin, isActive, isJustAUser
 } = Authenticate;
 const {
   validateLogin,
   validateUser,
+  validateNewUser,
   validateArticle,
   validateProfileUpdate,
   validatePasswordReset,
@@ -21,7 +27,9 @@ const {
   validateHighlightData,
   validateGetHighlight,
   validateRoleInput,
-  validateParamsInput
+  validateParamsInput,
+  validateUpdateUser,
+  validateGetUser
 } = InputValidator;
 
 export default {
@@ -29,6 +37,7 @@ export default {
   verifyToken,
   validateLogin,
   validateUser,
+  validateNewUser,
   validateProfileUpdate,
   validateArticle,
   validatePasswordReset,
@@ -45,5 +54,12 @@ export default {
   validateGetHighlight,
   isActive,
   validateRoleInput,
-  validateParamsInput
+  validateParamsInput,
+  validateUpdateUser,
+  validateGetUser,
+  validateSubscription,
+  validateUnSubscribe,
+  validateCreateToken,
+  validatePlan,
+  validateDeletePlan
 };

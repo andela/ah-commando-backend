@@ -12,7 +12,10 @@ import {
   reportArticleSchema,
   highlightDataSchema,
   getHighlightSchema,
-  roleBodySchema
+  roleBodySchema,
+  newUserSchema,
+  updateUserSchema,
+  getUserSchema
 } from './schema';
 
 import validate from '../helpers/validate';
@@ -229,6 +232,44 @@ class InputValidator {
   static validateRoleInput(req, res, next) {
     const role = { ...req.body };
     return validate(role, roleBodySchema, req, res, next);
+  }
+
+  /**
+   * @method validateNewUser
+   * @description Validates new user created by a god
+   * @param {object} req - The Request Object
+   * @param {object} res - The Response Object
+   * @param {function} next - The next function to point to the next middleware
+   * @returns {function} validate() - An execucted validate function
+   */
+  static validateNewUser(req, res, next) {
+    const user = { ...req.body.user };
+    return validate(user, newUserSchema, req, res, next);
+  }
+
+  /**
+   * @method validateUpdateUser
+   * @description Validates updating of a user
+   * @param {object} req - The Request Object
+   * @param {object} res - The Response Object
+   * @param {function} next - The next function to point to the next middleware
+   * @returns {function} validate() - An execucted validate function
+   */
+  static validateUpdateUser(req, res, next) {
+    const user = { ...req.body.user };
+    return validate(user, updateUserSchema, req, res, next);
+  }
+
+  /**
+  * @method getUser
+  * @description Validates getting a user
+  * @param {object} req - The Request Object
+  * @param {object} res - The Response Object
+  * @param {function} next - The next function to point to the next middleware
+  * @returns {function} validate() - An execucted validate function
+  */
+  static validateGetUser(req, res, next) {
+    return validate({ ...req.params }, getUserSchema, req, res, next);
   }
 }
 

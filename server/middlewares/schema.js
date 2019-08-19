@@ -182,7 +182,7 @@ export const commentBodySchema = {
 };
 
 export const likesSchema = {
-  liked: Joi.string().valid('true', 'false').required(),
+  liked: Joi.boolean().required(),
   type: Joi.string().valid('article', 'comment').required(),
   resourceId: Joi.number().integer().required().min(1)
 };
@@ -229,4 +229,159 @@ export const highlightDataSchema = {
 
 export const getHighlightSchema = {
   id: Joi.number().integer().required().min(1)
+};
+
+export const newUserSchema = {
+  firstname: Joi.string()
+    .lowercase()
+    .trim()
+    .required()
+    .regex(/^[a-zA-Z]+$/)
+    .error((errors) => {
+      errors.forEach((err) => {
+        switch (err.type) {
+          case 'string.regex.base':
+            err.message = 'firstname can only contain letters';
+            break;
+          default:
+            break;
+        }
+      });
+      return errors;
+    }),
+  lastname: Joi.string()
+    .lowercase()
+    .trim()
+    .required()
+    .regex(/^[a-zA-Z]+$/)
+    .error((errors) => {
+      errors.forEach((err) => {
+        switch (err.type) {
+          case 'string.regex.base':
+            err.message = 'lastname can only contain letters';
+            break;
+          default:
+            break;
+        }
+      });
+      return errors;
+    }),
+  username: Joi.string()
+    .trim()
+    .min(3)
+    .max(16)
+    .required()
+    .regex(/^[a-z0-9_-]+$/)
+    .error((errors) => {
+      errors.forEach((err) => {
+        switch (err.type) {
+          case 'string.regex.base':
+            err.message = 'usernames can only alphanumeric characters, underscores and hyphens';
+            break;
+          default:
+            break;
+        }
+      });
+      return errors;
+    }),
+  email: Joi.string()
+    .trim()
+    .lowercase()
+    .email({ minDomainSegments: 2 })
+    .required(),
+  isActive: Joi.boolean(),
+  role: Joi.string().valid('god', 'admin', 'moderator', 'user'),
+};
+export const updateUserSchema = {
+  firstname: Joi.string()
+    .lowercase()
+    .trim()
+    .required()
+    .regex(/^[a-zA-Z]+$/)
+    .error((errors) => {
+      errors.forEach((err) => {
+        switch (err.type) {
+          case 'string.regex.base':
+            err.message = 'firstname can only contain letters';
+            break;
+          default:
+            break;
+        }
+      });
+      return errors;
+    }),
+  lastname: Joi.string()
+    .lowercase()
+    .trim()
+    .regex(/^[a-zA-Z]+$/)
+    .error((errors) => {
+      errors.forEach((err) => {
+        switch (err.type) {
+          case 'string.regex.base':
+            err.message = 'lastname can only contain letters';
+            break;
+          default:
+            break;
+        }
+      });
+      return errors;
+    }),
+  username: Joi.string()
+    .trim()
+    .min(3)
+    .max(16)
+    .regex(/^[a-z0-9_-]+$/)
+    .error((errors) => {
+      errors.forEach((err) => {
+        switch (err.type) {
+          case 'string.regex.base':
+            err.message = 'usernames can only alphanumeric characters, underscores and hyphens';
+            break;
+          default:
+            break;
+        }
+      });
+      return errors;
+    }),
+  email: Joi.string()
+    .trim()
+    .lowercase()
+    .email({ minDomainSegments: 2 }),
+  isActive: Joi.boolean(),
+  role: Joi.string().valid('god', 'admin', 'moderator', 'user'),
+};
+
+export const getUserSchema = {
+  id: Joi.number().required()
+};
+
+export const newSubscriptionSchema = {
+  userId: Joi.number().integer().required(),
+  firstname: Joi.string().trim().lowercase().required(),
+  lastname: Joi.string().trim().lowercase().required(),
+  email: Joi.string().trim().lowercase().required(),
+  planId: Joi.string().trim().lowercase().required(),
+  token: Joi.object().required()
+};
+
+export const unsubscribeSchema = {
+  userId: Joi.number().integer().required()
+};
+
+export const subTokenSchema = {
+  cardNumber: Joi.number().integer().required(),
+  exp_month: Joi.number().integer().required(),
+  exp_year: Joi.number().integer().required(),
+  cvc: Joi.number().integer().required(),
+};
+
+export const planSchema = {
+  name: Joi.string().trim().lowercase().required(),
+  interval: Joi.string().trim().lowercase().required(),
+  amount: Joi.number().integer().required(),
+  currency: Joi.string().trim().lowercase().required(),
+};
+
+export const deleteCusSchema = {
+  userId: Joi.number().integer().required()
 };
