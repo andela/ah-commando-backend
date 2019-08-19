@@ -131,15 +131,13 @@ class ArticleController {
     if (req.user) {
       const userId = req.user.id;
       await models.Reading.findOrCreate({
-        where: { userId, articleId: article.id },
-        defaults: {
-          userId,
-          articleId: article.id,
-          slug,
-        },
+        where: { userId, articleId: article.id }
       });
-      await models.Article.increment({ readCount: 1 }, { where: { slug } });
     }
+
+    const readCount = await article.countReadings({
+      where: { articleId: article.id }
+    });
 
     const likes = await article.countLikes({
       where: { likes: true }
@@ -167,7 +165,7 @@ class ArticleController {
     });
 
     return successStat(res, 200, 'article', {
-      article, likes, dislikes, comments, noOfComments: comments.length
+      article, likes, dislikes, comments, noOfComments: comments.length, readCount,
     });
   }
 

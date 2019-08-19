@@ -4,7 +4,7 @@ import UserController from '../controllers/userController';
 import middlewares from '../middlewares';
 
 const {
-  verifyToken, validateProfileUpdate, optionalLogin, isActive
+  verifyToken, validateProfileUpdate, optionalLogin, isActive, isJustAUser,
 } = middlewares;
 const {
   userProfile,
@@ -17,7 +17,7 @@ const {
 
 const profileRoute = express();
 
-profileRoute.get('/profiles', verifyToken, listUsers);
+profileRoute.get('/profiles', verifyToken, isActive, isJustAUser, listUsers);
 profileRoute.get('/profiles/:username', optionalLogin, getAuserProfile);
 profileRoute
   .route('/user')
