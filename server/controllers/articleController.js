@@ -139,8 +139,11 @@ class ArticleController {
           slug,
         },
       });
-      await models.Article.increment({ readCount: 1 }, { where: { slug } });
     }
+
+    const readCount = await article.countReadings({
+      where: { articleId: article.id }
+    });
 
     const likes = await article.countLikes({
       where: { likes: true }
@@ -168,7 +171,7 @@ class ArticleController {
     });
 
     return successStat(res, 200, 'article', {
-      article, likes, dislikes, comments, noOfComments: comments.length
+      article, likes, dislikes, comments, noOfComments: comments.length, readCount,
     });
   }
 

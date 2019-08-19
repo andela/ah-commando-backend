@@ -19,10 +19,6 @@ module.exports = (sequelize, DataTypes) => {
       favoriteCounts: DataTypes.INTEGER,
       image: DataTypes.STRING,
       authorId: DataTypes.INTEGER,
-      readCount: {
-        type: DataTypes.INTEGER,
-        defaultValue: '0',
-      },
     },
   );
 
