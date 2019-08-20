@@ -407,7 +407,7 @@ describe('Profile Test', () => {
         .post(`${baseUrl}/users/login`)
         .send({
           user: {
-            email: 'john.doe@test.com',
+            email: 'admin@admin.com',
             password: 'P@ssword123'
           }
         })
