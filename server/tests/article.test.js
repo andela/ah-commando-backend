@@ -196,6 +196,18 @@ describe('Article test', () => {
         });
     });
 
+    it('should get all articles belonging to a specific user', (done) => {
+      chai
+        .request(app)
+        .get(`${baseUrl}/articles?authorId=1`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .end((err, res) => {
+          const { status } = res.body;
+          expect(status).to.equal(200);
+          done();
+        });
+    });
+
     it('should get all articles with pagination', (done) => {
       chai
         .request(app)
