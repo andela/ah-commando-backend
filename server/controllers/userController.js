@@ -352,6 +352,11 @@ class UserController {
 
     const updatedProfile = await models.User.findByPk(id);
     return successStat(res, 200, 'profile', {
+      token: await generateToken({
+        id: updatedProfile.id,
+        username: updatedProfile.username,
+        email: updatedProfile.email
+      }),
       firstname: updatedProfile.firstname,
       lastname: updatedProfile.lastname,
       username: updatedProfile.username,

@@ -202,6 +202,7 @@ export const searchFilterSchema = {
 };
 
 export const searchQuerySchema = {
+  authorId: Joi.string().allow('').trim(),
   searchQuery: Joi.string().allow('').trim().min(2),
   page: Joi.number().integer().optional(),
   limit: Joi.number().integer().optional()
