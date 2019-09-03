@@ -91,7 +91,24 @@ class ArticleController {
     if (!page && !limit) {
       if (!searchQuery) {
         articles = await models.Article.findAll({
-          include: [{ model: models.User, as: 'author', attributes: ['firstname', 'lastname', 'username', 'image', 'email'] }]
+          attributes: {
+            include: [
+              [sequelize.fn('SUM', sequelize.literal('CASE likes WHEN false THEN 1 ELSE 0 END')), 'dislikes'],
+              [sequelize.fn('SUM', sequelize.literal('CASE likes WHEN true THEN 1 ELSE 0 END')), 'likes'],
+            ],
+          },
+          include: [
+            { model: models.User, as: 'author', attributes: ['firstname', 'lastname', 'username', 'image', 'email'] },
+            {
+              model: models.Likes,
+              attributes: [],
+            },
+            {
+              model: models.Comment,
+              as: 'comment'
+            }
+          ],
+          group: ['Article.id', 'author.id', 'comment.id']
         });
       } else if (searchQuery && Object.keys(queryFilters)[0] !== 'undefined') {
         articles = await filterSearch(searchQuery, queryFilters);
