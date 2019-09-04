@@ -29,6 +29,8 @@ const {
   getAllCategories,
   shareOnFacebook,
   shareOnTweeter,
+  getArticleCategories,
+  getFeaturedArticles
 } = ArticleController;
 
 
@@ -49,6 +51,8 @@ router.post('/tags/create', verifyToken, isActive, createTag);
 
 // get and create a category
 router.get('/categories/get', getAllCategories);
+router.get('/categories/article', getArticleCategories);
+router.get('/categories/article/featured', getFeaturedArticles);
 
 // share an article
 router.get('/:slug/facebook-share', shareOnFacebook);
