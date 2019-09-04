@@ -19,10 +19,11 @@ class Paginate {
    * @param {Object} result - the key for the received data
    * @param {Object} res - response object
    * @param {Object} req - response object
+   * @param {Object} include - Include Object
    * @returns {Object} returns articles base on the pagination params
    * @memberof Paginate
    */
-  static async paginate(page, limit, modelToQuery, result, res, req) {
+  static async paginate(page, limit, modelToQuery, result, res, req, include = {}) {
     const { searchQuery } = req.query;
     const queryFilters = req.body;
     limit = parseInt(limit, 10) ? limit : 5;
@@ -33,7 +34,8 @@ class Paginate {
       resultFromDb = await modelToQuery.findAndCountAll({
         where: {},
         offset,
-        limit
+        limit,
+        include
       });
     } else if (searchQuery && Object.keys(queryFilters)[0] !== 'undefined') {
       resultFromDb = await filterSearch(searchQuery, queryFilters, limit, offset);

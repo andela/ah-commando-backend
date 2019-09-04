@@ -118,7 +118,13 @@ class ArticleController {
       }
       return successStat(res, 200, 'articles', articles);
     }
-    paginate(page, limit, models.Article, 'articles', res, req);
+    paginate(page, limit, models.Article, 'articles', res, req, [
+      { model: models.User, as: 'author', attributes: ['firstname', 'lastname', 'username', 'image', 'email'] },
+      {
+        model: models.Comment,
+        as: 'comment'
+      }
+    ]);
   }
 
   /**
