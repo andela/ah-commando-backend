@@ -66,6 +66,11 @@ class ArticleSearch {
         {
           model: Tags, attributes: ['name'], through: { attributes: [] }, duplicating: false
         },
+        {
+          model: models.Comment,
+          as: 'comment',
+          duplicating: false
+        }
       ],
     });
     return articles;
@@ -102,6 +107,11 @@ class ArticleSearch {
         },
         {
           model: Tags, attributes: ['name'], through: { attributes: [] }, duplicating: false
+        },
+        {
+          model: models.Comment,
+          as: 'comment',
+          duplicating: false
         }
       ],
       where: { [Op.and]: [{ [Op.or]: queryFields }, { [Op.and]: queryFilters }] }

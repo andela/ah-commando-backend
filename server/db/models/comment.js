@@ -4,6 +4,8 @@ module.exports = (sequelize, DataTypes) => {
     body: DataTypes.TEXT,
     authorId: DataTypes.INTEGER,
     articleId: DataTypes.INTEGER,
+    likesCount: DataTypes.INTEGER,
+    dislikesCount: DataTypes.INTEGER,
     highlightId: DataTypes.INTEGER,
     highlightUser: DataTypes.INTEGER,
   }, {});

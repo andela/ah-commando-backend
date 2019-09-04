@@ -196,6 +196,43 @@ describe('Article test', () => {
         });
     });
 
+
+    it('get all articles by categories', (done) => {
+      chai
+        .request(app)
+        .get(`${baseUrl}/articles/categories/article`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .end((err, res) => {
+          const { status } = res.body;
+          expect(status).to.equal(200);
+          done();
+        });
+    });
+
+    it('get all articles by a single categories', (done) => {
+      chai
+        .request(app)
+        .get(`${baseUrl}/articles/categories/article?category=technology`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .end((err, res) => {
+          const { status } = res.body;
+          expect(status).to.equal(200);
+          done();
+        });
+    });
+
+    it('get featured article', (done) => {
+      chai
+        .request(app)
+        .get(`${baseUrl}/articles/categories/article/featured`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .end((err, res) => {
+          const { status } = res.body;
+          expect(status).to.equal(200);
+          done();
+        });
+    });
+
     it('should get all articles belonging to a specific user', (done) => {
       chai
         .request(app)

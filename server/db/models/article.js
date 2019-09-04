@@ -19,7 +19,13 @@ module.exports = (sequelize, DataTypes) => {
       favoriteCounts: DataTypes.INTEGER,
       image: DataTypes.STRING,
       authorId: DataTypes.INTEGER,
-    }
+      likesCount: DataTypes.INTEGER,
+      dislikesCount: DataTypes.INTEGER,
+      readCount: {
+        type: DataTypes.INTEGER,
+        defaultValue: '0',
+      },
+    },
   );
 
   SequelizeSlugify.slugifyModel(Article, {

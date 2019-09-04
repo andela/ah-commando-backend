@@ -91,18 +91,8 @@ class ArticleController {
     if (!page && !limit) {
       if (!searchQuery) {
         articles = await models.Article.findAll({
-          attributes: {
-            include: [
-              [sequelize.fn('SUM', sequelize.literal('CASE likes WHEN false THEN 1 ELSE 0 END')), 'dislikes'],
-              [sequelize.fn('SUM', sequelize.literal('CASE likes WHEN true THEN 1 ELSE 0 END')), 'likes'],
-            ],
-          },
           include: [
             { model: models.User, as: 'author', attributes: ['firstname', 'lastname', 'username', 'image', 'email'] },
-            {
-              model: models.Likes,
-              attributes: [],
-            },
             {
               model: models.Comment,
               as: 'comment'
@@ -149,7 +139,11 @@ class ArticleController {
         model: models.User,
         as: 'author',
         attributes: ['firstname', 'lastname', 'username', 'image', 'email']
-      }]
+      }, {
+        model: models.Comment,
+        as: 'comment',
+      }],
+      group: ['Article.id', 'author.id', 'comment.id']
     });
 
     if (!article) {
@@ -162,39 +156,7 @@ class ArticleController {
         where: { userId, articleId: article.id }
       });
     }
-
-    const readCount = await article.countReadings({
-      where: { articleId: article.id }
-    });
-
-    const likes = await article.countLikes({
-      where: { likes: true }
-    });
-
-    const dislikes = await article.countLikes({
-      where: { likes: false }
-    });
-
-    const comments = await models.Comment.findAll({
-      where: { articleId: article.id },
-      attributes: {
-        include: [
-          [sequelize.fn('SUM', sequelize.literal('CASE likes WHEN false THEN 1 ELSE 0 END')), 'dislikes'],
-          [sequelize.fn('SUM', sequelize.literal('CASE likes WHEN true THEN 1 ELSE 0 END')), 'likes']
-        ],
-      },
-      include: [
-        {
-          model: models.Likes,
-          attributes: [],
-        }
-      ],
-      group: ['Comment.id']
-    });
-
-    return successStat(res, 200, 'article', {
-      article, likes, dislikes, comments, noOfComments: comments.length, readCount,
-    });
+    return successStat(res, 200, 'article', article);
   }
 
   /**
@@ -299,6 +261,9 @@ class ArticleController {
     const totalDislikes = await tableType.countLikes({
       where: { likes: false }
     });
+
+    await models[modelType].update({ likesCount: totalLikes, dislikesCount: totalDislikes },
+      { where: { id: resourceId } });
 
     return successStat(res, 200, `${type}_Likes`, {
       likes: totalLikes,
@@ -436,6 +401,62 @@ class ArticleController {
 
     const tweetSDK = `${process.env.TWITTER_SDK}${process.env.APP_URL}/api/v1/articles/${article.slug}`;
     return res.redirect(tweetSDK);
+  }
+
+  /**
+   * @description Gets the featured article
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @returns {String} returns a link to the article on twitter website
+  */
+  static async getFeaturedArticles(req, res) {
+    const article = await models.Article.findOne({
+      attributes: [
+        [sequelize.fn('max', sequelize.col('likesCount')), 'highestLikes']
+      ],
+    });
+    const featuredArticle = await models.Article.findOne({
+      where: { likesCount: article.dataValues.highestLikes },
+      include: [{
+        model: models.Comment,
+        as: 'comment'
+      },
+      {
+        as: 'author',
+        model: models.User,
+        attributes: ['firstname', 'lastname', 'image', 'username']
+      }],
+      group: ['Article.id']
+    });
+    return successStat(res, 200, 'article', featuredArticle);
+  }
+
+  /**
+   * @description Gets the featured article
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @returns {String} returns a link to the article on twitter website
+  */
+  static async getArticleCategories(req, res) {
+    const { category } = req.query;
+    let queryParameter = '';
+    if (category) queryParameter = { name: category };
+    const articleCategories = await models.Categories.findAll({
+      where: queryParameter,
+      include: {
+        model: models.Article,
+        include: [{
+          model: models.User,
+          as: 'author',
+          attributes: ['firstname', 'lastname', 'image', 'username']
+        },
+        {
+          model: models.Comment,
+          as: 'comment'
+        }]
+      },
+    });
+    return successStat(res, 200, 'Categories', articleCategories);
   }
 }
 
