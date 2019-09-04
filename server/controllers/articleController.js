@@ -448,11 +448,15 @@ class ArticleController {
       where: queryParameter,
       include: {
         model: models.Article,
-        include: {
+        include: [{
           model: models.User,
           as: 'author',
           attributes: ['firstname', 'lastname', 'image', 'username']
-        }
+        },
+        {
+          model: models.Comment,
+          as: 'comment'
+        }]
       },
     });
     return successStat(res, 200, 'Categories', articleCategories);

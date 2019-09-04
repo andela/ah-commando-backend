@@ -2,7 +2,7 @@ const faker = require('faker');
 
 const comments = [];
 
-for (let i = 0; i < 10; i += 1) {
+for (let i = 0; i < 50; i += 1) {
   comments.push({
     body: faker.lorem.sentence(),
     likesCount: faker.random.number({ min: 1, max: 99999999 }),
@@ -19,7 +19,7 @@ for (let i = 0; i < 10; i += 1) {
   });
 }
 
-for (let i = 0; i < 10; i += 1) {
+for (let i = 0; i < 50; i += 1) {
   comments.push({
     body: faker.lorem.sentence(),
     likesCount: faker.random.number({ min: 1, max: 99999999 }),
