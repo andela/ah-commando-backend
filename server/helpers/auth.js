@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { config } from 'dotenv';
+import Cryptr from 'cryptr';
 
 config();
 const secret = process.env.SECRET_KEY;
@@ -29,6 +30,19 @@ class Auth {
     */
   static async verifyToken(token, callBack) {
     return jwt.verify(token, secret, callBack);
+  }
+
+  /**
+    * @description Encrypt a jwt token
+    * @param {String} string - Token to be verified
+    *  @param {function} callBack - call back method to jwt
+    * @returns {Object} verified token
+    * @memberof Auth
+    */
+  static async encryptQuery(string) {
+    const cryptr = new Cryptr(process.env.SECRET_KEY);
+    const encryptedString = await cryptr.encrypt(string);
+    return encryptedString;
   }
 }
 
