@@ -10,7 +10,7 @@ const strategy = (req, done) => {
   const { user } = req.query;
   const Theuser = JSON.parse(user);
   req.user = Theuser;
-  done(null, Theuser);
+  done(null, user);
 };
 
 const {
@@ -22,11 +22,13 @@ const {
   FACEBOOK_CALLBACK_URL: fbcallbackUrl
 } = process.env;
 
+
 const googleStrat = {
   clientID: googleClient,
   clientSecret: googleSecret,
   callbackURL: googleCallbackUrl,
-  passReqToCallback: true
+  passReqToCallback: true,
+  proxy: true
 };
 
 const facebookStrat = {
@@ -38,7 +40,7 @@ const facebookStrat = {
 
 passport.use(
   'google',
-  process.env.NODE_ENV === 'development' ? new googleStrategy.Strategy(
+  process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production' ? new googleStrategy.Strategy(
     googleStrat,
     (request, accessToken, refreshToken, profile, done) => {
       const profilePix = profile.photos[0].value;
@@ -47,12 +49,13 @@ passport.use(
     }
   ) : new customStrategy(
     (req, done) => strategy(req, done)
-  )
+  ),
+  { failureRedirect: '/login' }
 );
 
 passport.use(
   'facebook',
-  process.env.NODE_ENV === 'development' ? new facebook.Strategy(
+  process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production' ? new facebook.Strategy(
     facebookStrat,
     (accessToken, refreshToken, profile, done) => {
       const profilePix = profile.photos[0].value;

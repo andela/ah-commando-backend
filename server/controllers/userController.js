@@ -10,7 +10,8 @@ const { Op } = sequelize;
 const { PasswordResetTokens } = models;
 const {
   addToBlacklist, generateToken, errorStat, successStat,
-  comparePassword, hashPassword, verifyToken, Mail, paginate
+  comparePassword, hashPassword, verifyToken, Mail, paginate,
+  encryptQuery
 } = helpers;
 
 
@@ -126,7 +127,7 @@ class UserController {
     const { id, username } = user;
     const token = generateToken({ id, username, email });
     await PasswordResetTokens.create({ token, userId: id, email });
-    const link = `http://${process.env.APP_URL}/api/v1/users/resetPassword/${id}/${token}`;
+    const link = `${process.env.FRONT_END_URL}reset-password/${id}/${token}`;
     const mail = new Mail({
       to: email,
       subject: 'Password Reset',
@@ -197,22 +198,15 @@ class UserController {
         verified: isVerified,
       }
     });
-    const token = generateToken({
+    let token = generateToken({
       id: newUser.id,
       email: userDetails.email
     });
 
-    const { bio } = newUser[0];
-
-    return successStat(res, 200, 'user', {
-      token,
-      firstname,
-      lastname,
-      email,
-      username,
-      bio,
-      imageUrl,
-    });
+    token = await encryptQuery(token);
+    return res.redirect(`${process.env.FRONT_END_URL}/?token=${token}&user=${JSON.stringify({
+      firstname, username, imageUrl, email
+    })}`);
   }
 
   /**

@@ -8,7 +8,7 @@ import Paginate from './paginate';
 
 import tagCategory from './tag_categoryHelper';
 
-const { generateToken, verifyToken } = Auth;
+const { generateToken, verifyToken, encryptQuery } = Auth;
 const { hashPassword, comparePassword } = passwordHash;
 const { errorStat, successStat } = Utilities;
 const { addToBlacklist, checkBlacklist } = blacklistToken;
@@ -30,5 +30,6 @@ export default {
   filterSearch,
   paginate,
   addTags,
-  addCategories
+  addCategories,
+  encryptQuery
 };
