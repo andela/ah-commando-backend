@@ -83,7 +83,7 @@ class ArticleController {
    * @memberof ArticleController
    */
   static async getAllArticles(req, res) {
-    const { searchQuery } = req.query;
+    const { searchQuery, authorId } = req.query;
     const queryFilters = req.body;
 
     let articles;
@@ -100,6 +100,17 @@ class ArticleController {
           ],
           group: ['Article.id', 'author.id', 'comment.id']
         });
+        if (authorId) {
+          articles = await models.Article.findAll({
+            where: {
+              authorId,
+            }
+          });
+        } else {
+          articles = await models.Article.findAll({
+            include: [{ model: models.User, as: 'author', attributes: ['firstname', 'lastname', 'username', 'image', 'email'] }]
+          });
+        }
       } else if (searchQuery && Object.keys(queryFilters)[0] !== 'undefined') {
         articles = await filterSearch(searchQuery, queryFilters);
       } else {
@@ -142,16 +153,9 @@ class ArticleController {
     if (req.user) {
       const userId = req.user.id;
       await models.Reading.findOrCreate({
-        where: { userId, articleId: article.id },
-        defaults: {
-          userId,
-          articleId: article.id,
-          slug,
-        },
+        where: { userId, articleId: article.id }
       });
-      await models.Article.increment({ readCount: 1 }, { where: { slug } });
     }
-
     return successStat(res, 200, 'article', article);
   }
 

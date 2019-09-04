@@ -2,8 +2,13 @@ import Authenticate from './authenticate';
 import InputValidator from './inputValidator';
 import { multerUploads } from './multer';
 import searchValidator from './searchValidator';
+import paymentValidator from './paymentValidator';
 
 const { validateFilter, validateKeyword } = searchValidator;
+const {
+  validateSubscription, validateUnSubscribe, validateCreateToken, validatePlan,
+  validateDeletePlan
+} = paymentValidator;
 const {
   verifyToken, optionalLogin, isActive, isJustAUser
 } = Authenticate;
@@ -51,5 +56,10 @@ export default {
   validateRoleInput,
   validateParamsInput,
   validateUpdateUser,
-  validateGetUser
+  validateGetUser,
+  validateSubscription,
+  validateUnSubscribe,
+  validateCreateToken,
+  validatePlan,
+  validateDeletePlan
 };

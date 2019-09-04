@@ -175,7 +175,9 @@ class AdminController {
       to: user.email,
       subject: "Welcome to Authors' Haven",
       messageHeader: `Hi, ${user.firstname}!`,
-      messageBody: `You have being added a/an ${userRole}, your username is ${username} and password ${password} 
+      messageBody: `You have being added as a/an ${userRole}, your login details is given below
+      username: ${username}
+      password: ${password} 
       please, click on the link below to verify your email and change your password as soon as possible`,
       iButton: true
     });
