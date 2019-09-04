@@ -428,9 +428,6 @@ class ArticleController {
       }],
       group: ['Article.id']
     });
-    if (!article) {
-      return errorStat(res, 404, 'not found');
-    }
     return successStat(res, 200, 'article', featuredArticle);
   }
 
