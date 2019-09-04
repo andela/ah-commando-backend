@@ -27,7 +27,7 @@ const articles = [{
   likesCount: 300,
   dislikesCount: 2000,
   readTime: 3,
-  authorId: 26,
+  authorId: 13,
   createdAt: new Date(),
   updatedAt: new Date()
 }];
@@ -43,7 +43,7 @@ for (let i = 0; i < 20; i += 1) {
     likesCount: faker.random.number({ min: 1, max: 99999999 }),
     dislikesCount: faker.random.number({ min: 1, max: 9999999 }),
     readCount: faker.random.number({ min: 1, max: 999999 }),
-    authorId: faker.random.number({ min: 1, max: 15 }),
+    authorId: faker.random.number({ min: 1, max: 12 }),
     readTime: faker.random.number({ min: 1, max: 10 }),
     createdAt: new Date(),
     updatedAt: new Date()

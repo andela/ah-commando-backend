@@ -8,7 +8,7 @@ module.exports = {
     const articleCategories = _.times(52, () => ({
       articleId: faker.random.number({
         min: 1,
-        max: 52
+        max: 30
       }),
       tagId: faker.random.number({
         min: 1,

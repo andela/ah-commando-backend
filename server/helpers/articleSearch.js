@@ -68,7 +68,8 @@ class ArticleSearch {
         },
         {
           model: models.Comment,
-          as: 'comment'
+          as: 'comment',
+          duplicating: false
         }
       ],
     });
@@ -109,7 +110,8 @@ class ArticleSearch {
         },
         {
           model: models.Comment,
-          as: 'comment'
+          as: 'comment',
+          duplicating: false
         }
       ],
       where: { [Op.and]: [{ [Op.or]: queryFields }, { [Op.and]: queryFilters }] }
