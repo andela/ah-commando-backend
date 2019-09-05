@@ -340,7 +340,7 @@ describe('User tests', () => {
         .end((err, res) => {
           const { message, status } = res.body;
           expect(status).to.equal(200);
-          expect(message).to.equal(`Hi ${userData[0].user.firstname}, A password reset link has been sent to your mail-box`);
+          expect(message).to.equal(`Hi ${userData[0].user.firstname.toUpperCase()}, A password reset link has been sent to your mail-box`);
           done();
         });
     });

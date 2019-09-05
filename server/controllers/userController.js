@@ -127,7 +127,7 @@ class UserController {
     const { id, username } = user;
     const token = generateToken({ id, username, email });
     await PasswordResetTokens.create({ token, userId: id, email });
-    const link = `${process.env.FRONT_END_URL}reset-password/${id}/${token}`;
+    const link = `${process.env.FRONT_END_URL}reset-password/?id=${id}&token=${token}`;
     const mail = new Mail({
       to: email,
       subject: 'Password Reset',
@@ -141,7 +141,7 @@ class UserController {
     });
     mail.sendMail();
 
-    return successStat(res, 200, 'message', `Hi ${user.firstname}, A password reset link has been sent to your mail-box`);
+    return successStat(res, 200, 'message', `Hi ${user.firstname.toUpperCase()}, A password reset link has been sent to your mail-box`);
   }
 
   /**
@@ -162,7 +162,8 @@ class UserController {
     if (!payload
       || payload.id !== Number(id)
       || !isTokenAvailable) return errorStat(res, 401, 'Invalid Reset Token');
-    await models.User.update({ password }, { where: { id: user.id } });
+    const hashedPassword = hashPassword(password);
+    await models.User.update({ password: hashedPassword }, { where: { id: user.id } });
     PasswordResetTokens.destroy({ where: { userId: id } });
     return successStat(res, 200, 'message', 'Success, Password Reset Successfully');
   }
