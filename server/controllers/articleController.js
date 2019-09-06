@@ -104,11 +104,26 @@ class ArticleController {
           articles = await models.Article.findAll({
             where: {
               authorId,
-            }
+            },
+            include: [
+              { model: models.User, as: 'author', attributes: ['firstname', 'lastname', 'username', 'image', 'email'] },
+              {
+                model: models.Comment,
+                as: 'comment'
+              }
+            ],
+            group: ['Article.id', 'author.id', 'comment.id']
           });
         } else {
           articles = await models.Article.findAll({
-            include: [{ model: models.User, as: 'author', attributes: ['firstname', 'lastname', 'username', 'image', 'email'] }]
+            include: [
+              { model: models.User, as: 'author', attributes: ['firstname', 'lastname', 'username', 'image', 'email'] },
+              {
+                model: models.Comment,
+                as: 'comment'
+              }
+            ],
+            group: ['Article.id', 'author.id', 'comment.id']
           });
         }
       } else if (searchQuery && Object.keys(queryFilters)[0] !== 'undefined') {
