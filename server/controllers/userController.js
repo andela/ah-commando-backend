@@ -205,7 +205,7 @@ class UserController {
     });
 
     token = await encryptQuery(token);
-    return res.redirect(`${process.env.FRONT_END_URL}/?token=${token}&user=${JSON.stringify({
+    return res.redirect(`${process.env.FRONT_END_URL}?token=${token}&user=${JSON.stringify({
       firstname, username, imageUrl, email
     })}`);
   }
