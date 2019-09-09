@@ -11,7 +11,6 @@ const { PasswordResetTokens } = models;
 const {
   addToBlacklist, generateToken, errorStat, successStat,
   comparePassword, hashPassword, verifyToken, Mail, paginate,
-  encryptQuery
 } = helpers;
 
 
@@ -199,12 +198,11 @@ class UserController {
         verified: isVerified,
       }
     });
-    let token = generateToken({
+    const token = generateToken({
       id: newUser.id,
       email: userDetails.email
     });
 
-    token = await encryptQuery(token);
     return res.redirect(`${process.env.FRONT_END_URL}?token=${token}&user=${JSON.stringify({
       firstname, username, imageUrl, email
     })}`);
