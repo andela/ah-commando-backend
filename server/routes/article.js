@@ -30,7 +30,8 @@ const {
   shareOnFacebook,
   shareOnTweeter,
   getArticleCategories,
-  getFeaturedArticles
+  getFeaturedArticles,
+  getAllArticlesByTag
 } = ArticleController;
 
 
@@ -59,4 +60,6 @@ router.get('/:slug/facebook-share', shareOnFacebook);
 router.get('/:slug/twitter-share', shareOnTweeter);
 
 router.post('/categories/create', verifyToken, isActive, createCategory);
+
+router.get('/tag/article', getAllArticlesByTag);
 export default router;

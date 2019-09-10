@@ -479,6 +479,48 @@ class ArticleController {
     });
     return successStat(res, 200, 'Categories', articleCategories);
   }
+
+  /**
+ * @description Gets the featured article
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ * @returns {String} returns a link to the article on twitter website
+*/
+  static async getAllArticlesByTag(req, res) {
+    const { articleTag } = req.body;
+
+    const tag = await models.Tags.findOne({
+      where: {
+        name: articleTag
+      }
+    });
+
+    if (!tag) return errorStat(res, 404, 'The tag does not exist');
+    const tagId = tag.id;
+
+    const articles = await models.Tags.findAll({
+      where: {
+        id: tagId
+      },
+      include: {
+        model: models.Article,
+        include: [{
+          model: models.User,
+          as: 'author',
+          attributes: ['firstname', 'lastname', 'image', 'username']
+        },
+        {
+          model: models.Comment,
+          as: 'comment'
+        },
+        {
+          model: models.Likes,
+        }]
+      },
+    });
+
+    return successStat(res, 200, 'Articles', articles);
+  }
 }
 
 export default ArticleController;
