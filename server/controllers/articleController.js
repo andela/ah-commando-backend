@@ -96,23 +96,45 @@ class ArticleController {
             {
               model: models.Comment,
               as: 'comment'
-            }
+            },
+            {
+              model: Categories, attributes: ['name'], through: { attributes: [] }, duplicating: false
+            },
+            {
+              model: Tags, attributes: ['name'], through: { attributes: [] }, duplicating: false
+            },
           ],
-          group: ['Article.id', 'author.id', 'comment.id']
+          attributes: {
+            exclude: ['tagList'],
+          },
+          group: ['Article.id', 'author.id', 'comment.id', 'Categories.id', 'Categories->ArticleCategories.categoryId',
+            'Categories->ArticleCategories.articleId', 'Categories->ArticleCategories.createdAt', 'Categories->ArticleCategories.updatedAt',
+            'Tags.id', 'Tags->ArticleTags.tagId', 'Tags->ArticleTags.articleId', 'Tags->ArticleTags.createdAt', 'Tags->ArticleTags.updatedAt']
         });
         if (authorId) {
           articles = await models.Article.findAll({
             where: {
               authorId,
             },
+            attributes: {
+              exclude: ['tagList'],
+            },
             include: [
               { model: models.User, as: 'author', attributes: ['firstname', 'lastname', 'username', 'image', 'email'] },
               {
                 model: models.Comment,
                 as: 'comment'
-              }
+              },
+              {
+                model: Categories, attributes: ['name'], through: { attributes: { exclude: ['createdAt', 'updatedAt'] } }, duplicating: false
+              },
+              {
+                model: Tags, attributes: ['name'], through: { attributes: { exclude: ['createdAt', 'updatedAt'] } }, duplicating: false
+              },
             ],
-            group: ['Article.id', 'author.id', 'comment.id']
+            group: ['Article.id', 'author.id', 'comment.id', 'Categories.id', 'Categories->ArticleCategories.categoryId',
+              'Categories->ArticleCategories.articleId', 'Categories->ArticleCategories.createdAt', 'Categories->ArticleCategories.updatedAt',
+              'Tags.id', 'Tags->ArticleTags.tagId', 'Tags->ArticleTags.articleId', 'Tags->ArticleTags.createdAt', 'Tags->ArticleTags.updatedAt']
           });
         } else {
           articles = await models.Article.findAll({
@@ -121,9 +143,20 @@ class ArticleController {
               {
                 model: models.Comment,
                 as: 'comment'
-              }
+              },
+              {
+                model: Categories, attributes: ['name'], through: { attributes: { exclude: ['createdAt', 'updatedAt'] } }, duplicating: false
+              },
+              {
+                model: Tags, attributes: ['name'], through: { attributes: [] }, duplicating: false
+              },
             ],
-            group: ['Article.id', 'author.id', 'comment.id']
+            attributes: {
+              exclude: ['tagList'],
+            },
+            group: ['Article.id', 'author.id', 'comment.id', 'Categories.id', 'Categories->ArticleCategories.categoryId',
+              'Categories->ArticleCategories.articleId', 'Categories->ArticleCategories.createdAt', 'Categories->ArticleCategories.updatedAt',
+              'Tags.id', 'Tags->ArticleTags.tagId', 'Tags->ArticleTags.articleId', 'Tags->ArticleTags.createdAt', 'Tags->ArticleTags.updatedAt']
           });
         }
       } else if (searchQuery && Object.keys(queryFilters)[0] !== 'undefined') {
@@ -138,7 +171,13 @@ class ArticleController {
       {
         model: models.Comment,
         as: 'comment'
-      }
+      },
+      {
+        model: Categories, attributes: ['name'], through: { attributes: [] }, duplicating: false
+      },
+      {
+        model: Tags, attributes: ['name'], through: { attributes: [] }, duplicating: false
+      },
     ]);
   }
 
@@ -156,15 +195,27 @@ class ArticleController {
       where: {
         slug,
       },
+      attributes: {
+        exclude: ['tagList'],
+      },
       include: [{
         model: models.User,
         as: 'author',
         attributes: ['firstname', 'lastname', 'username', 'image', 'email']
-      }, {
+      },
+      {
+        model: Categories, attributes: ['name'], through: { attributes: [] }, duplicating: false
+      },
+      {
+        model: Tags, attributes: ['name'], through: { attributes: [] }, duplicating: false
+      },
+      {
         model: models.Comment,
         as: 'comment',
       }],
-      group: ['Article.id', 'author.id', 'comment.id']
+      group: ['Article.id', 'author.id', 'comment.id', 'Categories.id', 'Categories->ArticleCategories.categoryId',
+        'Categories->ArticleCategories.articleId', 'Categories->ArticleCategories.createdAt', 'Categories->ArticleCategories.updatedAt',
+        'Tags.id', 'Tags->ArticleTags.tagId', 'Tags->ArticleTags.articleId', 'Tags->ArticleTags.createdAt', 'Tags->ArticleTags.updatedAt']
     });
 
     if (!article) {
@@ -193,6 +244,7 @@ class ArticleController {
       description,
       articleBody,
       tagList,
+      categoryList,
       image
     } = req.body.article;
     const editedArticle = await models.Article.update(
@@ -214,8 +266,14 @@ class ArticleController {
     if (editedArticle[1].length < 1) {
       return errorStat(res, 404, 'Article not found');
     }
-
     const article = editedArticle[1][editedArticle[1].length - 1].dataValues;
+
+    if (tagList && tagList.length) {
+      await addTags(tagList, article.id);
+    }
+    if (categoryList && categoryList.length) {
+      await addCategories(categoryList, article.id);
+    }
     return successStat(res, 200, 'article', article);
   }
 
@@ -438,9 +496,18 @@ class ArticleController {
     });
     const featuredArticle = await models.Article.findOne({
       where: { likesCount: article.dataValues.highestLikes },
+      attributes: {
+        exclude: ['tagList'],
+      },
       include: [{
         model: models.Comment,
         as: 'comment'
+      },
+      {
+        model: Categories, attributes: ['name'], through: { attributes: [] }, duplicating: false
+      },
+      {
+        model: Tags, attributes: ['name'], through: { attributes: [] }, duplicating: false
       },
       {
         as: 'author',
@@ -466,10 +533,19 @@ class ArticleController {
       where: queryParameter,
       include: {
         model: models.Article,
+        attributes: {
+          exclude: ['tagList'],
+        },
         include: [{
           model: models.User,
           as: 'author',
           attributes: ['firstname', 'lastname', 'image', 'username']
+        },
+        {
+          model: Categories, attributes: ['name'], through: { attributes: [] }, duplicating: false
+        },
+        {
+          model: Tags, attributes: ['name'], through: { attributes: [] }, duplicating: false
         },
         {
           model: models.Comment,
@@ -489,15 +565,15 @@ class ArticleController {
   static async getAllArticlesByTag(req, res) {
     const { articleTag } = req.body.tag;
     let { page, limit } = req.query;
-
     const tag = await models.Tags.findOne({ where: { name: articleTag } });
-
     if (!tag) return errorStat(res, 404, 'The tag does not exist');
     const tagId = tag.id;
-
     const where = { id: tagId };
     const include = {
       model: models.Article,
+      attributes: {
+        exclude: ['tagList'],
+      },
       include: [{
         model: models.User,
         as: 'author',
@@ -508,10 +584,12 @@ class ArticleController {
         as: 'comment'
       },
       {
-        model: models.Categories,
+        model: Categories, attributes: ['name'], through: { attributes: [] }, duplicating: false
+      },
+      {
+        model: Tags, attributes: ['name'], through: { attributes: [] }, duplicating: false
       }]
     };
-
     if (!page && !limit) {
       const articles = await models.Tags.findAll({
         where,
@@ -520,11 +598,9 @@ class ArticleController {
       const result = articles[0].Articles;
       return successStat(res, 200, 'articles', result);
     }
-
     limit = parseInt(limit, 10) ? limit : 5;
     page = parseInt(page, 10) > 0 ? page : 1;
     const offset = (page - 1) * limit;
-
     const paginatedResult = await models.Tags.findAndCountAll({
       where,
       offset,
@@ -534,14 +610,12 @@ class ArticleController {
     if (paginatedResult.rows.length < 1) {
       return errorStat(res, 404, 'Page not found');
     }
-
     return successStat(res, 200, 'articles', {
       page,
       numberOfPages: Math.ceil(paginatedResult.count / limit).toString(),
       data: paginatedResult.rows[0].Articles
     });
   }
-
 
   /**
    * @description Gets user who likes a certain post
