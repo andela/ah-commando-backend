@@ -77,7 +77,7 @@ export default class CommentController {
         {
           model: models.User,
           as: 'author',
-          attributes: ['username', 'firstname', 'image']
+          attributes: ['username', 'firstname', 'lastname', 'image']
         },
         {
           model: models.Article,
