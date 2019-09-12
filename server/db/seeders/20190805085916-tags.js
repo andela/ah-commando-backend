@@ -2,7 +2,7 @@
 
 const faker = require('faker');
 
-const tags = ['javascript', 'AI', 'travel', 'peace', 'believe', 'race', 'react', 'tutorial', 'knowledge'];
+const tags = ['javascript', 'AI', 'travel', 'peace', 'believe', 'race', 'react', 'tutorial', 'knowledge', 'andela', 'js'];
 module.exports = {
   up: (queryInterface) => {
     const randomCategories = tags.map(item => ({

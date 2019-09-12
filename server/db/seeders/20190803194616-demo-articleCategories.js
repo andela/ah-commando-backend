@@ -5,14 +5,14 @@ const faker = require('faker');
 
 module.exports = {
   up: (queryInterface) => {
-    const articleCategories = _.times(30, () => ({
+    const articleCategories = _.times(300, () => ({
       articleId: faker.random.number({
         min: 1,
-        max: 52
+        max: 300
       }),
       categoryId: faker.random.number({
         min: 1,
-        max: 7
+        max: 9
       }),
       createdAt: new Date(),
       updatedAt: new Date()

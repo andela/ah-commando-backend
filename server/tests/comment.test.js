@@ -111,7 +111,7 @@ describe('Handle Comment', () => {
       it('Should fail if post is not found', (done) => {
         chai
           .request(app)
-          .post(`${baseUrl}/comment/${230}`)
+          .post(`${baseUrl}/comment/${2300}`)
           .set('Authorization', `${userToken}`)
           .send(commentData[0])
           .end((err, res) => {
@@ -324,7 +324,7 @@ describe('Handle Comment', () => {
       it('Should fail if post is not found', (done) => {
         chai
           .request(app)
-          .post(`${baseUrl}/comment/${230}`)
+          .post(`${baseUrl}/comment/${2300}`)
           .set('Authorization', `${userToken}`)
           .send(commentData[0])
           .end((err, res) => {
