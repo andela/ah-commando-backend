@@ -113,6 +113,14 @@ class Notification {
           text: 'View Comment',
         };
         break;
+      case 'follow':
+        data = {
+          subject: 'New Follow alert',
+          header: 'Someone just followed you',
+          messageBody: `${payload.message}. Click the link below to view the user`,
+          text: 'View User',
+        };
+        break;
     }
     mailingList.forEach((user) => {
       const mail = new Mail({

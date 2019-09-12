@@ -2,6 +2,7 @@ import sequelize from 'sequelize';
 import dotenv from 'dotenv';
 import models from '../db/models';
 import helpers from '../helpers';
+import Notification from '../helpers/notifications';
 
 
 dotenv.config();
@@ -292,7 +293,7 @@ class UserController {
     */
   static async getAuserProfile(req, res) {
     const { params: { username }, user } = req;
-    const attributes = ['id', 'username', 'firstname', 'lastname', 'email', 'bio', 'image'];
+    const attributes = ['id', 'username', 'firstname', 'lastname', 'email', 'bio', 'image', 'newPostEmailSub'];
     const userProfile = await models.User.findOne({
       where: {
         username,
@@ -380,6 +381,13 @@ class UserController {
       if (!following) return errorStat(res, 400, `You are not following ${username}`);
       await user.removeFollower(id);
     }
+
+    const payload = {
+      resourceType: 'follow',
+      resourceId: req.user.username,
+      message: `${req.user.username} just ${method === 'POST' ? '' : 'un'}followed you`,
+    };
+    Notification.notify([user], payload);
 
     return successStat(res, 200, 'message', 'successful');
   }

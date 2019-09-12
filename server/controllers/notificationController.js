@@ -20,7 +20,7 @@ class NotificationController {
   static async getNotifications(req, res) {
     const { user: { id } } = req;
     const user = await models.User.findByPk(id);
-    return successStat(res, 200, 'notifications', await user.getNotifications());
+    return successStat(res, 200, 'notifications', await user.getNotifications({ where: { read: false } }));
   }
 
   /**
