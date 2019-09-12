@@ -6,13 +6,15 @@ import middlewares from '../middlewares';
 const router = express.Router();
 
 const {
-  verifyToken, validateLikes, isActive
+  verifyToken, validateLikes, isActive, optionalLogin
 } = middlewares;
 
 const {
-  likeOrDislikeArticle
+  likeOrDislikeArticle,
+  getLikerOfAnArticle
 } = ArticleController;
 
 router.post('/:resourceId', verifyToken, isActive, validateLikes, likeOrDislikeArticle);
+router.get('/:resourceId', optionalLogin, getLikerOfAnArticle);
 
 export default router;

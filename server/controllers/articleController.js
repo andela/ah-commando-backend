@@ -541,6 +541,37 @@ class ArticleController {
       data: paginatedResult.rows[0].Articles
     });
   }
+
+
+  /**
+   * @description Gets user who likes a certain post
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @returns {String} returns a link to the article on twitter website
+  */
+  static async getLikerOfAnArticle(req, res) {
+    const { params: { resourceId }, query: { type } } = req;
+    const { user } = req;
+    if (!user) {
+      return res.status(401).json({
+        status: 401,
+        message: 'user not logged in'
+      });
+    }
+    const hasLiked = await models.Likes.findOne({
+      where: {
+        resourceId,
+        userId: user.id,
+        type
+      },
+      attributes: ['likes'],
+    });
+    if (!hasLiked) return res.status(202).json({ status: 202, error: `user has not liked this ${type}` });
+    return res.status(201).json({
+      status: 201,
+      data: hasLiked,
+    });
+  }
 }
 
 export default ArticleController;
