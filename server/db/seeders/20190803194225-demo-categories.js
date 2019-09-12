@@ -2,7 +2,7 @@
 
 const faker = require('faker');
 
-const categories = ['technology', 'health', 'science', 'fashion', 'education', 'culture', 'lifestyle'];
+const categories = ['technology', 'health', 'science', 'fashion', 'education', 'culture', 'lifestyle', 'travel', 'nature'];
 
 module.exports = {
   up: (queryInterface) => {

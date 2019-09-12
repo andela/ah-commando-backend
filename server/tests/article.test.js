@@ -155,7 +155,7 @@ describe('Article test', () => {
     it('should should return an error if no article is found', (done) => {
       chai
         .request(app)
-        .post(`${baseUrl}/likes/100`)
+        .post(`${baseUrl}/likes/1000`)
         .set('Authorization', `Bearer ${userToken}`)
         .send({
           liked: {
