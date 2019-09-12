@@ -61,5 +61,5 @@ router.get('/:slug/twitter-share', shareOnTweeter);
 
 router.post('/categories/create', verifyToken, isActive, createCategory);
 
-router.get('/tag/article', getAllArticlesByTag);
+router.post('/tag/get-article', getAllArticlesByTag);
 export default router;

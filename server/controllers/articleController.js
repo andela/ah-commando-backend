@@ -481,45 +481,65 @@ class ArticleController {
   }
 
   /**
- * @description Gets the featured article
+ * @description Gets articles by tag
  * @param {Object} req - request object
  * @param {Object} res - response object
- * @returns {String} returns a link to the article on twitter website
+ * @returns {String} returns all articles for a tag
 */
   static async getAllArticlesByTag(req, res) {
-    const { articleTag } = req.body;
+    const { articleTag } = req.body.tag;
+    let { page, limit } = req.query;
 
-    const tag = await models.Tags.findOne({
-      where: {
-        name: articleTag
-      }
-    });
+    const tag = await models.Tags.findOne({ where: { name: articleTag } });
 
     if (!tag) return errorStat(res, 404, 'The tag does not exist');
     const tagId = tag.id;
 
-    const articles = await models.Tags.findAll({
-      where: {
-        id: tagId
+    const where = { id: tagId };
+    const include = {
+      model: models.Article,
+      include: [{
+        model: models.User,
+        as: 'author',
+        attributes: ['firstname', 'lastname', 'image', 'username']
       },
-      include: {
-        model: models.Article,
-        include: [{
-          model: models.User,
-          as: 'author',
-          attributes: ['firstname', 'lastname', 'image', 'username']
-        },
-        {
-          model: models.Comment,
-          as: 'comment'
-        },
-        {
-          model: models.Likes,
-        }]
+      {
+        model: models.Comment,
+        as: 'comment'
       },
-    });
+      {
+        model: models.Categories,
+      }]
+    };
 
-    return successStat(res, 200, 'Articles', articles);
+    if (!page && !limit) {
+      const articles = await models.Tags.findAll({
+        where,
+        include,
+      });
+      const result = articles[0].Articles;
+      return successStat(res, 200, 'articles', result);
+    }
+
+    limit = parseInt(limit, 10) ? limit : 5;
+    page = parseInt(page, 10) > 0 ? page : 1;
+    const offset = (page - 1) * limit;
+
+    const paginatedResult = await models.Tags.findAndCountAll({
+      where,
+      offset,
+      limit,
+      include
+    });
+    if (paginatedResult.rows.length < 1) {
+      return errorStat(res, 404, 'Page not found');
+    }
+
+    return successStat(res, 200, 'articles', {
+      page,
+      numberOfPages: Math.ceil(paginatedResult.count / limit).toString(),
+      data: paginatedResult.rows[0].Articles
+    });
   }
 }
 

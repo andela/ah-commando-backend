@@ -199,9 +199,11 @@ describe('Article test', () => {
     it('should get articles by tag', (done) => {
       chai
         .request(app)
-        .get(`${baseUrl}/articles/tag/article`)
+        .post(`${baseUrl}/articles/tag/get-article`)
         .send({
-          articleTag: 'javascript'
+          tag: {
+            articleTag: 'javascript'
+          }
         })
         .end((err, res) => {
           const { status } = res.body;
@@ -213,9 +215,11 @@ describe('Article test', () => {
     it('should return error if the tag doesnot exist', (done) => {
       chai
         .request(app)
-        .get(`${baseUrl}/articles/tag/article`)
+        .post(`${baseUrl}/articles/tag/get-article`)
         .send({
-          articleTag: 'minimemeneie'
+          tag: {
+            articleTag: 'minimemeneie'
+          }
         })
         .end((err, res) => {
           const { status } = res.body;
