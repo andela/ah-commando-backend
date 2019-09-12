@@ -196,6 +196,37 @@ describe('Article test', () => {
         });
     });
 
+    it('should get articles by tag', (done) => {
+      chai
+        .request(app)
+        .post(`${baseUrl}/articles/tag/get-article`)
+        .send({
+          tag: {
+            articleTag: 'javascript'
+          }
+        })
+        .end((err, res) => {
+          const { status } = res.body;
+          expect(status).to.equal(200);
+          done();
+        });
+    });
+
+    it('should return error if the tag doesnot exist', (done) => {
+      chai
+        .request(app)
+        .post(`${baseUrl}/articles/tag/get-article`)
+        .send({
+          tag: {
+            articleTag: 'minimemeneie'
+          }
+        })
+        .end((err, res) => {
+          const { status } = res.body;
+          expect(status).to.equal(404);
+          done();
+        });
+    });
 
     it('get all articles by categories', (done) => {
       chai
