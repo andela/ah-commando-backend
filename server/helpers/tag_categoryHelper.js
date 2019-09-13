@@ -1,7 +1,7 @@
 import models from '../db/models';
 
 const {
-  Categories, Tags, ArticleTags
+  Categories, Tags, ArticleTags, ArticleCategories
 } = models;
 /**
   * @Module Helper
@@ -17,6 +17,7 @@ class TagCategory {
     * @memberof TagCategory
     */
   static async addTags(tags, articleId) {
+    await ArticleTags.destroy({ where: { articleId } });
     const tagArray = tags.split(/[ ,]/);
     tagArray.forEach(async (tagItem) => {
       const tag = await Tags.findOrCreate({ where: { name: tagItem } });
@@ -34,11 +35,12 @@ class TagCategory {
     * @memberof TagCategory
     */
   static async addCategories(categories, articleId) {
+    await ArticleCategories.destroy({ where: { articleId } });
     const categoryArray = categories.split(/[ ,]/);
     categoryArray.forEach(async (categoryItem) => {
       const category = await Categories.findOrCreate({ where: { name: categoryItem } });
       const categoryId = category[0].dataValues.id;
-      await ArticleTags.create({ categoryId, articleId });
+      await ArticleCategories.create({ categoryId, articleId });
     });
   }
 }

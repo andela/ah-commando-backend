@@ -21,10 +21,19 @@ class reportController {
       where: {
         slug: req.params.slug
       },
+      attributes: {
+        exclude: ['tagList'],
+      },
       include: [{
         model: models.User,
         as: 'author',
         attributes: ['firstname', 'lastname', 'username', 'image', 'email']
+      },
+      {
+        model: models.Categories, attributes: ['name'], through: { attributes: [] }, duplicating: false
+      },
+      {
+        model: models.Tags, attributes: ['name'], through: { attributes: [] }, duplicating: false
       }]
     });
     if (!article) {
